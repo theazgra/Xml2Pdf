@@ -1,0 +1,169 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<PdfDocument style="Style.xml" sideMargins="10mm" topMargin="2.5cm" orientation="portrait" pageFormat="A4">
+    <Page>
+        <Header horizontalAlignment="left" fontSize="8">
+            <Paragraph property="DistilleryName"/>
+            <Paragraph property="DistilleryDIC"/>
+            <Paragraph property="DistilleryAddress_1"/>
+            <Paragraph property="DistilleryAddress_2"/>
+        </Header>
+
+        <Paragraph format="Doklad o pěstitelském pálení {0}" formatProperties="DistillationId"
+                   style="RedHeading1"/>
+
+        <Table columnCount="5" columnsWidth="0.1;0.2;0.2;0.2;0.3" onlyOutsideBorder="true" rowHeight="0.65cm">
+            <Row>
+                <Cell horizontalAlignment="left">
+                    <Paragraph text="Zákazník:"/>
+                </Cell>
+                <Cell horizontalAlignment="right">
+                    <Paragraph text="Příjmení jméno:"/>
+                </Cell>
+                <Cell horizontalAlignment="left">
+                    <Paragraph property="CustomerName"/>
+                </Cell>
+            </Row>
+            <Row>
+                <Cell/>
+                <Cell horizontalAlignment="right">
+                    <Paragraph text="Ulice, ČP:"/>
+                </Cell>
+                <Cell horizontalAlignment="left">
+                    <Paragraph property="CustomerStreetHN"/>
+                </Cell>
+                <Cell horizontalAlignment="right">
+                    <Paragraph text="Telefon:"/>
+                </Cell>
+                <Cell horizontalAlignment="left">
+                    <Paragraph property="CustomerPhone"/>
+                </Cell>
+            </Row>
+            <Row>
+                <Cell/>
+                <Cell horizontalAlignment="right">
+                    <Paragraph text="PSČ, Město:"/>
+                </Cell>
+                <Cell horizontalAlignment="left">
+                    <Paragraph property="CustomerCityZIP"/>
+                </Cell>
+                <Cell horizontalAlignment="right">
+                    <Paragraph text="Email:"/>
+                </Cell>
+                <Cell horizontalAlignment="left">
+                    <Paragraph property="CustomerEmail"/>
+                </Cell>
+            </Row>
+        </Table>
+
+        <Paragraph/>
+
+        <!-- If we dont specify columnsWidth set it universal to page width -->
+        <Table columnCount="7">
+            <!-- Row can have top/bottom/right/left border property -->
+            <Row headingFormat="true" boldFont="true">
+                <Cell horizontalAlignment="right">
+                    <Paragraph text="Množství LAA*"/>
+                </Cell>
+                <Cell horizontalAlignment="right">
+                    <Paragraph text="Sazba pálenice"/>
+                </Cell>
+                <Cell horizontalAlignment="right">
+                    <Paragraph text="Sazba spotřební daně"/>
+                </Cell>
+                <Cell horizontalAlignment="right">
+                    <Paragraph text="Spotřební daň"/>
+                </Cell>
+                <Cell horizontalAlignment="right">
+                    <Paragraph text="Základ DPH* "/>
+                </Cell>
+                <Cell horizontalAlignment="right">
+                    <Paragraph text="DPH (21%)"/>
+                </Cell>
+                <Cell horizontalAlignment="right">
+                    <Paragraph text="Cena Kč"/>
+                </Cell>
+            </Row>
+            <Row bottomBorderWidth="0.5" topBorderWidth="0.5">
+                <Cell horizontalAlignment="right">
+                    <Paragraph property="DistillationLAA"/>
+                </Cell>
+                <Cell horizontalAlignment="right">
+                    <Paragraph property="DistilleryPriceForLAA"/>
+                </Cell>
+                <Cell horizontalAlignment="right">
+                    <Paragraph property="ExciseDuty"/>
+                </Cell>
+                <Cell horizontalAlignment="right">
+                    <Paragraph property="ExciseDutyAmount"/>
+                </Cell>
+                <Cell horizontalAlignment="right">
+                    <Paragraph property="DphBase"/>
+                </Cell>
+                <Cell horizontalAlignment="right">
+                    <Paragraph property="DPH"/>
+                </Cell>
+                <Cell horizontalAlignment="right">
+                    <Paragraph property="Price"/>
+                </Cell>
+            </Row>
+            <Row>
+                <Cell/>
+                <Cell/>
+                <Cell/>
+                <Cell/>
+                <Cell/>
+                <Cell/>
+                <Cell horizontalAlignment="right">
+                    <Paragraph property="RoundedPrice"/>
+                </Cell>
+            </Row>
+        </Table>
+
+        <Paragraph/>
+        <Paragraph/>
+
+        <Table columnCount="2">
+            <Row spaceAfter="6mm">
+                <Cell>
+                    <Paragraph text="Dne: " property="CurrentDateTime"/>
+                </Cell>
+            </Row>
+            <Row horizontalAlignment="center">
+                <Cell>
+                    <Paragraph text="Vystavil: __________"/>
+                </Cell>
+                <Cell>
+                    <Paragraph text="Zákazník: __________"/>
+                </Cell>
+            </Row>
+            <Row horizontalAlignment="center">
+                <Cell>
+                    <Paragraph text="Správce"/>
+                </Cell>
+                <Cell>
+                    <Paragraph property="CustomerName"/>
+                </Cell>
+            </Row>
+        </Table>
+
+        <Paragraph text="Žádost o zpracování kvasu (ovoce)" style="Heading2" spaceBefore="8mm"/>
+
+        <Paragraph horizontalAlignment="center" italicFont="true"
+                   text="Písemné prohlášení pěstitele dle zákona č. 61/1997 Sb" spaceBefore="0" spaceAfter="5mm"/>
+
+
+        <Paragraph/>
+        <Paragraph format="Provoz: {0}, Pokladna: {1}, Datum a čas tržby: {2}   {3}"
+                   formatProperties="EetProvoznova;EetPokladna;EetAcceptedDate;EetAcceptedTime"/>
+
+        <Paragraph format="BKP: {0}" formatProperties="BKP"/>
+        <Paragraph format="{0}: {1}" formatProperties="PKPorFIK;PKPFIKValue"/>
+        <Paragraph text="Tržba je evidována v běžném režimu."/>
+
+
+        <Footer horizontalAlignment="left">
+            <Paragraph text="** nehodící se škrtněte"/>
+            <Paragraph text="* LAA = Litr aboslutního alkoholu, Základ DPH = sazba pálenice * množství LAA"/>
+        </Footer>
+    </Page>
+</PdfDocument>

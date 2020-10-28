@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<PdfDocument style="Style.xml" margins="10mm" orientation="landscape" pageFormat="A4">
+  <Page>
+
+    <Paragraph text="Toto je muj super nadpis" style="Heading1" />
+    
+    <Table columnCount="5" columnsWidth="0.2;0.2;0.2;0.2;0.2" allBorders="true" rowHeight="0.8cm">
+      <Row italicFont="true">
+        <Cell boldFont="true">
+          <Paragraph text="Id"  />
+        </Cell>
+        <Cell boldFont="true">
+          <Paragraph text="Jmeno"/>
+        </Cell>
+        <Cell boldFont="true">
+          <Paragraph text="Prijmeni"  />
+        </Cell>
+        <Cell boldFont="true">
+          <Paragraph text="Rodne cislo"  />
+        </Cell>
+        <Cell boldFont="true">
+          <Paragraph text="Vypaleno LAA"  />
+        </Cell>
+      </Row>
+      <RowDataTemplate itemsSource="Customers">
+        <Cell property="Id" italicFont="true"/>
+        <Cell property="Name" />
+        <Cell property="Surename" />
+        <Cell property="PersonalNumber" />
+        <Cell property="DistilledVolume" horizontalAlignment="right" />
+      </RowDataTemplate>
+    </Table>
+
+    <Image property="Img" x="100" y="200" scale="2.0"  />
+  </Page>
+</PdfDocument>
