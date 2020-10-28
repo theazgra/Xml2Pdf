@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<PdfDocument style="Style.xml" topMargin="30mm" sideMargins="10mm" orientation="portrait" pageFormat="A4">
+    <Page>
+
+        <Header horizontalAlignment="right" fontSize="10">
+            <Paragraph text="DistilleryName"/>
+            <Paragraph text="DistilleryDIC"/>
+            <Paragraph text="DistilleryAddress_1"/>
+            <Paragraph text="DistilleryAddress_2"/>
+        </Header>
+
+        <Line spaceAfter="5mm"/>
+
+        <Paragraph format="Cena itemu {0} je {1}" formatProperties="Name;Price"/>
+        <Paragraph text="This is bold text" boldFont="true"/>
+        <Paragraph text="This is italic text" italicFont="true"/>
+        <Paragraph text="This is underline text" underlineFont="single" spaceAfter="5mm"/>
+        <Paragraph text="This is italic underline text" underlineFont="dotted" italicFont="true"/>
+
+        <Paragraph text="This is right alignment text" horizontalAlignment="right"/>
+        <Paragraph text="This is left alignment text" horizontalAlignment="left"/>
+        <!--<Paragraph text="This is center alignment text" horizontalAlignment="center" allBorderWidth="1" bottomBorderColor="pink" topBorderColor="red"
+                 distanceFromBorders="1cm"/>-->
+
+        <Paragraph/>
+        <Paragraph/>
+
+        <Table columnCount="3" allBorders="true" columnsWidth="0.2;0.4;0.4" rowHeight="0.8cm">
+            <Row headingFormat="true" background="red">
+                <Cell horizontalAlignment="left" background="pink">
+                    <Paragraph text="Id:"/>
+                </Cell>
+                <Cell horizontalAlignment="right">
+                    <Paragraph text="Příjmení jméno:"/>
+                </Cell>
+                <Cell horizontalAlignment="left" mergeDown="1">
+                    <Paragraph text="Rodne cislo"/>
+                </Cell>
+            </Row>
+            <Row>
+                <!--<Cell horizontalAlignment="left">
+                  <Paragraph text="Zakaznik text"/>
+                </Cell>-->
+                <Cell/>
+                <Cell horizontalAlignment="right">
+                    <Paragraph property="Name"/>
+                </Cell>
+                <Cell horizontalAlignment="left">
+                    <Paragraph text="111111/1111"/>
+                </Cell>
+            </Row>
+            <!--<Row>
+            <Cell/>
+            <Cell horizontalAlignment="right">
+              <Paragraph text="Ulice, ČP:"/>
+            </Cell>
+            <Cell horizontalAlignment="left">
+              <Paragraph property="CustomerStreetHN"/>
+            </Cell>
+            <Cell horizontalAlignment="right">
+              <Paragraph text="Telefon:"/>
+            </Cell>
+            <Cell horizontalAlignment="left">
+              <Paragraph property="CustomerPhone"/>
+            </Cell>
+          </Row>
+          <Row>
+            <Cell/>
+            <Cell horizontalAlignment="right">
+              <Paragraph text="PSČ, Město:"/>
+            </Cell>
+            <Cell horizontalAlignment="left">
+              <Paragraph property="CustomerCityZIP"/>
+            </Cell>
+            <Cell horizontalAlignment="right">
+              <Paragraph text="Email:"/>
+            </Cell>
+            <Cell horizontalAlignment="left">
+              <Paragraph property="CustomerEmail"/>
+            </Cell>
+          </Row>-->
+        </Table>
+
+        <Footer horizontalAlignment="left" fontSize="9">
+            <Paragraph text="** nehodící se škrtněte"/>
+            <Paragraph text="* LAA = Litr aboslutního alkoholu, Základ DPH = sazba pálenice * množství LAA"/>
+        </Footer>
+    </Page>
+</PdfDocument>
