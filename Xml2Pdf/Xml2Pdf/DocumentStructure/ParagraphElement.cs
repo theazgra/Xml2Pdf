@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Xml2Pdf.Exceptions;
@@ -13,6 +14,9 @@ namespace Xml2Pdf.DocumentStructure
         public string Format { get; set; }
         public string[] FormatProperties { get; set; }
 
+        public override bool IsParentType => false;
+        public override Type[] AllowedChildrenTypes => Array.Empty<Type>();
+
         [SuppressMessage("ReSharper", "CoVariantArrayConversion")]
         public string GetTextToRender(IDictionary<string, object> objectPropertyMap, ValueFormatter formatter)
         {
@@ -23,7 +27,7 @@ namespace Xml2Pdf.DocumentStructure
             {
                 if (!objectPropertyMap.ContainsKey(Property))
                     throw TextException.PropertyNotFound(Property);
-                
+
                 return GetAndFormatProperty(Property);
             }
 

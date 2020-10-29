@@ -1,16 +1,33 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Xml2Pdf.Exceptions;
 
 namespace Xml2Pdf.DocumentStructure
 {
     public abstract class DocumentElement
     {
-        protected List<DocumentElement> children;
+        private List<DocumentElement> _children;
 
-        public IReadOnlyList<DocumentElement> Children => children.AsReadOnly();
-        public bool HasChildren => (children.Count > 0);
+        public IReadOnlyList<DocumentElement> Children => _children.AsReadOnly();
+        public bool HasChildren => (_children.Count > 0);
 
-        protected DocumentElement()
+        public abstract bool IsParentType { get; }
+
+        public abstract Type[] AllowedChildrenTypes { get; }
+
+        protected DocumentElement() { }
+
+        protected bool CanHaveChildOfType(Type childType) => AllowedChildrenTypes.Contains(childType);
+
+        public void AddChild(DocumentElement child)
         {
+            if (!CanHaveChildOfType(child.GetType()))
+            {
+                throw UnexpectedDocumentElementException.WrongDocumentElement(child.GetType(), AllowedChildrenTypes);
+            }
+
+            _children.Add(child);
         }
     }
 }
