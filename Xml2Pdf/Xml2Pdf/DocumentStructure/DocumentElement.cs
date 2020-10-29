@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using Org.BouncyCastle.Asn1.Utilities;
 using Xml2Pdf.Exceptions;
 
 namespace Xml2Pdf.DocumentStructure
@@ -9,8 +11,9 @@ namespace Xml2Pdf.DocumentStructure
     {
         private List<DocumentElement> _children;
 
-        public IReadOnlyList<DocumentElement> Children => _children.AsReadOnly();
-        public bool HasChildren => (_children.Count > 0);
+        public IEnumerable<DocumentElement> Children => _children ?? Enumerable.Empty<DocumentElement>();
+
+        public bool HasChildren => (_children != null && _children.Count > 0);
 
         public abstract bool IsParentType { get; }
 
@@ -18,7 +21,28 @@ namespace Xml2Pdf.DocumentStructure
 
         protected DocumentElement() { }
 
-        protected bool CanHaveChildOfType(Type childType) => AllowedChildrenTypes.Contains(childType);
+        private bool CanHaveChildOfType(Type childType) => AllowedChildrenTypes.Contains(childType);
+
+        internal virtual void DumpToStringBuilder(StringBuilder dumpBuilder, int indentationLevel)
+        {
+            PrepareIndent(dumpBuilder, indentationLevel).Append('<').Append(GetType().Name).Append('>').AppendLine();
+
+            foreach (DocumentElement child in Children)
+            {
+                child.DumpToStringBuilder(dumpBuilder, indentationLevel + 2);
+            }
+        }
+
+        protected StringBuilder PrepareIndent(StringBuilder dumpBuilder,
+                                              in int indentationLevel)
+        {
+            for (int i = 0; i < indentationLevel; i++)
+            {
+                dumpBuilder.Append(' ');
+            }
+
+            return dumpBuilder;
+        }
 
         public void AddChild(DocumentElement child)
         {
@@ -27,6 +51,7 @@ namespace Xml2Pdf.DocumentStructure
                 throw UnexpectedDocumentElementException.WrongDocumentElement(child.GetType(), AllowedChildrenTypes);
             }
 
+            _children ??= new List<DocumentElement>();
             _children.Add(child);
         }
     }

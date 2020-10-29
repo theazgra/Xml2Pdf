@@ -7,7 +7,7 @@ namespace Xml2Pdf
     {
         internal const char XpathDelimiter = '/';
 
-        #region Style
+#region Style
 
         internal const string PdfDocumentStyleRootElement = "PdfDocumentStyle";
         internal const string ColorsElement = "Colors";
@@ -41,14 +41,14 @@ namespace Xml2Pdf
         internal const string DistanceAttribute = "distance";
         internal const string Border = "Border";
 
-        #endregion
+#endregion
 
-        #region Document
+#region Document
 
-        internal const string PdfDocumentRootElement = "PdfDocument";
+        internal const string RootDocumentElement = "PdfDocument";
         internal const string StyleAttribute = "style";
-        internal const string PortraitConstant = "portrait";
-        internal const string LandscapeConstant = "landscape";
+        internal const string Portrait = "portrait";
+        internal const string Landscape = "landscape";
         internal const string Header = "Header";
         internal const string Footer = "Footer";
         internal const string Page = "Page";
@@ -61,12 +61,13 @@ namespace Xml2Pdf
         internal const string PropertyAttribute = "property";
         internal const string FormatAttribute = "format";
         internal const string FormatPropertiesAttribute = "formatProperties";
-        internal const string TopMarginAttribute = "topMargin";
-        internal const string BottomMarginAttribute = "bottomMargin";
-        internal const string SideMarginsAttribute = "sideMargins";
-        internal const string OrientationAttribute = "orientation";
-        internal const string MarginsAttribute = "margins";
-        internal const string PageSizeAttribute = "pageSize";
+        internal const string TopMargin = "topMargin";
+        internal const string BottomMargin = "bottomMargin";
+        internal const string LeftMargin = "leftMargin";
+        internal const string RightMargin = "rightMargin";
+        internal const string PageOrientation = "orientation";
+        internal const string Margins = "margins";
+        internal const string PageSize = "pageSize";
         internal const string HorizontalAlignmentAttribute = "horizontalAlignment";
         internal const string BoldFontAttribute = "boldFont";
         internal const string ItalicFontAttribute = "italicFont";
@@ -110,6 +111,6 @@ namespace Xml2Pdf
         internal const string BackgroundColorAttribute = "background";
         internal const string FontColorAttribute = "fontColor";
 
-        #endregion
+#endregion
     }
 }

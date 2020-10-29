@@ -17,6 +17,7 @@ namespace Xml2PdfTestApp
             string filePath = "..\\..\\..\\Templates\\Test1.xml";
             XmlDocumentTemplateParser parser = new XmlDocumentTemplateParser();
             var doc = parser.ParseTemplateFile(filePath);
+            Console.WriteLine(doc.DumpDocumentTree());
         }
     }
 }

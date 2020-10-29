@@ -1,10 +1,12 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 using System.Xml;
 using Xml2Pdf.DocumentStructure;
 using Xml2Pdf.Exceptions;
 using Xml2Pdf.Parser.Interface;
-using static Xml2Pdf.Parser.Xml.XmlDocumentElementFactory;
+using static Xml2Pdf.Parser.Xml.DocumentElementFactory;
 
 namespace Xml2Pdf.Parser.Xml
 {
@@ -26,7 +28,7 @@ namespace Xml2Pdf.Parser.Xml
             using var xmlReader = XmlReader.Create(inputStream, xmlReaderSettings);
 
             while (!xmlReader.EOF && (xmlReader.NodeType != XmlNodeType.Element &&
-                                      xmlReader.Name != Constants.PdfDocumentRootElement))
+                                      xmlReader.Name != Constants.RootDocumentElement))
             {
                 xmlReader.Read();
             }
@@ -59,7 +61,7 @@ namespace Xml2Pdf.Parser.Xml
 
         private void ParseXmlText(XmlReader xmlReader, DocumentElement lastParsedElement)
         {
-            if (lastParsedElement is ParagraphElement paragraph)
+            if (lastParsedElement.Children.LastOrDefault() is ParagraphElement paragraph)
             {
                 paragraph.Text = xmlReader.Value;
             }
@@ -96,17 +98,15 @@ namespace Xml2Pdf.Parser.Xml
 
         private void ParseXmlAttributes(XmlReader xmlReader, DocumentElement currentElement)
         {
-            return;
-            // if (xmlReader.HasAttributes)
-            // {
-            //     for (int i = 0; i < xmlReader.AttributeCount; i++)
-            //     {
-            //         xmlReader.MoveToAttribute(i);
-            //         Console.WriteLine($"Attribute: {xmlReader.Name}; Value: {xmlReader.Value}");
-            //     }
-            //
-            //     xmlReader.MoveToElement();
-            // }
+            System.Diagnostics.Debug.Assert(xmlReader.HasAttributes);
+
+            for (int attributeIndex = 0; attributeIndex < xmlReader.AttributeCount; attributeIndex++)
+            {
+                xmlReader.MoveToAttribute(attributeIndex);
+                ElementPropertyParser.ParseAndAssignElementProperty(currentElement, xmlReader.Name, xmlReader.Value);
+            }
+
+            xmlReader.MoveToElement();
         }
     }
 }
