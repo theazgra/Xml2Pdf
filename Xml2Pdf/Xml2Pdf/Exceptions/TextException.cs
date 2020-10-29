@@ -4,7 +4,7 @@ namespace Xml2Pdf.Exceptions
 {
     public class TextException : Exception
     {
-        public TextException(string message) : base(message)
+        private TextException(string message) : base(message)
         {
         }
 
@@ -13,5 +13,9 @@ namespace Xml2Pdf.Exceptions
 
         internal static TextException MissingFormatProperties() =>
             new TextException($"Format properties aren't available for format string.");
+
+        internal static TextException WrongTypeForRawText(Type wrongType) =>
+            new TextException(
+                $"Trying to assign text to Non-Paragraph DocumentElement. Actual element type={wrongType}");
     }
 }
