@@ -5,7 +5,10 @@
         <Paragraph italic="true">Italic text</Paragraph>
         <Paragraph underline="true">Underline text</Paragraph>
         <Paragraph underline="true" foreground="red">Underline Red text</Paragraph>
-        <Paragraph><Text>This is paragraph </Text><Text>(added text from &lt;Text&gt; tag)</Text><Text> text</Text></Paragraph>
-        <!--        <Paragraph>This is paragraph <Text>(added text from &lt;Text&gt; tag)</Text> text</Paragraph>-->
+        <Paragraph>
+            <Text>This is paragraph</Text>
+            <Text foreground="blue">(added text from &lt;Text&gt; tag)</Text>
+            <Text>text</Text>
+        </Paragraph>
     </Page>
 </PdfDocument>

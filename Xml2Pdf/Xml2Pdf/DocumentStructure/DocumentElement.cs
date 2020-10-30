@@ -14,6 +14,8 @@ namespace Xml2Pdf.DocumentStructure
 
         private List<DocumentElement> _children;
 
+        public int ChildrenCount => _children.Count;
+
         public IEnumerable<DocumentElement> Children => _children ?? Enumerable.Empty<DocumentElement>();
 
         public bool HasChildren => (_children != null && _children.Count > 0);

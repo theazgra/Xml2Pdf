@@ -17,6 +17,8 @@ namespace Xml2Pdf.DocumentStructure.Geometry
             Bottom = bottom;
         }
 
+        public bool AreComplete() => (Left.HasValue && Top.HasValue && Right.HasValue && Bottom.HasValue);
+
         public Margins(float leftRight, float topBottom) : this(leftRight, topBottom, leftRight, topBottom) { }
 
         public Margins(float margin) : this(margin, margin, margin, margin) { }

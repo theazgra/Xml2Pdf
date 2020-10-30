@@ -7,6 +7,7 @@ using System.Xml;
 using Xml2Pdf.DocumentStructure;
 using Xml2Pdf.Exceptions;
 using Xml2Pdf.Parser.Interface;
+using Xml2Pdf.Utilities;
 using static Xml2Pdf.Parser.Xml.DocumentElementFactory;
 
 namespace Xml2Pdf.Parser.Xml
@@ -27,6 +28,7 @@ namespace Xml2Pdf.Parser.Xml
                 IgnoreWhitespace = true
             };
             using var xmlReader = XmlReader.Create(inputStream, xmlReaderSettings);
+            IXmlLineInfo lineInfo = (IXmlLineInfo) xmlReader;
 
             while (!xmlReader.EOF && (xmlReader.NodeType != XmlNodeType.Element && xmlReader.Name != "PdfDocument"))
             {

@@ -145,14 +145,21 @@ namespace Xml2Pdf.Renderer
             }
             else if (element.IsEmpty())
             {
+                paragraph.Add(RenderTextElement(element.Children.ElementAt(0) as TextElement));
+                
+                for (int i = 1; i < element.ChildrenCount; i++)
+                {
+                    paragraph.Add(" ").Add(RenderTextElement(element.Children.ElementAt(i) as TextElement));
+                }
                 foreach (var child in element.Children)
                 {
-                    paragraph.Add(RenderTextElement(child as TextElement));
+                    
                 }
             }
             else
             {
-                throw new NotImplementedException("Mix of raw text and <Text> elements is not implemented yet.");
+                throw new NotImplementedException("Mix of raw text and <Text> elements is not supported yet. " +
+                                                  "Use only raw text or multiple <Text> elements.");
             }
 
             if (pdfParentObject is Document doc)
@@ -161,10 +168,10 @@ namespace Xml2Pdf.Renderer
                 cell.Add(paragraph);
         }
 
-        private Text RenderTextElement(TextElement element)
+        private Text RenderTextElement(TextElement element, string textToRender = null)
         {
             Text text = null;
-            var textToRender = element.GetTextToRender(_objectPropertyMap, ValueFormatter);
+            textToRender ??= element.GetTextToRender(_objectPropertyMap, ValueFormatter);
 
             if (element.Superscript)
             {

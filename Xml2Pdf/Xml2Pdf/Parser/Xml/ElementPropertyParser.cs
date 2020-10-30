@@ -26,9 +26,8 @@ namespace Xml2Pdf.Parser.Xml
                 case RootDocumentElement rootDocumentElement:
                     AssignRootDocumentElementProperties(rootDocumentElement, propertyBag);
                     break;
-                case ParagraphElement paragraphElement:
-                    AssignParagraphElementProperties(paragraphElement, propertyBag);
-                    break;
+                case ParagraphElement _:
+                case TextElement _:
                 case PageElement _: // No properties to be parsed yet.
                     return;
                 default:

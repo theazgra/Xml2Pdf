@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Text;
-using Xml2Pdf.Exceptions;
-using Xml2Pdf.Format;
 
 namespace Xml2Pdf.DocumentStructure
 {
