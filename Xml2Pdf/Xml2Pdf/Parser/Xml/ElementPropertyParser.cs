@@ -50,6 +50,9 @@ namespace Xml2Pdf.Parser.Xml
                     case "verticalAlignment":
                         textElement.VerticalAlignment = ValueParser.ParseVerticalAlignment(pair.Value);
                         break;
+                    case "textAlignment":
+                        textElement.TextAlignment = ValueParser.ParseTextAlignment(pair.Value);
+                        break;
                     case "bold":
                         textElement.Bold = ValueParser.ParseBool(pair.Value);
                         break;
@@ -99,6 +102,7 @@ namespace Xml2Pdf.Parser.Xml
                                 BorderType = BorderType.Solid
                             };
                         }
+
                         borderedElement.Borders.Color = ValueParser.ParseColor(pair.Value);
                         break;
                     case "borderWidth":
@@ -125,6 +129,7 @@ namespace Xml2Pdf.Parser.Xml
                                 BorderType = BorderType.Solid
                             };
                         }
+
                         borderedElement.TopBorder.Color = ValueParser.ParseColor(pair.Value);
                         break;
                     case "topBorderWidth":
@@ -135,6 +140,7 @@ namespace Xml2Pdf.Parser.Xml
                                 BorderType = BorderType.Solid
                             };
                         }
+
                         borderedElement.TopBorder.Width = ValueParser.ParseFloat(pair.Value);
                         break;
                     case "topBorderType":
@@ -149,6 +155,7 @@ namespace Xml2Pdf.Parser.Xml
                                 BorderType = BorderType.Solid
                             };
                         }
+
                         borderedElement.BottomBorder.Color = ValueParser.ParseColor(pair.Value);
                         break;
                     case "bottomBorderWidth":
@@ -159,6 +166,7 @@ namespace Xml2Pdf.Parser.Xml
                                 BorderType = BorderType.Solid
                             };
                         }
+
                         borderedElement.BottomBorder.Width = ValueParser.ParseFloat(pair.Value);
                         break;
                     case "bottomBorderType":
@@ -173,6 +181,7 @@ namespace Xml2Pdf.Parser.Xml
                                 BorderType = BorderType.Solid
                             };
                         }
+
                         borderedElement.LeftBorder.Color = ValueParser.ParseColor(pair.Value);
                         break;
                     case "leftBorderWidth":
@@ -183,6 +192,7 @@ namespace Xml2Pdf.Parser.Xml
                                 BorderType = BorderType.Solid
                             };
                         }
+
                         borderedElement.LeftBorder.Width = ValueParser.ParseFloat(pair.Value);
                         break;
                     case "leftBorderType":
@@ -197,6 +207,7 @@ namespace Xml2Pdf.Parser.Xml
                                 BorderType = BorderType.Solid
                             };
                         }
+
                         borderedElement.RightBorder.Color = ValueParser.ParseColor(pair.Value);
                         break;
                     case "rightBorderWidth":
@@ -207,6 +218,7 @@ namespace Xml2Pdf.Parser.Xml
                                 BorderType = BorderType.Solid
                             };
                         }
+
                         borderedElement.RightBorder.Width = ValueParser.ParseFloat(pair.Value);
                         break;
                     case "rightBorderType":

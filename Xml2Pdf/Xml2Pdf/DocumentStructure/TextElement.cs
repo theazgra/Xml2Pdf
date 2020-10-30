@@ -8,8 +8,9 @@ namespace Xml2Pdf.DocumentStructure
 {
     public abstract class TextElement : BorderedDocumentElement
     {
-        public HorizontalAlignment HorizontalAlignment { get; set; } = HorizontalAlignment.LEFT;
         public VerticalAlignment VerticalAlignment { get; set; } = VerticalAlignment.TOP;
+        public TextAlignment TextAlignment { get; set; } = TextAlignment.LEFT;
+        public HorizontalAlignment HorizontalAlignment { get; set; } = HorizontalAlignment.LEFT;
         public bool Bold { get; set; } = false;
         public bool Italic { get; set; } = false;
         public bool Superscript { get; set; } = false;
@@ -24,6 +25,10 @@ namespace Xml2Pdf.DocumentStructure
             base.DumpToStringBuilder(dumpBuilder, indentationLevel);
             PrepareIndent(dumpBuilder, indentationLevel).Append("(TextElement)").AppendLine();
 
+            PrepareIndent(dumpBuilder, indentationLevel)
+                .Append(" -TextAlignment: ")
+                .Append(TextAlignment)
+                .AppendLine();
 
             PrepareIndent(dumpBuilder, indentationLevel)
                 .Append(" -HorizontalAlignment: ")

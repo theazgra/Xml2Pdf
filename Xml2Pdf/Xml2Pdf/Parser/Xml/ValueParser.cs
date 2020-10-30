@@ -126,7 +126,7 @@ namespace Xml2Pdf.Parser.Xml
 
         internal static bool ParseBool(string value) { return (value == "true" || value == "yes"); }
 
-        internal  static HorizontalAlignment ParseHorizontalAlignment(string value)
+        internal static HorizontalAlignment ParseHorizontalAlignment(string value)
         {
             return value switch
             {
@@ -137,7 +137,21 @@ namespace Xml2Pdf.Parser.Xml
                          ValueParseException("Invalid HorizontalAlignment, valid values are: left, center and right")
             };
         }
-        
+
+        internal static TextAlignment ParseTextAlignment(string value)
+        {
+            return value switch
+            {
+                "left" => TextAlignment.LEFT,
+                "right" => TextAlignment.RIGHT,
+                "center" => TextAlignment.CENTER,
+                "justify" => TextAlignment.JUSTIFIED,
+                "justifyAll" => TextAlignment.JUSTIFIED_ALL,
+                _ => throw new
+                         ValueParseException("Invalid HorizontalAlignment, valid values are: left, center and right")
+            };
+        }
+
         internal static VerticalAlignment ParseVerticalAlignment(string value)
         {
             return value switch
