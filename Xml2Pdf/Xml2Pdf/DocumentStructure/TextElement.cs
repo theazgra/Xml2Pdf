@@ -1,13 +1,20 @@
-﻿using System.Text;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Text;
 using iText.Kernel.Colors;
 using iText.Layout.Properties;
-using Xml2Pdf.DocumentStructure.Geometry;
+using Xml2Pdf.Exceptions;
+using Xml2Pdf.Format;
 using Xml2Pdf.Utilities;
 
 namespace Xml2Pdf.DocumentStructure
 {
-    public abstract class TextElement : BorderedDocumentElement
+    public class TextElement : BorderedDocumentElement
     {
+#region TextProperties
+
         public VerticalAlignment VerticalAlignment { get; set; } = VerticalAlignment.TOP;
         public TextAlignment TextAlignment { get; set; } = TextAlignment.LEFT;
         public HorizontalAlignment HorizontalAlignment { get; set; } = HorizontalAlignment.LEFT;
@@ -15,10 +22,27 @@ namespace Xml2Pdf.DocumentStructure
         public bool Italic { get; set; } = false;
         public bool Superscript { get; set; } = false;
         public bool Subscript { get; set; } = false;
-        public UnderlineInfo Underline { get; set; }
+        public bool Underline { get; set; }
         public float FontSize { get; set; }
         public Color ForegroundColor { get; set; } = ColorConstants.BLACK;
         public Color BackgroundColor { get; set; } = ColorConstants.WHITE;
+
+#endregion
+
+        public StringBuilder TextBuilder { get; } = new StringBuilder(0);
+
+        public string Property { get; set; }
+        public string Format { get; set; }
+        public string[] FormatProperties { get; set; }
+
+        public bool IsEmpty()
+        {
+            return TextBuilder.Length == 0 && Property == null && Format == null && FormatProperties == null;
+        }
+
+
+        public override bool IsParentType => false;
+        public override Type[] AllowedChildrenTypes => Array.Empty<Type>();
 
         internal override void DumpToStringBuilder(StringBuilder dumpBuilder, int indentationLevel)
         {
@@ -48,8 +72,7 @@ namespace Xml2Pdf.DocumentStructure
 
             PrepareIndent(dumpBuilder, indentationLevel).Append(" -Subscript: ").Append(Subscript).AppendLine();
 
-            if (Underline != null)
-                PrepareIndent(dumpBuilder, indentationLevel).Append(" -Underline: ").Append(Underline).AppendLine();
+            PrepareIndent(dumpBuilder, indentationLevel).Append(" -Underline: ").Append(Underline).AppendLine();
 
             PrepareIndent(dumpBuilder, indentationLevel).Append(" -FontSize: ").Append(FontSize).AppendLine();
 
@@ -62,6 +85,61 @@ namespace Xml2Pdf.DocumentStructure
                 .Append(" -BackgroundColor: ")
                 .Append(BackgroundColor.ToPrettyString())
                 .AppendLine();
+
+            if (TextBuilder.Length != 0)
+                PrepareIndent(dumpBuilder, indentationLevel)
+                    .Append(" -Text='")
+                    .Append(TextBuilder.ToString())
+                    .Append('\'')
+                    .AppendLine();
+
+            if (Property != null)
+                PrepareIndent(dumpBuilder, indentationLevel)
+                    .Append(" -Property='")
+                    .Append(Property)
+                    .Append('\'')
+                    .AppendLine();
+
+            if (Format != null)
+                PrepareIndent(dumpBuilder, indentationLevel)
+                    .Append(" -Format='")
+                    .Append(Format)
+                    .Append('\'')
+                    .AppendLine();
+            if (FormatProperties != null)
+            {
+                PrepareIndent(dumpBuilder, indentationLevel)
+                    .Append(" -FormatProperties='")
+                    .Append(FormatProperties)
+                    .Append('\'')
+                    .AppendLine();
+            }
+        }
+
+        [SuppressMessage("ReSharper", "CoVariantArrayConversion")]
+        public string GetTextToRender(IDictionary<string, object> objectPropertyMap, ValueFormatter formatter)
+        {
+            string GetAndFormatProperty(string property) => formatter.FormatValue(objectPropertyMap[property]);
+            if (TextBuilder.Length != 0)
+                return TextBuilder.ToString();
+            if (Property != null)
+            {
+                if (!objectPropertyMap.ContainsKey(Property))
+                    throw TextException.PropertyNotFound(Property);
+
+                return GetAndFormatProperty(Property);
+            }
+
+            if (Format != null)
+            {
+                if (FormatProperties == null)
+                    throw TextException.MissingFormatProperties();
+
+                string[] values = FormatProperties.Select(GetAndFormatProperty).ToArray();
+                return string.Format(Format, values);
+            }
+
+            return string.Empty;
         }
     }
 }

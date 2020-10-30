@@ -12,20 +12,28 @@ namespace Xml2Pdf.Parser.Xml
     {
         private static readonly Dictionary<string, Color> DefaultColorMap = new Dictionary<string, Color>
         {
-            {"Black", ColorConstants.BLACK},
-            {"Blue", ColorConstants.BLUE},
-            {"Cyan", ColorConstants.CYAN},
-            {"DarkGray", ColorConstants.DARK_GRAY},
-            {"Gray", ColorConstants.GRAY},
-            {"Green", ColorConstants.GREEN},
-            {"LightGray", ColorConstants.LIGHT_GRAY},
-            {"Magenta", ColorConstants.MAGENTA},
-            {"Orange", ColorConstants.ORANGE},
-            {"Pink", ColorConstants.PINK},
-            {"Red", ColorConstants.RED},
-            {"White", ColorConstants.WHITE},
-            {"Yellow", ColorConstants.YELLOW}
+            {"black", ColorConstants.BLACK},
+            {"blue", ColorConstants.BLUE},
+            {"cyan", ColorConstants.CYAN},
+            {"darkGray", ColorConstants.DARK_GRAY},
+            {"gray", ColorConstants.GRAY},
+            {"green", ColorConstants.GREEN},
+            {"lightGray", ColorConstants.LIGHT_GRAY},
+            {"magenta", ColorConstants.MAGENTA},
+            {"orange", ColorConstants.ORANGE},
+            {"pink", ColorConstants.PINK},
+            {"red", ColorConstants.RED},
+            {"white", ColorConstants.WHITE},
+            {"yellow", ColorConstants.YELLOW}
         };
+
+        private static Color GetDefaultColor(string colorName)
+        {
+            string lc = colorName.ToLower();
+            if (DefaultColorMap.ContainsKey(lc))
+                return DefaultColorMap[lc];
+            throw new ValueParseException($"Invalid color with name '{colorName}'");
+        }
 
         internal static Margins ParseCompleteMargins(string value)
         {
@@ -116,9 +124,7 @@ namespace Xml2Pdf.Parser.Xml
 
             return parts.Length switch
             {
-                1 => DefaultColorMap.ContainsKey(value)
-                         ? DefaultColorMap[value]
-                         : throw new ValueParseException($"Unknown color '{value}'"),
+                1 => GetDefaultColor(value),
                 3 => new DeviceRgb(int.Parse(parts[0]), int.Parse(parts[1]), int.Parse(parts[2])),
                 _ => throw new ValueParseException($"Unknown color '{value}'")
             };

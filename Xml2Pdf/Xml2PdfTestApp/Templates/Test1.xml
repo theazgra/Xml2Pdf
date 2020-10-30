@@ -1,6 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <PdfDocument>
-    <Page text="foo">
-        <Paragraph borderWidth="5" property="Name" format="{0} is {1} or three" formatProperties="price,value">This is text inside paragraph.</Paragraph>
+    <Page>
+        <Paragraph bold="true">Bold Text</Paragraph>
+        <Paragraph italic="true">Italic text</Paragraph>
+        <Paragraph underline="true">Underline text</Paragraph>
+        <Paragraph underline="true" foreground="red">Underline Red text</Paragraph>
+        <Paragraph><Text>This is paragraph </Text><Text>(added text from &lt;Text&gt; tag)</Text><Text> text</Text></Paragraph>
+        <!--        <Paragraph>This is paragraph <Text>(added text from &lt;Text&gt; tag)</Text> text</Paragraph>-->
     </Page>
 </PdfDocument>

@@ -4,7 +4,8 @@ namespace Xml2Pdf.Format
 {
     public interface IPropertyFormatter
     {
-        Type[] RegisteredTypes { get; }
+        int Priority { get; }
+        Type RegisteredType { get; }
         string Format(object value);
     }
 }

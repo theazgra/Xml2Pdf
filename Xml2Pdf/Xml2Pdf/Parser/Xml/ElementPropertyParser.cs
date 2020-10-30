@@ -60,11 +60,7 @@ namespace Xml2Pdf.Parser.Xml
                         textElement.Italic = ValueParser.ParseBool(pair.Value);
                         break;
                     case "underline":
-                        if (ValueParser.ParseBool(pair.Value))
-                        {
-                            textElement.Underline = new UnderlineInfo();
-                        }
-
+                        textElement.Underline = ValueParser.ParseBool(pair.Value);
                         break;
                     case "subscript":
                         textElement.Subscript = ValueParser.ParseBool(pair.Value);
@@ -245,7 +241,7 @@ namespace Xml2Pdf.Parser.Xml
                 switch (name)
                 {
                     case "text":
-                        paragraphElement.Text = value;
+                        paragraphElement.TextBuilder.Append(value);
                         break;
                     case "property":
                         paragraphElement.Property = value;

@@ -2,13 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Org.BouncyCastle.Asn1.Utilities;
 using Xml2Pdf.Exceptions;
 
 namespace Xml2Pdf.DocumentStructure
 {
     public abstract class DocumentElement
     {
+        protected delegate void ChildAdded(DocumentElement child);
+
+        protected event ChildAdded OnChildAdded;
+
         private List<DocumentElement> _children;
 
         public IEnumerable<DocumentElement> Children => _children ?? Enumerable.Empty<DocumentElement>();
@@ -48,6 +51,7 @@ namespace Xml2Pdf.DocumentStructure
 
             _children ??= new List<DocumentElement>();
             _children.Add(child);
+            OnChildAdded?.Invoke(child);
         }
     }
 }

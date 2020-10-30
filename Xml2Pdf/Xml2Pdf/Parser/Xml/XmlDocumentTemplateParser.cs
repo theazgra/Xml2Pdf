@@ -34,20 +34,24 @@ namespace Xml2Pdf.Parser.Xml
             }
 
             RootDocumentElement root = ParseDocumentElement(xmlReader, null) as RootDocumentElement;
-            DocumentElement lastParentElement = root;
+
+            var parentElements = new Stack<DocumentElement>();
+            parentElements.Push(root);
 
             while (xmlReader.Read())
             {
                 switch (xmlReader.NodeType)
                 {
                     case XmlNodeType.Element:
-                        lastParentElement = ParseDocumentElement(xmlReader, lastParentElement);
+                        parentElements.Push(ParseDocumentElement(xmlReader, parentElements.Peek()));
+                        // lastParentElement = ;
                         break;
                     case XmlNodeType.Text:
-                        ParseXmlText(xmlReader, lastParentElement);
+                        ParseXmlText(xmlReader, parentElements.Peek());
                         break;
                     case XmlNodeType.XmlDeclaration:
                     case XmlNodeType.EndElement:
+                        parentElements.Pop();
                         break;
                     default:
                         Console.WriteLine($"Unhandled node type: {xmlReader.NodeType}");
@@ -61,13 +65,13 @@ namespace Xml2Pdf.Parser.Xml
 
         private void ParseXmlText(XmlReader xmlReader, DocumentElement lastParsedElement)
         {
-            if (lastParsedElement.Children.LastOrDefault() is ParagraphElement paragraph)
+            if (lastParsedElement is TextElement textElement)
             {
-                paragraph.Text = xmlReader.Value;
+                textElement.TextBuilder.Append(xmlReader.Value);
             }
             else
             {
-                throw TextException.WrongTypeForRawText(lastParsedElement.GetType());
+                throw TextException.WrongTypeForRawText(lastParsedElement.Children.Last().GetType());
             }
         }
 
@@ -93,7 +97,7 @@ namespace Xml2Pdf.Parser.Xml
                 ParseXmlAttributes(xmlReader, currentElement);
             }
 
-            return currentElement.IsParentType ? currentElement : parentElement;
+            return currentElement;
         }
 
         private void ParseXmlAttributes(XmlReader xmlReader, DocumentElement currentElement)

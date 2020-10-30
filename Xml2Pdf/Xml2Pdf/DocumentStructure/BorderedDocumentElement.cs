@@ -10,7 +10,6 @@ namespace Xml2Pdf.DocumentStructure
         public BorderInfo TopBorder { get; set; }
         public BorderInfo BottomBorder { get; set; }
         public BorderInfo LeftBorder { get; set; }
-
         public BorderInfo RightBorder { get; set; }
         // TODO(Moravec): Border radius.
 

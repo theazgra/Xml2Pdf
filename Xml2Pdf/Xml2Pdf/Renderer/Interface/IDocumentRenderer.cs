@@ -2,8 +2,9 @@
 
 namespace Xml2Pdf.Renderer.Interface
 {
-     interface IDocumentRenderer
-     {
-          bool RenderDocument(RootDocumentElement document, string savePath);
-     }
+    interface IDocumentRenderer
+    {
+        bool RenderDocument(RootDocumentElement rootDocumentElement, string savePath, object dataObject);
+        bool RenderDocument(RootDocumentElement rootDocumentElement, string savePath);
+    }
 }

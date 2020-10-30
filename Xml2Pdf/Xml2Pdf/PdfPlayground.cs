@@ -12,6 +12,7 @@ using iText.Layout.Borders;
 using iText.Layout.Element;
 using iText.Layout.Properties;
 using Org.BouncyCastle.Crypto.Generators;
+using Xml2Pdf.DocumentStructure;
 using Xml2Pdf.DocumentStructure.Geometry;
 using Border = iText.Layout.Borders.Border;
 
@@ -36,11 +37,12 @@ namespace Xml2Pdf
             // Actual document writing
 
             var customFont = PdfFontFactory.CreateFont(iText.IO.Font.Constants.StandardFonts.TIMES_ROMAN);
-            var paragraph = new Paragraph("This is paragraph text")
+            var paragraph = new Paragraph("This is paragraph text centered")
                 .SetFont(customFont)
                 .SetBold()
                 .SetItalic()
-                .SetHorizontalAlignment(HorizontalAlignment.CENTER)
+                .SetTextAlignment(TextAlignment.CENTER)
+                // .SetHorizontalAlignment(HorizontalAlignment.CENTER)
                 .SetFontColor(ColorConstants.RED);
 
             //var b = new SolidBorder
@@ -72,15 +74,23 @@ namespace Xml2Pdf
 
             document.Add(new Paragraph("This text is on third page."));
 
-            var t = new Table(new float[] {2, 3, 5, 8}, false);
-            var c = new Cell(4, 5);
-
+            //  TODO: SetTextAlignment instead of horizontal alignment
+            var t = new Table(3);
+            t.SetBold();
+            t.SetHorizontalAlignment(HorizontalAlignment.CENTER);
+            t.SetWidth(PageSize.A4.GetWidth() * 0.5f);
+            t.SetHeight(PageSize.A4.GetHeight() * 0.4f);
+            t.StartNewRow();
+            t.AddCell(new Cell().Add(new Paragraph("A")));
+            t.AddCell(new Cell().Add(new Paragraph("B")).SetVerticalAlignment(VerticalAlignment.MIDDLE).SetTextAlignment(TextAlignment.CENTER));
+            t.AddCell(new Cell().Add(new Paragraph("C")));
+            t.StartNewRow();
+            t.AddCell(new Cell().Add(new Paragraph("A")));
+            t.AddCell(new Cell().Add(new Paragraph("B")));
+            t.AddCell(new Cell().Add(new Paragraph(new Text("dede"))));
+            
             document.Add(t);
 
-            var i = new Image(ImageDataFactory.Create(new byte[]{25,64,45}), 5.0f, 5.0f, 6.0f);
-            //i.Scale()
-            
-            document.Add(i);
 
             // Closing and saving.
             document.Close();

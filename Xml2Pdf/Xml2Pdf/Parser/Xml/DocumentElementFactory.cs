@@ -9,6 +9,8 @@ namespace Xml2Pdf.Parser.Xml
         {
             return elementName switch
             {
+                "Paragraph" => new ParagraphElement(),
+                "Text" => new TextElement(),
                 "PdfDocument" => new RootDocumentElement(),
                 "Page" => new PageElement(),
                 "Line" => new LineElement(),
@@ -17,7 +19,6 @@ namespace Xml2Pdf.Parser.Xml
                 "TableRow" => new TableRowElement(),
                 "Cell" => new TableCellElement(),
                 "TableDataRow" => new TableDataRowElement(),
-                "Paragraph" => new ParagraphElement(),
                 "Header" => new HeaderElement(),
                 "Footer" => new FooterElement(),
                 _ => throw new InvalidDocumentElementException(elementName)
