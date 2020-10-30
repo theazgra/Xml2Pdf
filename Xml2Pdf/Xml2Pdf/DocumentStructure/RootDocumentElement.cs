@@ -22,7 +22,7 @@ namespace Xml2Pdf.DocumentStructure
 
         internal override void DumpToStringBuilder(StringBuilder dumpBuilder, int indentationLevel)
         {
-            PrepareIndent(dumpBuilder, indentationLevel).Append("<RootDocumentElement>").AppendLine();
+            base.DumpToStringBuilder(dumpBuilder, indentationLevel);
             PrepareIndent(dumpBuilder, indentationLevel).Append(" -PageSize=").Append(PageSize).AppendLine();
             PrepareIndent(dumpBuilder, indentationLevel).Append(" -PageOrientation=").Append(PageOrientation).AppendLine();
             if (CustomMargins != null)

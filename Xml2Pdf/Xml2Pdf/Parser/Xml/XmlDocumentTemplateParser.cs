@@ -28,8 +28,7 @@ namespace Xml2Pdf.Parser.Xml
             };
             using var xmlReader = XmlReader.Create(inputStream, xmlReaderSettings);
 
-            while (!xmlReader.EOF && (xmlReader.NodeType != XmlNodeType.Element &&
-                                      xmlReader.Name != Constants.RootDocumentElement))
+            while (!xmlReader.EOF && (xmlReader.NodeType != XmlNodeType.Element && xmlReader.Name != "PdfDocument"))
             {
                 xmlReader.Read();
             }
@@ -100,14 +99,15 @@ namespace Xml2Pdf.Parser.Xml
         private void ParseXmlAttributes(XmlReader xmlReader, DocumentElement currentElement)
         {
             System.Diagnostics.Debug.Assert(xmlReader.HasAttributes);
-            var attributeBag = new KeyValuePair<string, string>[xmlReader.AttributeCount];
+            PropertyBag<string> propertyBag = new PropertyBag<string>(xmlReader.AttributeCount);
 
             for (int attributeIndex = 0; attributeIndex < xmlReader.AttributeCount; attributeIndex++)
             {
                 xmlReader.MoveToAttribute(attributeIndex);
-                attributeBag[attributeIndex] = new KeyValuePair<string, string>(xmlReader.Name, xmlReader.Value);
+                propertyBag[attributeIndex] = new PropertyPair<string>(xmlReader.Name, xmlReader.Value);
             }
-            ElementPropertyParser.ParseAndAssignElementProperties(currentElement, attributeBag);
+
+            ElementPropertyParser.ParseAndAssignElementProperties(currentElement, propertyBag);
 
             xmlReader.MoveToElement();
         }

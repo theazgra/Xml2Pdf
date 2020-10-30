@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <PdfDocument>
     <Page text="foo">
-        <Paragraph property="Name" format="{0} is {1} or three" formatProperties="price,value">This is text inside paragraph.</Paragraph>
+        <Paragraph borderWidth="5" property="Name" format="{0} is {1} or three" formatProperties="price,value">This is text inside paragraph.</Paragraph>
     </Page>
 </PdfDocument>

@@ -1,5 +1,8 @@
-﻿using System.Globalization;
+﻿using System.Collections.Generic;
+using System.Globalization;
+using iText.Kernel.Colors;
 using iText.Kernel.Geom;
+using iText.Layout.Properties;
 using Xml2Pdf.DocumentStructure.Geometry;
 using Xml2Pdf.Exceptions;
 
@@ -7,6 +10,23 @@ namespace Xml2Pdf.Parser.Xml
 {
     internal static class ValueParser
     {
+        private static readonly Dictionary<string, Color> DefaultColorMap = new Dictionary<string, Color>
+        {
+            {"Black", ColorConstants.BLACK},
+            {"Blue", ColorConstants.BLUE},
+            {"Cyan", ColorConstants.CYAN},
+            {"DarkGray", ColorConstants.DARK_GRAY},
+            {"Gray", ColorConstants.GRAY},
+            {"Green", ColorConstants.GREEN},
+            {"LightGray", ColorConstants.LIGHT_GRAY},
+            {"Magenta", ColorConstants.MAGENTA},
+            {"Orange", ColorConstants.ORANGE},
+            {"Pink", ColorConstants.PINK},
+            {"Red", ColorConstants.RED},
+            {"White", ColorConstants.WHITE},
+            {"Yellow", ColorConstants.YELLOW}
+        };
+
         internal static Margins ParseCompleteMargins(string value)
         {
             string[] parts = value.Split(',', ';');
@@ -30,10 +50,10 @@ namespace Xml2Pdf.Parser.Xml
         {
             return propertyValue switch
             {
-                Constants.Portrait => PageOrientation.Portrait,
-                Constants.Landscape => PageOrientation.Landscape,
+                "portrait" => PageOrientation.Portrait,
+                "landscape" => PageOrientation.Landscape,
                 _ => throw new ValueParseException($"Invalid value '{propertyValue}' for page orientation. " +
-                                                   $"Valid values are {Constants.Portrait} and {Constants.Landscape}.")
+                                                   "Valid values are portrait and landscape.")
             };
         }
 
@@ -69,6 +89,64 @@ namespace Xml2Pdf.Parser.Xml
                 "Ledger" => PageSize.LEDGER,
                 "Executive" => PageSize.EXECUTIVE,
                 _ => throw new ValueParseException("Invalid value for page size.")
+            };
+        }
+
+        internal static BorderType ParseBorderType(string value)
+        {
+            return value switch
+            {
+                "NoBorder" => BorderType.NoBorder,
+                "Solid" => BorderType.Solid,
+                "Dashed" => BorderType.Dashed,
+                "Dotted" => BorderType.Dotted,
+                "Double" => BorderType.Double,
+                "RoundDots" => BorderType.RoundDots,
+                "Groove3D" => BorderType.Groove3D,
+                "Inset3D" => BorderType.Inset3D,
+                "Outset3D" => BorderType.Outset3D,
+                "Ridge3D" => BorderType.Ridge3D,
+                _ => throw new ValueParseException($"Invalid borded type: '{value}'.")
+            };
+        }
+
+        internal static Color ParseColor(string value)
+        {
+            var parts = value.Split(';', ',');
+
+            return parts.Length switch
+            {
+                1 => DefaultColorMap.ContainsKey(value)
+                         ? DefaultColorMap[value]
+                         : throw new ValueParseException($"Unknown color '{value}'"),
+                3 => new DeviceRgb(int.Parse(parts[0]), int.Parse(parts[1]), int.Parse(parts[2])),
+                _ => throw new ValueParseException($"Unknown color '{value}'")
+            };
+        }
+
+        internal static bool ParseBool(string value) { return (value == "true" || value == "yes"); }
+
+        internal  static HorizontalAlignment ParseHorizontalAlignment(string value)
+        {
+            return value switch
+            {
+                "left" => HorizontalAlignment.LEFT,
+                "center" => HorizontalAlignment.CENTER,
+                "right" => HorizontalAlignment.RIGHT,
+                _ => throw new
+                         ValueParseException("Invalid HorizontalAlignment, valid values are: left, center and right")
+            };
+        }
+        
+        internal static VerticalAlignment ParseVerticalAlignment(string value)
+        {
+            return value switch
+            {
+                "top" => VerticalAlignment.TOP,
+                "bottom" => VerticalAlignment.BOTTOM,
+                "middle" => VerticalAlignment.MIDDLE,
+                _ => throw new
+                         ValueParseException("Invalid VerticalAlignment, valid values are: top, bottom and middle.")
             };
         }
     }

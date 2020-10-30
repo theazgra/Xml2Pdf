@@ -9,17 +9,17 @@ namespace Xml2Pdf.Parser.Xml
         {
             return elementName switch
             {
-                Constants.RootDocumentElement => new RootDocumentElement(),
-                Constants.Page => new PageElement(),
-                Constants.Line => new LineElement(),
-                Constants.Image => new ImageElement(),
-                Constants.Table => new TableElement(),
-                Constants.Row => new TableRowElement(),
-                Constants.Cell => new TableCellElement(),
-                Constants.RowDataTemplate => new TableDataRowElement(),
-                Constants.Paragraph => new ParagraphElement(),
-                Constants.Header => new HeaderElement(),
-                Constants.Footer => new FooterElement(),
+                "PdfDocument" => new RootDocumentElement(),
+                "Page" => new PageElement(),
+                "Line" => new LineElement(),
+                "Image" => new ImageElement(),
+                "Table" => new TableElement(),
+                "TableRow" => new TableRowElement(),
+                "Cell" => new TableCellElement(),
+                "TableDataRow" => new TableDataRowElement(),
+                "Paragraph" => new ParagraphElement(),
+                "Header" => new HeaderElement(),
+                "Footer" => new FooterElement(),
                 _ => throw new InvalidDocumentElementException(elementName)
             };
         }

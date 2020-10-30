@@ -17,6 +17,15 @@ namespace Xml2Pdf.DocumentStructure
 
         public override bool IsParentType => true;
         public override Type[] AllowedChildrenTypes => PossibleChildren;
+
+        internal override void DumpToStringBuilder(StringBuilder dumpBuilder, int indentationLevel)
+        {
+            base.DumpToStringBuilder(dumpBuilder, indentationLevel);
+            foreach (var child in Children)
+            {
+                child.DumpToStringBuilder(dumpBuilder, indentationLevel + 2);
+            }
+        }
     }
 
     public class HeaderElement : TextElement

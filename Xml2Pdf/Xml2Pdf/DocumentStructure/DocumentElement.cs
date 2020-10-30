@@ -26,11 +26,6 @@ namespace Xml2Pdf.DocumentStructure
         internal virtual void DumpToStringBuilder(StringBuilder dumpBuilder, int indentationLevel)
         {
             PrepareIndent(dumpBuilder, indentationLevel).Append('<').Append(GetType().Name).Append('>').AppendLine();
-
-            foreach (DocumentElement child in Children)
-            {
-                child.DumpToStringBuilder(dumpBuilder, indentationLevel + 2);
-            }
         }
 
         protected StringBuilder PrepareIndent(StringBuilder dumpBuilder,

@@ -46,7 +46,8 @@ namespace Xml2Pdf.DocumentStructure
 
         internal override void DumpToStringBuilder(StringBuilder dumpBuilder, int indentationLevel)
         {
-            PrepareIndent(dumpBuilder, indentationLevel).Append("<Paragraph>").AppendLine();
+            base.DumpToStringBuilder(dumpBuilder, indentationLevel);
+
             if (Text != null)
                 PrepareIndent(dumpBuilder, indentationLevel).Append(" -Text=").Append(Text).AppendLine();
 
