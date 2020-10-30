@@ -1,81 +1,95 @@
 ﻿using System;
+using System.Collections.Generic;
+using iText.Kernel.Colors;
 using Xml2Pdf.DocumentStructure;
 using Xml2Pdf.DocumentStructure.Geometry;
 using Xml2Pdf.Exceptions;
+using Xml2Pdf.Utilities;
 
 namespace Xml2Pdf.Parser.Xml
 {
     internal static class ElementPropertyParser
     {
-        internal static void ParseAndAssignElementProperty(DocumentElement documentElement,
-                                                           string propertyName,
-                                                           string propertyValue)
+        internal static void ParseAndAssignElementProperties(DocumentElement documentElement,
+                                                             KeyValuePair<string, string>[] propertyBag)
         {
-            if (documentElement is RootDocumentElement rootDocumentElement)
-                AssignRootDocumentElementProperties(rootDocumentElement, propertyName, propertyValue);
-            else if (documentElement is ParagraphElement paragraphElement)
-                AssignParagraphElementProperties(paragraphElement, propertyName, propertyValue);
-            else
+            switch (documentElement)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.Error
-                       .WriteLine($"Missing branch in `ParseAndAssignElementProperty` for '{documentElement.GetType().Name}'");
-                Console.ForegroundColor = ConsoleColor.White;
+                case RootDocumentElement rootDocumentElement:
+                    ColorConsole.WriteLine(ConsoleColor.Green, "Matched RootDocumentElement");
+                    AssignRootDocumentElementProperties(rootDocumentElement, propertyBag);
+                    break;
+                case ParagraphElement paragraphElement:
+                    ColorConsole.WriteLine(ConsoleColor.Green, "Matched ParagraphElement");
+                    AssignParagraphElementProperties(paragraphElement, propertyBag);
+                    break;
+                case PageElement _: // No properties to be parsed yet.
+                    ColorConsole.WriteLine(ConsoleColor.Green, "Matched PageElement");
+                    return;
+                default:
+                    ColorConsole.WriteLine(ConsoleColor.Red,
+                                           $"Missing branch in `ParseAndAssignElementProperty` for '{documentElement.GetType().Name}'");
+                    break;
             }
         }
 
         private static void AssignParagraphElementProperties(ParagraphElement paragraphElement,
-                                                             string propertyName,
-                                                             string propertyValue)
+                                                             KeyValuePair<string, string>[] propertyBag)
         {
-            switch (propertyName)
+            foreach (var pair in propertyBag)
             {
-                case Constants.TextAttribute:
-                    paragraphElement.Text = propertyValue;
-                    break;
-                case Constants.PropertyAttribute:
-                    paragraphElement.Property = propertyValue;
-                    break;
-                case Constants.FormatAttribute:
-                    paragraphElement.Format = propertyValue;
-                    break;
-                case Constants.FormatPropertiesAttribute:
-                    paragraphElement.FormatProperties = propertyValue.Split(',', ';');
-                    break;
-                default:
-                    throw new InvalidDocumentElementPropertyException(paragraphElement, propertyName, propertyValue);
+                switch (pair.Key)
+                {
+                    case Constants.TextAttribute:
+                        paragraphElement.Text = pair.Value;
+                        break;
+                    case Constants.PropertyAttribute:
+                        paragraphElement.Property = pair.Value;
+                        break;
+                    case Constants.FormatAttribute:
+                        paragraphElement.Format = pair.Value;
+                        break;
+                    case Constants.FormatPropertiesAttribute:
+                        paragraphElement.FormatProperties = pair.Value.Split(',', ';');
+                        break;
+                    default:
+                        throw new InvalidDocumentElementPropertyException(paragraphElement, pair.Key, pair.Value);
+                }
             }
         }
 
         private static void AssignRootDocumentElementProperties(RootDocumentElement rootDocumentElement,
-                                                                string propertyName,
-                                                                string propertyValue)
+                                                                KeyValuePair<string, string>[] propertyBag)
         {
-            switch (propertyName)
+            foreach (var pair in propertyBag)
             {
-                case Constants.Margins:
-                    rootDocumentElement.CustomMargins = ValueParser.ParseCompleteMargins(propertyValue);
-                    break;
-                case Constants.TopMargin:
-                    rootDocumentElement.CustomMargins = new Margins {Top = ValueParser.ParseFloat(propertyValue)};
-                    break;
-                case Constants.BottomMargin:
-                    rootDocumentElement.CustomMargins = new Margins {Bottom = ValueParser.ParseFloat(propertyValue)};
-                    break;
-                case Constants.LeftMargin:
-                    rootDocumentElement.CustomMargins = new Margins {Left = ValueParser.ParseFloat(propertyValue)};
-                    break;
-                case Constants.RightMargin:
-                    rootDocumentElement.CustomMargins = new Margins {Right = ValueParser.ParseFloat(propertyValue)};
-                    break;
-                case Constants.PageSize:
-                    rootDocumentElement.PageSize = ValueParser.ParsePageSize(propertyValue);
-                    break;
-                case Constants.PageOrientation:
-                    rootDocumentElement.PageOrientation = ValueParser.ParsePageOrientation(propertyValue);
-                    break;
-                default:
-                    throw new InvalidDocumentElementPropertyException(rootDocumentElement, propertyName, propertyValue);
+                switch (pair.Key)
+                {
+                    case Constants.Margins:
+                        rootDocumentElement.CustomMargins = ValueParser.ParseCompleteMargins(pair.Value);
+                        break;
+                    case Constants.TopMargin:
+                        rootDocumentElement.CustomMargins = new Margins {Top = ValueParser.ParseFloat(pair.Value)};
+                        break;
+                    case Constants.BottomMargin:
+                        rootDocumentElement.CustomMargins = new Margins
+                            {Bottom = ValueParser.ParseFloat(pair.Value)};
+                        break;
+                    case Constants.LeftMargin:
+                        rootDocumentElement.CustomMargins = new Margins {Left = ValueParser.ParseFloat(pair.Value)};
+                        break;
+                    case Constants.RightMargin:
+                        rootDocumentElement.CustomMargins = new Margins {Right = ValueParser.ParseFloat(pair.Value)};
+                        break;
+                    case Constants.PageSize:
+                        rootDocumentElement.PageSize = ValueParser.ParsePageSize(pair.Value);
+                        break;
+                    case Constants.PageOrientation:
+                        rootDocumentElement.PageOrientation = ValueParser.ParsePageOrientation(pair.Value);
+                        break;
+                    default:
+                        throw new InvalidDocumentElementPropertyException(rootDocumentElement, pair.Key, pair.Value);
+                }
             }
         }
     }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.ComTypes;
@@ -99,12 +100,14 @@ namespace Xml2Pdf.Parser.Xml
         private void ParseXmlAttributes(XmlReader xmlReader, DocumentElement currentElement)
         {
             System.Diagnostics.Debug.Assert(xmlReader.HasAttributes);
+            var attributeBag = new KeyValuePair<string, string>[xmlReader.AttributeCount];
 
             for (int attributeIndex = 0; attributeIndex < xmlReader.AttributeCount; attributeIndex++)
             {
                 xmlReader.MoveToAttribute(attributeIndex);
-                ElementPropertyParser.ParseAndAssignElementProperty(currentElement, xmlReader.Name, xmlReader.Value);
+                attributeBag[attributeIndex] = new KeyValuePair<string, string>(xmlReader.Name, xmlReader.Value);
             }
+            ElementPropertyParser.ParseAndAssignElementProperties(currentElement, attributeBag);
 
             xmlReader.MoveToElement();
         }
