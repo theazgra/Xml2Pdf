@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Linq;
+using System.Collections.Generic;
 using System.Globalization;
 using iText.Kernel.Colors;
 using iText.Kernel.Geom;
@@ -51,8 +52,17 @@ namespace Xml2Pdf.Parser.Xml
             };
         }
 
+        internal static int ParseInt(string value) => int.Parse(value);
+
         internal static float ParseFloat(string propertyValue) =>
             float.Parse(propertyValue, CultureInfo.InvariantCulture);
+
+        internal static float[] ParseFloatArray(string value)
+        {
+            var parts = value.Split(';', ',');
+            var coeffs = parts.Select(x => ParseFloat(x)).ToArray();
+            return coeffs;
+        }
 
         internal static PageOrientation ParsePageOrientation(string propertyValue)
         {

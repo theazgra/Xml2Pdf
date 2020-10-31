@@ -10,5 +10,10 @@
             <Text foreground="blue">(added text from &lt;Text&gt; tag)</Text>
             <Text>text</Text>
         </Paragraph>
+
+        <Table columnCount="3">
+
+        </Table>
+
     </Page>
 </PdfDocument>
