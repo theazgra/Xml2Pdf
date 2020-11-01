@@ -29,6 +29,9 @@ namespace Xml2Pdf.Parser.Xml
                 case TableElement tableElement:
                     AssignTableElementProperties(tableElement, propertyBag);
                     break;
+                case TableRowElement tableRowElement:
+                    AssignTableRowElementProperties(tableRowElement, propertyBag);
+                    break;
                 case ParagraphElement _:
                 case TextElement _:
                 case PageElement _: // No properties to be parsed yet.
@@ -37,6 +40,25 @@ namespace Xml2Pdf.Parser.Xml
                     ColorConsole.WriteLine(ConsoleColor.Red,
                                            $"Missing branch in `ParseAndAssignElementProperty` for '{documentElement.GetType().Name}'");
                     break;
+            }
+        }
+
+        private static void AssignTableRowElementProperties(TableRowElement tableRowElement,
+                                                            PropertyBag<string> propertyBag)
+        {
+            foreach (var pair in propertyBag.UnprocessedPairs())
+            {
+                switch (pair.Name)
+                {
+                    case "rowHeight":
+                        tableRowElement.RowHeight = ValueParser.ParseFloat(pair.Value);
+                        break;
+                    case "header":
+                        tableRowElement.IsHeader = ValueParser.ParseBool(pair.Value);
+                        break;
+                    default:
+                        throw new InvalidDocumentElementPropertyException(tableRowElement, pair.Name, pair.Value);
+                }
             }
         }
 
@@ -65,7 +87,8 @@ namespace Xml2Pdf.Parser.Xml
                     case "rowHeight":
                         tableElement.RowHeight = ValueParser.ParseFloat(pair.Value);
                         break;
-
+                    default:
+                        throw new InvalidDocumentElementPropertyException(tableElement, pair.Name, pair.Value);
                 }
             }
         }
@@ -257,30 +280,6 @@ namespace Xml2Pdf.Parser.Xml
             }
         }
 
-        private static void AssignParagraphElementProperties(ParagraphElement paragraphElement,
-                                                             PropertyBag<string> propertyBag)
-        {
-            foreach (var (name, value) in propertyBag.UnprocessedPairs())
-            {
-                switch (name)
-                {
-                    case "text":
-                        paragraphElement.TextBuilder.Append(value);
-                        break;
-                    case "property":
-                        paragraphElement.Property = value;
-                        break;
-                    case "format":
-                        paragraphElement.Format = value;
-                        break;
-                    case "formatProperties":
-                        paragraphElement.FormatProperties = value.Split(',', ';');
-                        break;
-                    default:
-                        throw new InvalidDocumentElementPropertyException(paragraphElement, name, value);
-                }
-            }
-        }
 
         private static void AssignRootDocumentElementProperties(RootDocumentElement rootDocumentElement,
                                                                 PropertyBag<string> propertyBag)
@@ -293,17 +292,17 @@ namespace Xml2Pdf.Parser.Xml
                         rootDocumentElement.CustomMargins = ValueParser.ParseCompleteMargins(value);
                         break;
                     case "topMargin":
-                        rootDocumentElement.CustomMargins = new Margins { Top = ValueParser.ParseFloat(value) };
+                        rootDocumentElement.CustomMargins = new Margins {Top = ValueParser.ParseFloat(value)};
                         break;
                     case "bottomMargin":
                         rootDocumentElement.CustomMargins = new Margins
-                        { Bottom = ValueParser.ParseFloat(value) };
+                            {Bottom = ValueParser.ParseFloat(value)};
                         break;
                     case "leftMargin":
-                        rootDocumentElement.CustomMargins = new Margins { Left = ValueParser.ParseFloat(value) };
+                        rootDocumentElement.CustomMargins = new Margins {Left = ValueParser.ParseFloat(value)};
                         break;
                     case "rightMargin":
-                        rootDocumentElement.CustomMargins = new Margins { Right = ValueParser.ParseFloat(value) };
+                        rootDocumentElement.CustomMargins = new Margins {Right = ValueParser.ParseFloat(value)};
                         break;
                     case "pageSize":
                         rootDocumentElement.PageSize = ValueParser.ParsePageSize(value);
