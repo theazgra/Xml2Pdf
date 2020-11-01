@@ -100,14 +100,15 @@ namespace Xml2Pdf.Renderer
                 }
             }
 
-            foreach (var childElement in rootElement.Children)
+            for (int i = 0; i < rootElement.ChildrenCount; i++)
             {
+                var childElement = rootElement.Children.ElementAt(i);
                 Debug.Assert(childElement is PageElement, "Invalid child element for RootElement");
                 RenderDocumentElement(childElement, null, _pdfDocument);
-            }
 
-            // End the page. Move to RenderRootDocumentElement?
-            _pdfDocument.Add(new AreaBreak());
+                if (i < (rootElement.ChildrenCount - 1))
+                    _pdfDocument.Add(new AreaBreak());
+            }
         }
 
         private void RenderDocumentElement(DocumentElement element, DocumentElement parent, object pdfParentObject)
