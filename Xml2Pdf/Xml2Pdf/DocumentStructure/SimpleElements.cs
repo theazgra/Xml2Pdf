@@ -11,6 +11,7 @@ namespace Xml2Pdf.DocumentStructure
             typeof(FooterElement),
             typeof(ImageElement),
             typeof(LineElement),
+            typeof(ListElement),
             typeof(ParagraphElement),
             typeof(TableElement)
         };
@@ -18,12 +19,12 @@ namespace Xml2Pdf.DocumentStructure
         public override bool IsParentType => true;
         public override Type[] AllowedChildrenTypes => PossibleChildren;
 
-        internal override void DumpToStringBuilder(StringBuilder dumpBuilder, int indentationLevel)
+        internal override void DumpToStringBuilder(StringBuilder dumpBuilder, int indent)
         {
-            base.DumpToStringBuilder(dumpBuilder, indentationLevel);
+            base.DumpToStringBuilder(dumpBuilder, indent);
             foreach (var child in Children)
             {
-                child.DumpToStringBuilder(dumpBuilder, indentationLevel + 2);
+                child.DumpToStringBuilder(dumpBuilder, indent + DumpIndentationOffset);
             }
         }
     }

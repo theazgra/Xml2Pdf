@@ -38,7 +38,7 @@ namespace Xml2Pdf.DocumentStructure
 
 #endregion
 
-        public StringBuilder TextBuilder { get; } = new StringBuilder(0);
+        public string Text { get; set; }
 
         public string Property { get; set; }
         public string Format { get; set; }
@@ -82,10 +82,7 @@ namespace Xml2Pdf.DocumentStructure
         }
 
 
-        public bool IsEmpty()
-        {
-            return TextBuilder.Length == 0 && Property == null && Format == null && FormatProperties == null;
-        }
+        public bool IsEmpty() { return Text == null && Property == null && Format == null && FormatProperties == null; }
 
 
         internal override void DumpToStringBuilder(StringBuilder dumpBuilder, int indent)
@@ -120,10 +117,10 @@ namespace Xml2Pdf.DocumentStructure
                     .AppendLine();
             }
 
-            if (TextBuilder.Length != 0)
+            if (Text != null)
                 PrepareIndent(dumpBuilder, indent)
                     .Append(" -Text='")
-                    .Append(TextBuilder.ToString())
+                    .Append(Text.ToString())
                     .Append('\'')
                     .AppendLine();
 
@@ -154,8 +151,8 @@ namespace Xml2Pdf.DocumentStructure
         public string GetTextToRender(IDictionary<string, object> objectPropertyMap, ValueFormatter formatter)
         {
             string GetAndFormatProperty(string property) => formatter.FormatValue(objectPropertyMap[property]);
-            if (TextBuilder.Length != 0)
-                return TextBuilder.ToString();
+            if (Text != null)
+                return Text.ToString();
             if (Property != null)
             {
                 if (!objectPropertyMap.ContainsKey(Property))
@@ -175,5 +172,14 @@ namespace Xml2Pdf.DocumentStructure
 
             return string.Empty;
         }
+    }
+
+    /// <summary>
+    /// TextElement which is leaf, meaning it can't have any children.
+    /// </summary>
+    public class LeafTextElement : TextElement
+    {
+        public override bool IsParentType => false;
+        public override Type[] AllowedChildrenTypes => null;
     }
 }

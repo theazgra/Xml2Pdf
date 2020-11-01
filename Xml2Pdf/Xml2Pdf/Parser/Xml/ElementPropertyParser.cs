@@ -32,6 +32,10 @@ namespace Xml2Pdf.Parser.Xml
                 case TableRowElement tableRowElement:
                     AssignTableRowElementProperties(tableRowElement, propertyBag);
                     break;
+                case ListElement listElement:
+                    AssignListElementProperties(listElement, propertyBag);
+                    break;
+                case ListItemElement _:
                 case ParagraphElement _:
                 case TextElement _:
                 case PageElement _: // No properties to be parsed yet.
@@ -40,6 +44,41 @@ namespace Xml2Pdf.Parser.Xml
                     ColorConsole.WriteLine(ConsoleColor.Red,
                                            $"Missing branch in `ParseAndAssignElementProperty` for '{documentElement.GetType().Name}'");
                     break;
+            }
+        }
+
+        private static void AssignListElementProperties(ListElement listElement, PropertyBag<string> propertyBag)
+        {
+            foreach (var pair in propertyBag.UnprocessedPairs())
+            {
+                switch (pair.Name)
+                {
+                    case "startIndex":
+                        listElement.StartIndex.Value = ValueParser.ParseInt(pair.Value);
+                        break;
+                    case "indent":
+                    case "indentation":
+                        listElement.Indentation.Value = ValueParser.ParseFloat(pair.Value);
+                        break;
+                    case "symbol":
+                    case "listSymbol":
+                        listElement.ListSymbol.Value = pair.Value;
+                        break;
+                    case "preText":
+                    case "preSymbolText":
+                        listElement.PreSymbolText.Value = pair.Value;
+                        break;
+                    case "postText":
+                    case "postSymbolText":
+                        listElement.PostSymbolText.Value = pair.Value;
+                        break;
+                    case "enumerate":
+                    case "enumeration":
+                        listElement.Enumeration.Value = ValueParser.ParseBool(pair.Value);
+                        break;
+                    default:
+                        throw new InvalidDocumentElementPropertyException(listElement, pair.Name, pair.Value);
+                }
             }
         }
 
@@ -158,16 +197,16 @@ namespace Xml2Pdf.Parser.Xml
                     case "borders":
                         borderedElement.Borders.Value = ValueParser.ParseBorderInfo(pair.Value);
                         break;
-                    case "topBorder":
+                    case "borderTop":
                         borderedElement.TopBorder.Value = ValueParser.ParseBorderInfo(pair.Value);
                         break;
-                    case "bottomBorder":
+                    case "borderBottom":
                         borderedElement.BottomBorder.Value = ValueParser.ParseBorderInfo(pair.Value);
                         break;
-                    case "leftBorder":
+                    case "borderLeft":
                         borderedElement.LeftBorder.Value = ValueParser.ParseBorderInfo(pair.Value);
                         break;
-                    case "rightBorder":
+                    case "borderRight":
                         borderedElement.RightBorder.Value = ValueParser.ParseBorderInfo(pair.Value);
                         break;
                 }

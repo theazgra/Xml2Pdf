@@ -21,7 +21,7 @@ namespace Xml2Pdf.DocumentStructure
 
             foreach (var child in Children)
             {
-                child.DumpToStringBuilder(dumpBuilder, indent + 2);
+                child.DumpToStringBuilder(dumpBuilder, indent + DumpIndentationOffset);
             }
         }
     }

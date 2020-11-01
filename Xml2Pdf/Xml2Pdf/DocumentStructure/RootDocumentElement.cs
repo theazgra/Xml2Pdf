@@ -29,20 +29,20 @@ namespace Xml2Pdf.DocumentStructure
                             };
         }
 
-        internal override void DumpToStringBuilder(StringBuilder dumpBuilder, int indentationLevel)
+        internal override void DumpToStringBuilder(StringBuilder dumpBuilder, int indent)
         {
-            base.DumpToStringBuilder(dumpBuilder, indentationLevel);
-            PrepareIndent(dumpBuilder, indentationLevel).Append(" -PageSize=").Append(PageSize).AppendLine();
-            PrepareIndent(dumpBuilder, indentationLevel)
+            base.DumpToStringBuilder(dumpBuilder, indent);
+            PrepareIndent(dumpBuilder, indent).Append(" -PageSize=").Append(PageSize).AppendLine();
+            PrepareIndent(dumpBuilder, indent)
                 .Append(" -PageOrientation=")
                 .Append(PageOrientation)
                 .AppendLine();
             if (CustomMargins != null)
-                PrepareIndent(dumpBuilder, indentationLevel).Append(" #Margins: ").Append(CustomMargins);
+                PrepareIndent(dumpBuilder, indent).Append(" #Margins: ").Append(CustomMargins);
 
             foreach (var child in Children)
             {
-                child.DumpToStringBuilder(dumpBuilder, (indentationLevel + 2));
+                child.DumpToStringBuilder(dumpBuilder, (indent + DumpIndentationOffset));
             }
         }
 

@@ -12,13 +12,13 @@ namespace Xml2Pdf.DocumentStructure
 
         protected override bool CanInheritBorderProperties => false;
     
-        internal override void DumpToStringBuilder(StringBuilder dumpBuilder, int indentationLevel)
+        internal override void DumpToStringBuilder(StringBuilder dumpBuilder, int indent)
         {
-            base.DumpToStringBuilder(dumpBuilder, indentationLevel);
+            base.DumpToStringBuilder(dumpBuilder, indent);
 
             foreach (var child in Children)
             {
-                child.DumpToStringBuilder(dumpBuilder, indentationLevel + 2);
+                child.DumpToStringBuilder(dumpBuilder, indent + DumpIndentationOffset);
             }
         }
     }

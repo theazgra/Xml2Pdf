@@ -69,7 +69,7 @@ namespace Xml2Pdf.Parser.Xml
         {
             if (lastParsedElement is TextElement textElement)
             {
-                textElement.TextBuilder.Append(xmlReader.Value);
+                textElement.Text = xmlReader.Value;
             }
             else
             {

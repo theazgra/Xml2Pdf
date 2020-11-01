@@ -21,7 +21,7 @@ namespace Xml2Pdf.Renderer
     public class PdfDocumentRenderer : IDocumentRenderer
     {
         private Document _pdfDocument = null;
-        private Dictionary<string, object> _objectPropertyMap;
+        private readonly Dictionary<string, object> _objectPropertyMap;
 
         private readonly PdfFont _defaultFont;
 
@@ -77,6 +77,83 @@ namespace Xml2Pdf.Renderer
             return true;
         }
 
+        private void RenderDocumentElement(DocumentElement element, DocumentElement parent, object docParent)
+        {
+            switch (element)
+            {
+                case PageElement pageElement:
+                    RenderPageElement(pageElement, parent, docParent);
+                    break;
+                case ParagraphElement paragraphElement:
+                    RenderParagraphElement(paragraphElement, parent, docParent);
+                    break;
+                case TableElement tableElement:
+                    RenderTableElement(tableElement, parent, docParent);
+                    break;
+                case TableRowElement tableRowElement:
+                    RenderTableRowElement(tableRowElement, parent as TableElement, docParent as Table);
+                    break;
+                case TableCellElement tableCell:
+                    RenderTableCell(tableCell, parent as TableRowElement, docParent as Table);
+                    break;
+                case ListElement listElement:
+                    RenderListElement(listElement, parent, docParent);
+                    break;
+                case ListItemElement listItemElement:
+                    RenderListItemElement(listItemElement, docParent as iText.Layout.Element.List);
+                    break;
+                default:
+                    ColorConsole.WriteLine(ConsoleColor.Red,
+                                           $"Missing branch in PdfDocumentRenderer::RenderDocumentElement() for {element.GetType().Name}");
+                    break;
+            }
+        }
+
+        private void RenderListElement(ListElement element, DocumentElement parent, object pdfParentObject)
+        {
+            iText.Layout.Element.List list;
+            if (element.Enumeration.IsInitialized && element.Enumeration.Value)
+                list = new List(ListNumberingType.DECIMAL);
+            else
+                list = new List();
+
+
+            if (element.Indentation.IsInitialized)
+                list.SetSymbolIndent(element.Indentation.Value);
+            if (element.ListSymbol.IsInitialized)
+                list.SetListSymbol(element.ListSymbol.Value);
+            if (element.StartIndex.IsInitialized)
+                list.SetItemStartIndex(element.StartIndex.Value);
+            if (element.PreSymbolText.IsInitialized)
+                list.SetPreSymbolText(element.PreSymbolText.Value);
+            if (element.PostSymbolText.IsInitialized)
+                list.SetPostSymbolText(element.PostSymbolText.Value);
+
+            foreach (var listChild in element.Children)
+            {
+                RenderListItemElement(listChild as ListItemElement, list);
+            }
+
+            if (pdfParentObject is Document document)
+            {
+                document.Add(list);
+            }
+            else
+            {
+                throw RenderException.WrongPdfParent(nameof(RenderListElement),
+                                                     typeof(Document),
+                                                     pdfParentObject.GetType());
+            }
+        }
+
+        private void RenderListItemElement(ListItemElement listChild, List list)
+        {
+            var listItem = new ListItem(listChild.GetTextToRender(_objectPropertyMap, ValueFormatter));
+            listItem.SetFont(_defaultFont);
+            SetTextElementProperties(listItem, listChild);
+            list.Add(listItem);
+        }
+
         [SuppressMessage("ReSharper", "PossibleInvalidOperationException")]
         private void RenderRootDocumentElement(RootDocumentElement rootElement)
         {
@@ -114,32 +191,6 @@ namespace Xml2Pdf.Renderer
             }
         }
 
-        private void RenderDocumentElement(DocumentElement element, DocumentElement parent, object pdfParentObject)
-        {
-            switch (element)
-            {
-                case PageElement pageElement:
-                    RenderPageElement(pageElement, parent, pdfParentObject);
-                    break;
-                case ParagraphElement paragraphElement:
-                    RenderParagraphElement(paragraphElement, parent, pdfParentObject);
-                    break;
-                case TableElement tableElement:
-                    RenderTableElement(tableElement, parent, pdfParentObject);
-                    break;
-                case TableRowElement tableRowElement:
-                    RenderTableRowElement(tableRowElement, parent as TableElement, pdfParentObject as Table);
-                    break;
-                case TableCellElement tableCell:
-                    RenderTableCell(tableCell, parent as TableRowElement, pdfParentObject as Table);
-                    break;
-                default:
-                    ColorConsole.WriteLine(ConsoleColor.Red,
-                                           $"Missing branch in PdfDocumentRenderer::RenderDocumentElement() for {element.GetType().Name}");
-                    break;
-            }
-        }
-
         private void RenderTableCell(TableCellElement tableCell, TableRowElement parent, Table pdfParentObject)
         {
             Debug.Assert(parent != null, "DocumentElement parent is null.");
@@ -171,7 +222,7 @@ namespace Xml2Pdf.Renderer
             Debug.Assert(parent != null, "DocumentElement parent is null.");
             Debug.Assert(pdfTable != null, "Pdf parent is null.");
             pdfTable.StartNewRow();
-            
+
 
             if (!tableRowElement.RowHeight.IsInitialized && parent.RowHeight.IsInitialized)
             {
@@ -211,8 +262,9 @@ namespace Xml2Pdf.Renderer
             }
             else
             {
-                throw new
-                    RenderException($"Invalid pdf parent in RenderTableElement(), expected Document, but got: '{pdfParentObject.GetType().Name}'");
+                throw RenderException.WrongPdfParent(nameof(RenderTableElement),
+                                                     typeof(Document),
+                                                     pdfParentObject.GetType());
             }
         }
 

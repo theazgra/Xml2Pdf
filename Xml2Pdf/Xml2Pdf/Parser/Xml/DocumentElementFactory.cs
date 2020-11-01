@@ -14,6 +14,8 @@ namespace Xml2Pdf.Parser.Xml
                 "PdfDocument" => new RootDocumentElement(),
                 "Page" => new PageElement(),
                 "Line" => new LineElement(),
+                "List" => new ListElement(),
+                "ListItem" => new ListItemElement(),
                 "Image" => new ImageElement(),
                 "Table" => new TableElement(),
                 "TableRow" => new TableRowElement(),

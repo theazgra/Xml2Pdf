@@ -67,16 +67,14 @@ namespace Xml2Pdf
 
 
             List pdfList = new List(ListNumberingType.DECIMAL)
-                .SetSymbolIndent(12)
-                .SetFont(customFont);
-
-
+                .SetSymbolIndent(12);
+            
             pdfList.Add(new ListItem("Never gonna give you up"))
-                .Add(new ListItem("Never gonna let you down"))
-                .Add(new ListItem("Never gonna run around and desert you"))
-                .Add(new ListItem("Never gonna make you cry"))
-                .Add(new ListItem("Never gonna say goodbye"))
-                .Add(new ListItem("Never gonna tell a lie and hurt you"));
+                   .Add(new ListItem("Never gonna let you down"))
+                   .Add(new ListItem("Never gonna run around and desert you"))
+                   .Add(new ListItem("Never gonna make you cry"))
+                   .Add(new ListItem("Never gonna say goodbye"))
+                   .Add(new ListItem("Never gonna tell a lie and hurt you"));
 
             document.Add(new Paragraph("Hello World!"));
 

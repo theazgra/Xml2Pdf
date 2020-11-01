@@ -8,6 +8,8 @@ namespace Xml2Pdf.DocumentStructure
 {
     public abstract class DocumentElement
     {
+        public const int DumpIndentationOffset = 2;
+
         protected delegate void ChildAdded(DocumentElement child);
 
         protected event ChildAdded OnChildAdded;
@@ -29,9 +31,9 @@ namespace Xml2Pdf.DocumentStructure
 
         private bool CanHaveChildOfType(Type childType) => AllowedChildrenTypes.Contains(childType);
 
-        internal virtual void DumpToStringBuilder(StringBuilder dumpBuilder, int indentationLevel)
+        internal virtual void DumpToStringBuilder(StringBuilder dumpBuilder, int indent)
         {
-            PrepareIndent(dumpBuilder, indentationLevel).Append('<').Append(GetType().Name).Append('>').AppendLine();
+            PrepareIndent(dumpBuilder, indent).Append('<').Append(GetType().Name).Append('>').AppendLine();
         }
 
         protected StringBuilder DumpElementProperty<T>(StringBuilder dumpBuilder,
@@ -64,7 +66,7 @@ namespace Xml2Pdf.DocumentStructure
 
         public void AddChild(DocumentElement child)
         {
-            if (!CanHaveChildOfType(child.GetType()))
+            if (IsParentType && !CanHaveChildOfType(child.GetType()))
             {
                 throw UnexpectedDocumentElementException.WrongDocumentElement(child.GetType(), AllowedChildrenTypes);
             }
