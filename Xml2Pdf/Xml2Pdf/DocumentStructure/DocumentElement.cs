@@ -33,6 +33,23 @@ namespace Xml2Pdf.DocumentStructure
             PrepareIndent(dumpBuilder, indentationLevel).Append('<').Append(GetType().Name).Append('>').AppendLine();
         }
 
+        protected StringBuilder DumpElementProperty<T>(StringBuilder dumpBuilder,
+                                                       in int indentationLevel,
+                                                       string propertyName,
+                                                       ElementProperty<T> elementProperty)
+        {
+            if (!elementProperty.IsInitialized)
+                return dumpBuilder;
+            PrepareIndent(dumpBuilder, indentationLevel)
+                .Append(" -")
+                .Append(propertyName)
+                .Append(": '")
+                .Append(elementProperty.Value)
+                .Append('\'')
+                .AppendLine();
+            return dumpBuilder;
+        }
+
         protected StringBuilder PrepareIndent(StringBuilder dumpBuilder,
                                               in int indentationLevel)
         {

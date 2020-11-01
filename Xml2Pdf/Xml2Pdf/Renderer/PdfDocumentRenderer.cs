@@ -146,7 +146,7 @@ namespace Xml2Pdf.Renderer
             else if (element.IsEmpty())
             {
                 paragraph.Add(RenderTextElement(element.Children.ElementAt(0) as TextElement));
-                
+
                 for (int i = 1; i < element.ChildrenCount; i++)
                 {
                     paragraph.Add(" ").Add(RenderTextElement(element.Children.ElementAt(i) as TextElement));
@@ -169,46 +169,51 @@ namespace Xml2Pdf.Renderer
             Text text = null;
             textToRender ??= element.GetTextToRender(_objectPropertyMap, ValueFormatter);
 
-            if (element.Superscript)
+            if (element.Superscript.IsInitialized && element.Superscript.Value)
             {
                 text = new Text(textToRender).SetFont(_defaultFont).SetTextRise(7).SetFontSize(DefaultFontSize);
             }
-            else if (element.Subscript)
+            else if (element.Subscript.IsInitialized && element.Subscript.Value)
             {
                 text = new Text(textToRender).SetFont(_defaultFont).SetTextRise(-7).SetFontSize(DefaultFontSize);
             }
             else
             {
-                text = new Text(textToRender).SetFontSize(element.FontSize != 0 ? element.FontSize : DefaultFontSize);
+                float fontSize = element.FontSize.IsInitialized ? element.FontSize.Value : DefaultFontSize;
+                text = new Text(textToRender).SetFontSize(fontSize);
             }
 
             // Borders.
-            if (element.Borders != null)
+            if (element.Borders.IsInitialized)
             {
-                text.SetBorder(element.Borders.ToITextBorder());
+                text.SetBorder(element.Borders.Value.ToITextBorder());
             }
             else
             {
-                if (element.TopBorder != null)
-                    text.SetBorderTop(element.TopBorder.ToITextBorder());
-                if (element.BottomBorder != null)
-                    text.SetBorderBottom(element.BottomBorder.ToITextBorder());
-                if (element.LeftBorder != null)
-                    text.SetBorderLeft(element.LeftBorder.ToITextBorder());
-                if (element.RightBorder != null)
-                    text.SetBorderRight(element.RightBorder.ToITextBorder());
+                if (element.TopBorder.IsInitialized)
+                    text.SetBorderTop(element.TopBorder.Value.ToITextBorder());
+                if (element.BottomBorder.IsInitialized)
+                    text.SetBorderBottom(element.BottomBorder.Value.ToITextBorder());
+                if (element.LeftBorder.IsInitialized)
+                    text.SetBorderLeft(element.LeftBorder.Value.ToITextBorder());
+                if (element.RightBorder.IsInitialized)
+                    text.SetBorderRight(element.RightBorder.Value.ToITextBorder());
             }
 
-            text.SetHorizontalAlignment(element.HorizontalAlignment)
-                .SetTextAlignment(element.TextAlignment)
-                .SetFontColor(element.ForegroundColor)
-                .SetBackgroundColor(element.BackgroundColor);
+            if (element.HorizontalAlignment.IsInitialized)
+                text.SetHorizontalAlignment(element.HorizontalAlignment.Value);
+            if (element.TextAlignment.IsInitialized)
+                text.SetTextAlignment(element.TextAlignment.Value);
+            if (element.ForegroundColor.IsInitialized)
+                text.SetFontColor(element.ForegroundColor.Value);
+            if (element.BackgroundColor.IsInitialized)
+                text.SetBackgroundColor(element.BackgroundColor.Value);
 
-            if (element.Bold)
+            if (element.Bold.IsInitialized && element.Bold.Value)
                 text.SetBold();
-            if (element.Italic)
+            if (element.Italic.IsInitialized && element.Italic.Value)
                 text.SetItalic();
-            if (element.Underline)
+            if (element.Underline.IsInitialized && element.Underline.IsInitialized)
                 text.SetUnderline();
 
             return text;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Xml;
 using System.Xml.Serialization;
 using Xml2Pdf;
@@ -15,20 +16,39 @@ namespace Xml2PdfTestApp
     {
         static void Main(string[] args)
         {
+            bool dump = false;
+            bool render = false;
+
+            foreach (string arg in args)
+            {
+                switch (arg)
+                {
+                    case "-d":
+                        dump = true;
+                        break;
+                    case "-r":
+                        render = true;
+                        break;
+                }
+            }
+
+            string filePath = @"D:\codes\Xml2Pdf\Xml2Pdf\Xml2PdfTestApp\Templates\Test1.xml";
+
             // PdfPlayground.Play();
-            
-            bool dump = args.Length > 0 && args[0] == "-d";
-            // PdfPlayground.Play();
-            string filePath = "..\\..\\..\\Templates\\Test1.xml";
             XmlDocumentTemplateParser parser = new XmlDocumentTemplateParser();
             var doc = parser.ParseTemplateFile(filePath);
-            
+
             if (dump)
                 Console.WriteLine(doc.DumpDocumentTree());
-            
-            var renderer = new PdfDocumentRenderer();
-            renderer.ValueFormatter.AddFormatter(new ToStringFormatter<object>());
-            renderer.RenderDocument(doc, "D:\\tmp\\rendered.pdf");
+
+            if (render)
+            {
+                const string renderTarget = "D:\\tmp\\rendered.pdf";
+                var renderer = new PdfDocumentRenderer();
+                renderer.ValueFormatter.AddFormatter(new ToStringFormatter<object>());
+                renderer.RenderDocument(doc, renderTarget);
+                Console.WriteLine("Document is rendered to {0}", renderTarget);
+            }
         }
     }
 }

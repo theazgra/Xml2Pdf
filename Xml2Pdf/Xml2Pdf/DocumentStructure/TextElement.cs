@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using iText.Kernel.Colors;
+using iText.Layout.Element;
 using iText.Layout.Properties;
 using Xml2Pdf.Exceptions;
 using Xml2Pdf.Format;
@@ -13,19 +14,27 @@ namespace Xml2Pdf.DocumentStructure
 {
     public class TextElement : BorderedDocumentElement
     {
+        public override bool IsParentType => false;
+        public override Type[] AllowedChildrenTypes => Array.Empty<Type>();
+
 #region TextProperties
 
-        public VerticalAlignment VerticalAlignment { get; set; } = VerticalAlignment.TOP;
-        public TextAlignment TextAlignment { get; set; } = TextAlignment.LEFT;
-        public HorizontalAlignment HorizontalAlignment { get; set; } = HorizontalAlignment.LEFT;
-        public bool Bold { get; set; } = false;
-        public bool Italic { get; set; } = false;
-        public bool Superscript { get; set; } = false;
-        public bool Subscript { get; set; } = false;
-        public bool Underline { get; set; }
-        public float FontSize { get; set; }
-        public Color ForegroundColor { get; set; } = ColorConstants.BLACK;
-        public Color BackgroundColor { get; set; } = ColorConstants.WHITE;
+        public ElementProperty<VerticalAlignment> VerticalAlignment { get; set; } =
+            new ElementProperty<VerticalAlignment>();
+
+        public ElementProperty<TextAlignment> TextAlignment { get; set; } = new ElementProperty<TextAlignment>();
+
+        public ElementProperty<HorizontalAlignment> HorizontalAlignment { get; set; } =
+            new ElementProperty<HorizontalAlignment>();
+
+        public ElementProperty<bool> Bold { get; set; } = new ElementProperty<bool>();
+        public ElementProperty<bool> Italic { get; set; } = new ElementProperty<bool>();
+        public ElementProperty<bool> Superscript { get; set; } = new ElementProperty<bool>();
+        public ElementProperty<bool> Subscript { get; set; } = new ElementProperty<bool>();
+        public ElementProperty<bool> Underline { get; set; } = new ElementProperty<bool>();
+        public ElementProperty<float> FontSize { get; set; } = new ElementProperty<float>();
+        public ElementProperty<Color> ForegroundColor { get; set; } = new ElementProperty<Color>();
+        public ElementProperty<Color> BackgroundColor { get; set; } = new ElementProperty<Color>();
 
 #endregion
 
@@ -35,80 +44,80 @@ namespace Xml2Pdf.DocumentStructure
         public string Format { get; set; }
         public string[] FormatProperties { get; set; }
 
+        public TextElement()
+        {
+            // OnChildAdded += child =>
+            // {
+            //     if (child is TextElement)
+            //     {
+            //         ColorConsole.WriteLine(ConsoleColor.Blue,
+            //                                "Child of TextElement is also TextElement and can inherit properties.");
+            //     }
+            // };
+        }
+
         public bool IsEmpty()
         {
             return TextBuilder.Length == 0 && Property == null && Format == null && FormatProperties == null;
         }
 
 
-        public override bool IsParentType => false;
-        public override Type[] AllowedChildrenTypes => Array.Empty<Type>();
-
-        internal override void DumpToStringBuilder(StringBuilder dumpBuilder, int indentationLevel)
+        internal override void DumpToStringBuilder(StringBuilder dumpBuilder, int indent)
         {
-            base.DumpToStringBuilder(dumpBuilder, indentationLevel);
-            PrepareIndent(dumpBuilder, indentationLevel).Append("(TextElement)").AppendLine();
+            base.DumpToStringBuilder(dumpBuilder, indent);
+            PrepareIndent(dumpBuilder, indent).Append("(TextElement)").AppendLine();
 
-            PrepareIndent(dumpBuilder, indentationLevel)
-                .Append(" -TextAlignment: ")
-                .Append(TextAlignment)
-                .AppendLine();
+            DumpElementProperty(dumpBuilder, indent, "TextAlignment", TextAlignment);
+            DumpElementProperty(dumpBuilder, indent, "HorizontalAlignment", HorizontalAlignment);
+            DumpElementProperty(dumpBuilder, indent, "VerticalAlignment", VerticalAlignment);
 
-            PrepareIndent(dumpBuilder, indentationLevel)
-                .Append(" -HorizontalAlignment: ")
-                .Append(HorizontalAlignment)
-                .AppendLine();
+            DumpElementProperty(dumpBuilder, indent, "Bold", Bold);
+            DumpElementProperty(dumpBuilder, indent, "Italic", Italic);
+            DumpElementProperty(dumpBuilder, indent, "Superscript", Superscript);
+            DumpElementProperty(dumpBuilder, indent, "Subscript", Subscript);
+            DumpElementProperty(dumpBuilder, indent, "Underline", Underline);
+            DumpElementProperty(dumpBuilder, indent, "FontSize", FontSize);
 
-            PrepareIndent(dumpBuilder, indentationLevel)
-                .Append(" -VerticalAlignment: ")
-                .Append(VerticalAlignment)
-                .AppendLine();
 
-            PrepareIndent(dumpBuilder, indentationLevel).Append(" -Bold: ").Append(Bold).AppendLine();
+            if (ForegroundColor.IsInitialized)
+            {
+                PrepareIndent(dumpBuilder, indent)
+                    .Append(" -ForegroundColor: ")
+                    .Append(ForegroundColor.Value.ToPrettyString())
+                    .AppendLine();
+            }
 
-            PrepareIndent(dumpBuilder, indentationLevel).Append(" -Italic: ").Append(Italic).AppendLine();
-
-            PrepareIndent(dumpBuilder, indentationLevel).Append(" -Superscript: ").Append(Superscript).AppendLine();
-
-            PrepareIndent(dumpBuilder, indentationLevel).Append(" -Subscript: ").Append(Subscript).AppendLine();
-
-            PrepareIndent(dumpBuilder, indentationLevel).Append(" -Underline: ").Append(Underline).AppendLine();
-
-            PrepareIndent(dumpBuilder, indentationLevel).Append(" -FontSize: ").Append(FontSize).AppendLine();
-
-            PrepareIndent(dumpBuilder, indentationLevel)
-                .Append(" -ForegroundColor: ")
-                .Append(ForegroundColor.ToPrettyString())
-                .AppendLine();
-
-            PrepareIndent(dumpBuilder, indentationLevel)
-                .Append(" -BackgroundColor: ")
-                .Append(BackgroundColor.ToPrettyString())
-                .AppendLine();
+            if (BackgroundColor.IsInitialized)
+            {
+                PrepareIndent(dumpBuilder, indent)
+                    .Append(" -BackgroundColor: ")
+                    .Append(BackgroundColor.Value.ToPrettyString())
+                    .AppendLine();
+            }
 
             if (TextBuilder.Length != 0)
-                PrepareIndent(dumpBuilder, indentationLevel)
+                PrepareIndent(dumpBuilder, indent)
                     .Append(" -Text='")
                     .Append(TextBuilder.ToString())
                     .Append('\'')
                     .AppendLine();
 
             if (Property != null)
-                PrepareIndent(dumpBuilder, indentationLevel)
+                PrepareIndent(dumpBuilder, indent)
                     .Append(" -Property='")
                     .Append(Property)
                     .Append('\'')
                     .AppendLine();
 
             if (Format != null)
-                PrepareIndent(dumpBuilder, indentationLevel)
+                PrepareIndent(dumpBuilder, indent)
                     .Append(" -Format='")
                     .Append(Format)
                     .Append('\'')
                     .AppendLine();
             if (FormatProperties != null)
             {
-                PrepareIndent(dumpBuilder, indentationLevel)
+                PrepareIndent(dumpBuilder, indent)
                     .Append(" -FormatProperties='")
                     .Append(FormatProperties)
                     .Append('\'')

@@ -77,39 +77,39 @@ namespace Xml2Pdf.Parser.Xml
                 switch (pair.Name)
                 {
                     case "horizontalAlignment":
-                        textElement.HorizontalAlignment = ValueParser.ParseHorizontalAlignment(pair.Value);
+                        textElement.HorizontalAlignment.Value = ValueParser.ParseHorizontalAlignment(pair.Value);
                         break;
                     case "verticalAlignment":
-                        textElement.VerticalAlignment = ValueParser.ParseVerticalAlignment(pair.Value);
+                        textElement.VerticalAlignment.Value = ValueParser.ParseVerticalAlignment(pair.Value);
                         break;
                     case "textAlignment":
-                        textElement.TextAlignment = ValueParser.ParseTextAlignment(pair.Value);
+                        textElement.TextAlignment.Value = ValueParser.ParseTextAlignment(pair.Value);
                         break;
                     case "bold":
-                        textElement.Bold = ValueParser.ParseBool(pair.Value);
+                        textElement.Bold.Value = ValueParser.ParseBool(pair.Value);
                         break;
                     case "italic":
-                        textElement.Italic = ValueParser.ParseBool(pair.Value);
+                        textElement.Italic.Value = ValueParser.ParseBool(pair.Value);
                         break;
                     case "underline":
-                        textElement.Underline = ValueParser.ParseBool(pair.Value);
+                        textElement.Underline.Value = ValueParser.ParseBool(pair.Value);
                         break;
                     case "subscript":
-                        textElement.Subscript = ValueParser.ParseBool(pair.Value);
+                        textElement.Subscript.Value = ValueParser.ParseBool(pair.Value);
                         break;
                     case "superscript":
-                        textElement.Superscript = ValueParser.ParseBool(pair.Value);
+                        textElement.Superscript.Value = ValueParser.ParseBool(pair.Value);
                         break;
                     case "fontSize":
-                        textElement.FontSize = ValueParser.ParseFloat(pair.Value);
+                        textElement.FontSize.Value = ValueParser.ParseFloat(pair.Value);
                         break;
                     case "foreground":
                     case "foregroundColor":
-                        textElement.ForegroundColor = ValueParser.ParseColor(pair.Value);
+                        textElement.ForegroundColor.Value = ValueParser.ParseColor(pair.Value);
                         break;
                     case "background":
                     case "backgroundColor":
-                        textElement.BackgroundColor = ValueParser.ParseColor(pair.Value);
+                        textElement.BackgroundColor.Value = ValueParser.ParseColor(pair.Value);
                         break;
                 }
             }
@@ -123,145 +123,137 @@ namespace Xml2Pdf.Parser.Xml
                 switch (pair.Name)
                 {
                     case "borderColor":
-                        if (borderedElement.Borders == null)
+                        if (borderedElement.Borders.Value == null)
                         {
-                            borderedElement.Borders = new BorderInfo
+                            borderedElement.Borders.Value = new BorderInfo
                             {
                                 BorderType = BorderType.Solid
                             };
                         }
 
-                        borderedElement.Borders.Color = ValueParser.ParseColor(pair.Value);
+                        borderedElement.Borders.Value.Color = ValueParser.ParseColor(pair.Value);
                         break;
                     case "borderWidth":
-                        if (borderedElement.Borders == null)
+                        if (borderedElement.Borders.Value == null)
                         {
-                            borderedElement.Borders = new BorderInfo
+                            borderedElement.Borders.Value = new BorderInfo
                             {
                                 BorderType = BorderType.Solid
                             };
                         }
 
-                        borderedElement.Borders.Width = ValueParser.ParseFloat(pair.Value);
+                        borderedElement.Borders.Value.Width = ValueParser.ParseFloat(pair.Value);
 
                         break;
                     case "borderType":
-                        borderedElement.Borders ??= new BorderInfo();
-                        borderedElement.Borders.BorderType = ValueParser.ParseBorderType(pair.Value);
+                        borderedElement.Borders.Value ??= new BorderInfo();
+                        borderedElement.Borders.Value.BorderType = ValueParser.ParseBorderType(pair.Value);
                         break;
                     case "topBorderColor":
-                        if (borderedElement.Borders == null)
+                        if (borderedElement.Borders.Value == null)
                         {
-                            borderedElement.Borders = new BorderInfo
+                            borderedElement.Borders.Value = new BorderInfo
                             {
                                 BorderType = BorderType.Solid
                             };
                         }
 
-                        borderedElement.TopBorder.Color = ValueParser.ParseColor(pair.Value);
+                        borderedElement.TopBorder.Value.Color = ValueParser.ParseColor(pair.Value);
                         break;
                     case "topBorderWidth":
-                        if (borderedElement.Borders == null)
+                        if (borderedElement.Borders.Value == null)
                         {
-                            borderedElement.Borders = new BorderInfo
+                            borderedElement.Borders.Value = new BorderInfo
                             {
                                 BorderType = BorderType.Solid
                             };
                         }
 
-                        borderedElement.TopBorder.Width = ValueParser.ParseFloat(pair.Value);
+                        borderedElement.TopBorder.Value.Width = ValueParser.ParseFloat(pair.Value);
                         break;
                     case "topBorderType":
-                        borderedElement.TopBorder ??= new BorderInfo();
-                        borderedElement.TopBorder.BorderType = ValueParser.ParseBorderType(pair.Value);
+                        borderedElement.TopBorder.Value ??= new BorderInfo();
+                        borderedElement.TopBorder.Value.BorderType = ValueParser.ParseBorderType(pair.Value);
                         break;
                     case "bottomBorderColor":
-                        if (borderedElement.Borders == null)
+                        if (borderedElement.Borders.Value == null)
                         {
-                            borderedElement.Borders = new BorderInfo
+                            borderedElement.Borders.Value = new BorderInfo
                             {
                                 BorderType = BorderType.Solid
                             };
                         }
 
-                        borderedElement.BottomBorder.Color = ValueParser.ParseColor(pair.Value);
+                        borderedElement.BottomBorder.Value.Color = ValueParser.ParseColor(pair.Value);
                         break;
                     case "bottomBorderWidth":
-                        if (borderedElement.Borders == null)
+                        if (borderedElement.Borders.Value == null)
                         {
-                            borderedElement.Borders = new BorderInfo
+                            borderedElement.Borders.Value = new BorderInfo
                             {
                                 BorderType = BorderType.Solid
                             };
                         }
 
-                        borderedElement.BottomBorder.Width = ValueParser.ParseFloat(pair.Value);
+                        borderedElement.BottomBorder.Value.Width = ValueParser.ParseFloat(pair.Value);
                         break;
                     case "bottomBorderType":
-                        borderedElement.BottomBorder ??= new BorderInfo();
-                        borderedElement.BottomBorder.BorderType = ValueParser.ParseBorderType(pair.Value);
+                        borderedElement.BottomBorder.Value ??= new BorderInfo();
+                        borderedElement.BottomBorder.Value.BorderType = ValueParser.ParseBorderType(pair.Value);
                         break;
                     case "leftBorderColor":
-                        if (borderedElement.Borders == null)
+                        if (borderedElement.Borders.Value == null)
                         {
-                            borderedElement.Borders = new BorderInfo
+                            borderedElement.Borders.Value = new BorderInfo
                             {
                                 BorderType = BorderType.Solid
                             };
                         }
 
-                        borderedElement.LeftBorder.Color = ValueParser.ParseColor(pair.Value);
+                        borderedElement.LeftBorder.Value.Color = ValueParser.ParseColor(pair.Value);
                         break;
                     case "leftBorderWidth":
-                        if (borderedElement.Borders == null)
+                        if (borderedElement.Borders.Value == null)
                         {
-                            borderedElement.Borders = new BorderInfo
+                            borderedElement.Borders.Value = new BorderInfo
                             {
                                 BorderType = BorderType.Solid
                             };
                         }
 
-                        borderedElement.LeftBorder.Width = ValueParser.ParseFloat(pair.Value);
+                        borderedElement.LeftBorder.Value.Width = ValueParser.ParseFloat(pair.Value);
                         break;
                     case "leftBorderType":
-                        borderedElement.LeftBorder ??= new BorderInfo();
-                        borderedElement.LeftBorder.BorderType = ValueParser.ParseBorderType(pair.Value);
+                        borderedElement.LeftBorder.Value ??= new BorderInfo();
+                        borderedElement.LeftBorder.Value.BorderType = ValueParser.ParseBorderType(pair.Value);
                         break;
                     case "rightBorderColor":
-                        if (borderedElement.Borders == null)
+                        if (borderedElement.Borders.Value == null)
                         {
-                            borderedElement.Borders = new BorderInfo
+                            borderedElement.Borders.Value = new BorderInfo
                             {
                                 BorderType = BorderType.Solid
                             };
                         }
 
-                        borderedElement.RightBorder.Color = ValueParser.ParseColor(pair.Value);
+                        borderedElement.RightBorder.Value.Color = ValueParser.ParseColor(pair.Value);
                         break;
                     case "rightBorderWidth":
-                        if (borderedElement.Borders == null)
+                        if (borderedElement.Borders.Value == null)
                         {
-                            borderedElement.Borders = new BorderInfo
+                            borderedElement.Borders.Value = new BorderInfo
                             {
                                 BorderType = BorderType.Solid
                             };
                         }
 
-                        borderedElement.RightBorder.Width = ValueParser.ParseFloat(pair.Value);
+                        borderedElement.RightBorder.Value.Width = ValueParser.ParseFloat(pair.Value);
                         break;
                     case "rightBorderType":
-                        borderedElement.RightBorder ??= new BorderInfo();
-                        borderedElement.RightBorder.BorderType = ValueParser.ParseBorderType(pair.Value);
+                        borderedElement.RightBorder.Value ??= new BorderInfo();
+                        borderedElement.RightBorder.Value.BorderType = ValueParser.ParseBorderType(pair.Value);
                         break;
                 }
-
-                /*
-        public BorderInfo TopBorder { get; set; }
-        public BorderInfo BottomBorder { get; set; }
-        public BorderInfo LeftBorder { get; set; }
-        public BorderInfo RightBorder { get; set; }
-                 * 
-                 */
             }
         }
 
