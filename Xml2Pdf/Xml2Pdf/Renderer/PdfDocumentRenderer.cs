@@ -151,10 +151,6 @@ namespace Xml2Pdf.Renderer
                 {
                     paragraph.Add(" ").Add(RenderTextElement(element.Children.ElementAt(i) as TextElement));
                 }
-                foreach (var child in element.Children)
-                {
-                    
-                }
             }
             else
             {
