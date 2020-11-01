@@ -50,5 +50,12 @@
             _value = value;
             IsInitialized = true;
         }
+
+        /// <summary>
+        /// Get value of this property if it is initialized, otherwise return defaultValue.
+        /// </summary>
+        /// <param name="defaultValue">Default value.</param>
+        /// <returns>Initialized value or default value.</returns>
+        public T ValueOr(T defaultValue) { return IsInitialized ? _value : defaultValue; }
     }
 }

@@ -34,8 +34,24 @@ namespace Xml2Pdf
             // TODO(Moravec): Pdf size and landscape.
             //new Document(pdf, PageSize.A4.Rotate());
 
-            // Actual document writing
 
+            var t = new Table(3);
+            t.SetBold();
+            t.SetHorizontalAlignment(HorizontalAlignment.CENTER);
+            t.SetWidth(PageSize.A4.GetWidth() * 0.5f);
+            t.SetHeight(PageSize.A4.GetHeight() * 0.4f);
+            // t.StartNewRow();
+            t.AddCell(new Cell().Add(new Paragraph("A")));
+            t.AddCell(new Cell().Add(new Paragraph("B")).SetVerticalAlignment(VerticalAlignment.MIDDLE).SetTextAlignment(TextAlignment.CENTER));
+            t.AddCell(new Cell().Add(new Paragraph("C")));
+            t.StartNewRow();
+            t.AddCell(new Cell().Add(new Paragraph("A")));
+            t.AddCell(new Cell().Add(new Paragraph("B")));
+            t.AddCell(new Cell().Add(new Paragraph(new Text("dede"))));
+            
+            document.Add(t);
+            
+            // Actual document writing
             var customFont = PdfFontFactory.CreateFont(iText.IO.Font.Constants.StandardFonts.TIMES_ROMAN);
             var paragraph = new Paragraph("This is paragraph text centered")
                 .SetFont(customFont)
@@ -75,21 +91,7 @@ namespace Xml2Pdf
             document.Add(new Paragraph("This text is on third page."));
 
             //  TODO: SetTextAlignment instead of horizontal alignment
-            var t = new Table(3);
-            t.SetBold();
-            t.SetHorizontalAlignment(HorizontalAlignment.CENTER);
-            t.SetWidth(PageSize.A4.GetWidth() * 0.5f);
-            t.SetHeight(PageSize.A4.GetHeight() * 0.4f);
-            t.StartNewRow();
-            t.AddCell(new Cell().Add(new Paragraph("A")));
-            t.AddCell(new Cell().Add(new Paragraph("B")).SetVerticalAlignment(VerticalAlignment.MIDDLE).SetTextAlignment(TextAlignment.CENTER));
-            t.AddCell(new Cell().Add(new Paragraph("C")));
-            t.StartNewRow();
-            t.AddCell(new Cell().Add(new Paragraph("A")));
-            t.AddCell(new Cell().Add(new Paragraph("B")));
-            t.AddCell(new Cell().Add(new Paragraph(new Text("dede"))));
-            
-            document.Add(t);
+         
 
 
             // Closing and saving.

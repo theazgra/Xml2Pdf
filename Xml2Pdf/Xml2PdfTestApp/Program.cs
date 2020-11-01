@@ -16,6 +16,8 @@ namespace Xml2PdfTestApp
     {
         static void Main(string[] args)
         {
+            // PdfPlayground.Play();
+            // return;
             bool dump = false;
             bool render = false;
 
@@ -34,7 +36,6 @@ namespace Xml2PdfTestApp
 
             string filePath = @"D:\codes\Xml2Pdf\Xml2Pdf\Xml2PdfTestApp\Templates\Test1.xml";
 
-            // PdfPlayground.Play();
             XmlDocumentTemplateParser parser = new XmlDocumentTemplateParser();
             var doc = parser.ParseTemplateFile(filePath);
 

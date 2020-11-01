@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using Xml2Pdf.Exceptions;
 
 namespace Xml2Pdf.DocumentStructure
 {
@@ -31,6 +32,24 @@ namespace Xml2Pdf.DocumentStructure
             {
                 child.DumpToStringBuilder(dumpBuilder, indent + 2);
             }
+        }
+
+        public float[] GetColumnWidths()
+        {
+            if (!ColumnWidths.IsInitialized && ColumnCount.IsInitialized)
+            {
+                ColumnWidths.Value = new float[ColumnCount.Value];
+                for (int i = 0; i < ColumnCount.Value; i++)
+                {
+                    ColumnWidths.Value[i] = 1.0f / (float) ColumnCount.Value;
+                }
+            }
+            else
+            {
+                throw new RenderException("Table element don't have ColumnCount nor ColumnWidths initialized.");
+            }
+
+            return ColumnWidths.Value;
         }
     }
 }

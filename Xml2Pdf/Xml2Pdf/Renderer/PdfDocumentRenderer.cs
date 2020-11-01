@@ -7,11 +7,14 @@ using iText.Kernel.Font;
 using iText.Kernel.Pdf;
 using iText.Layout;
 using iText.Layout.Element;
+using iText.Layout.Properties;
 using Xml2Pdf.DocumentStructure;
 using Xml2Pdf.DocumentStructure.Geometry;
+using Xml2Pdf.Exceptions;
 using Xml2Pdf.Format;
 using Xml2Pdf.Renderer.Interface;
 using Xml2Pdf.Renderer.Mappers;
+using Xml2Pdf.Utilities;
 
 namespace Xml2Pdf.Renderer
 {
@@ -121,6 +124,90 @@ namespace Xml2Pdf.Renderer
                 case ParagraphElement paragraphElement:
                     RenderParagraphElement(paragraphElement, parent, pdfParentObject);
                     break;
+                case TableElement tableElement:
+                    RenderTableElement(tableElement, parent, pdfParentObject);
+                    break;
+                case TableRowElement tableRowElement:
+                    RenderTableRowElement(tableRowElement, parent as TableElement, pdfParentObject as Table);
+                    break;
+                case TableCellElement tableCell:
+                    RenderTableCell(tableCell, parent as TableRowElement, pdfParentObject as Table);
+                    break;
+                default:
+                    ColorConsole.WriteLine(ConsoleColor.Red,
+                                           $"Missing branch in PdfDocumentRenderer::RenderDocumentElement() for {element.GetType().Name}");
+                    break;
+            }
+        }
+
+        private void RenderTableCell(TableCellElement tableCell, TableRowElement parent, Table pdfParentObject)
+        {
+            Debug.Assert(parent != null, "DocumentElement parent is null.");
+            Debug.Assert(pdfParentObject != null, "Pdf parent is null.");
+
+            int rowSpan = tableCell.RowSpan.ValueOr(1);
+            int colSpan = tableCell.ColumnSpan.ValueOr(1);
+
+            Cell cell = new Cell(rowSpan, colSpan);
+
+            if (parent.RowHeight.IsInitialized)
+                cell.SetHeight(parent.RowHeight.Value);
+
+            Debug.Assert(tableCell.ChildrenCount == 1);
+            foreach (var cellChild in tableCell.Children)
+            {
+                RenderDocumentElement(cellChild, tableCell, cell);
+            }
+
+            pdfParentObject.AddCell(cell);
+        }
+
+        private void RenderTableRowElement(TableRowElement tableRowElement, TableElement parent, Table pdfTable)
+        {
+            Debug.Assert(parent != null, "DocumentElement parent is null.");
+            Debug.Assert(pdfTable != null, "Pdf parent is null.");
+            pdfTable.StartNewRow();
+
+            if (!tableRowElement.RowHeight.IsInitialized && parent.RowHeight.IsInitialized)
+            {
+                tableRowElement.RowHeight.Value = parent.RowHeight.Value;
+            }
+
+            foreach (var tableCell in tableRowElement.Children)
+            {
+                Debug.Assert(tableCell.GetType() == typeof(TableCellElement));
+                RenderDocumentElement(tableCell, tableRowElement, pdfTable);
+            }
+        }
+
+        private void RenderTableElement(TableElement tableElement, DocumentElement parent, object pdfParentObject)
+        {
+            Table table = new Table(tableElement.GetColumnWidths(),
+                                    (tableElement.LargeTable.IsInitialized && tableElement.LargeTable.Value));
+
+            // TODO(Moravec): Customizable.
+            table.SetWidth(new UnitValue(UnitValue.PERCENT, 100.0f));
+
+            if (tableElement.VerticalBorderSpacing.IsInitialized)
+                table.SetVerticalBorderSpacing(tableElement.VerticalBorderSpacing.Value);
+            if (tableElement.HorizontalBorderSpacing.IsInitialized)
+                table.SetHorizontalBorderSpacing(tableElement.HorizontalBorderSpacing.Value);
+
+            foreach (var tableRow in tableElement.Children)
+            {
+                Debug.Assert(tableRow.GetType() == typeof(TableRowElement),
+                             "Invalid children of TableElement. Invalid type.");
+                RenderDocumentElement(tableRow, tableElement, table);
+            }
+
+            if (pdfParentObject is Document document)
+            {
+                document.Add(table);
+            }
+            else
+            {
+                throw new
+                    RenderException($"Invalid pdf parent in RenderTableElement(), expected Document, but got: '{pdfParentObject.GetType().Name}'");
             }
         }
 
