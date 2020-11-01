@@ -19,22 +19,22 @@ namespace Xml2Pdf.DocumentStructure
 
 #region TextProperties
 
-        public ElementProperty<VerticalAlignment> VerticalAlignment { get; set; } =
+        public ElementProperty<VerticalAlignment> VerticalAlignment { get; } =
             new ElementProperty<VerticalAlignment>();
 
-        public ElementProperty<TextAlignment> TextAlignment { get; set; } = new ElementProperty<TextAlignment>();
+        public ElementProperty<TextAlignment> TextAlignment { get; } = new ElementProperty<TextAlignment>();
 
-        public ElementProperty<HorizontalAlignment> HorizontalAlignment { get; set; } =
+        public ElementProperty<HorizontalAlignment> HorizontalAlignment { get; } =
             new ElementProperty<HorizontalAlignment>();
 
-        public ElementProperty<bool> Bold { get; set; } = new ElementProperty<bool>();
-        public ElementProperty<bool> Italic { get; set; } = new ElementProperty<bool>();
-        public ElementProperty<bool> Superscript { get; set; } = new ElementProperty<bool>();
-        public ElementProperty<bool> Subscript { get; set; } = new ElementProperty<bool>();
-        public ElementProperty<bool> Underline { get; set; } = new ElementProperty<bool>();
-        public ElementProperty<float> FontSize { get; set; } = new ElementProperty<float>();
-        public ElementProperty<Color> ForegroundColor { get; set; } = new ElementProperty<Color>();
-        public ElementProperty<Color> BackgroundColor { get; set; } = new ElementProperty<Color>();
+        public ElementProperty<bool> Bold { get; } = new ElementProperty<bool>();
+        public ElementProperty<bool> Italic { get; } = new ElementProperty<bool>();
+        public ElementProperty<bool> Superscript { get; } = new ElementProperty<bool>();
+        public ElementProperty<bool> Subscript { get; } = new ElementProperty<bool>();
+        public ElementProperty<bool> Underline { get; } = new ElementProperty<bool>();
+        public ElementProperty<float> FontSize { get; } = new ElementProperty<float>();
+        public ElementProperty<Color> ForegroundColor { get; } = new ElementProperty<Color>();
+        public ElementProperty<Color> BackgroundColor { get; } = new ElementProperty<Color>();
 
 #endregion
 
@@ -67,16 +67,15 @@ namespace Xml2Pdf.DocumentStructure
             base.DumpToStringBuilder(dumpBuilder, indent);
             PrepareIndent(dumpBuilder, indent).Append("(TextElement)").AppendLine();
 
-            DumpElementProperty(dumpBuilder, indent, "TextAlignment", TextAlignment);
-            DumpElementProperty(dumpBuilder, indent, "HorizontalAlignment", HorizontalAlignment);
-            DumpElementProperty(dumpBuilder, indent, "VerticalAlignment", VerticalAlignment);
-
-            DumpElementProperty(dumpBuilder, indent, "Bold", Bold);
-            DumpElementProperty(dumpBuilder, indent, "Italic", Italic);
-            DumpElementProperty(dumpBuilder, indent, "Superscript", Superscript);
-            DumpElementProperty(dumpBuilder, indent, "Subscript", Subscript);
-            DumpElementProperty(dumpBuilder, indent, "Underline", Underline);
-            DumpElementProperty(dumpBuilder, indent, "FontSize", FontSize);
+            DumpElementProperty(dumpBuilder, indent, nameof(TextAlignment), TextAlignment);
+            DumpElementProperty(dumpBuilder, indent, nameof(HorizontalAlignment), HorizontalAlignment);
+            DumpElementProperty(dumpBuilder, indent, nameof(VerticalAlignment), VerticalAlignment);
+            DumpElementProperty(dumpBuilder, indent, nameof(Bold), Bold);
+            DumpElementProperty(dumpBuilder, indent, nameof(Italic), Italic);
+            DumpElementProperty(dumpBuilder, indent, nameof(Superscript), Superscript);
+            DumpElementProperty(dumpBuilder, indent, nameof(Subscript), Subscript);
+            DumpElementProperty(dumpBuilder, indent, nameof(Underline), Underline);
+            DumpElementProperty(dumpBuilder, indent, nameof(FontSize), FontSize);
 
 
             if (ForegroundColor.IsInitialized)

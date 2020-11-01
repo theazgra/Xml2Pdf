@@ -51,10 +51,10 @@ namespace Xml2Pdf.Parser.Xml
                 switch (pair.Name)
                 {
                     case "rowHeight":
-                        tableRowElement.RowHeight = ValueParser.ParseFloat(pair.Value);
+                        tableRowElement.RowHeight.Value = ValueParser.ParseFloat(pair.Value);
                         break;
                     case "header":
-                        tableRowElement.IsHeader = ValueParser.ParseBool(pair.Value);
+                        tableRowElement.IsHeader.Value = ValueParser.ParseBool(pair.Value);
                         break;
                     default:
                         throw new InvalidDocumentElementPropertyException(tableRowElement, pair.Name, pair.Value);
@@ -69,23 +69,23 @@ namespace Xml2Pdf.Parser.Xml
                 switch (pair.Name)
                 {
                     case "columnCount":
-                        tableElement.ColumnCount = ValueParser.ParseInt(pair.Value);
+                        tableElement.ColumnCount.Value = ValueParser.ParseInt(pair.Value);
                         break;
                     case "columnWidths":
-                        tableElement.ColumnWidths = ValueParser.ParseFloatArray(pair.Value);
-                        tableElement.ColumnCount = tableElement.ColumnWidths.Length;
+                        tableElement.ColumnWidths.Value = ValueParser.ParseFloatArray(pair.Value);
+                        tableElement.ColumnCount.Value = tableElement.ColumnWidths.Value.Length;
                         break;
                     case "largeTable":
-                        tableElement.LargeTable = ValueParser.ParseBool(pair.Value);
+                        tableElement.LargeTable.Value = ValueParser.ParseBool(pair.Value);
                         break;
                     case "verticalBorderSpacing":
-                        tableElement.VerticalBorderSpacing = ValueParser.ParseFloat(pair.Value);
+                        tableElement.VerticalBorderSpacing.Value = ValueParser.ParseFloat(pair.Value);
                         break;
                     case "horizontalBorderSpacing":
-                        tableElement.HorizontalBorderSpacing = ValueParser.ParseFloat(pair.Value);
+                        tableElement.HorizontalBorderSpacing.Value = ValueParser.ParseFloat(pair.Value);
                         break;
                     case "rowHeight":
-                        tableElement.RowHeight = ValueParser.ParseFloat(pair.Value);
+                        tableElement.RowHeight.Value = ValueParser.ParseFloat(pair.Value);
                         break;
                     default:
                         throw new InvalidDocumentElementPropertyException(tableElement, pair.Name, pair.Value);
@@ -133,6 +133,15 @@ namespace Xml2Pdf.Parser.Xml
                     case "background":
                     case "backgroundColor":
                         textElement.BackgroundColor.Value = ValueParser.ParseColor(pair.Value);
+                        break;
+                    case "property":
+                        textElement.Property = pair.Value;
+                        break;
+                    case "format":
+                        textElement.Format = pair.Value;
+                        break;
+                    case "formatProperties":
+                        textElement.FormatProperties = pair.Value.Split(',', ';');
                         break;
                 }
             }

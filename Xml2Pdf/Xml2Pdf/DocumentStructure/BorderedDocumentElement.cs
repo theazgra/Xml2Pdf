@@ -5,11 +5,11 @@ namespace Xml2Pdf.DocumentStructure
 {
     public abstract class BorderedDocumentElement : DocumentElement
     {
-        public ElementProperty<BorderInfo> Borders { get; set; } = new ElementProperty<BorderInfo>();
-        public ElementProperty<BorderInfo> TopBorder { get; set; } = new ElementProperty<BorderInfo>();
-        public ElementProperty<BorderInfo> BottomBorder { get; set; } = new ElementProperty<BorderInfo>();
-        public ElementProperty<BorderInfo> LeftBorder { get; set; } = new ElementProperty<BorderInfo>();
-        public ElementProperty<BorderInfo> RightBorder { get; set; } = new ElementProperty<BorderInfo>();
+        public ElementProperty<BorderInfo> Borders { get; } = new ElementProperty<BorderInfo>();
+        public ElementProperty<BorderInfo> TopBorder { get; } = new ElementProperty<BorderInfo>();
+        public ElementProperty<BorderInfo> BottomBorder { get; } = new ElementProperty<BorderInfo>();
+        public ElementProperty<BorderInfo> LeftBorder { get; } = new ElementProperty<BorderInfo>();
+        public ElementProperty<BorderInfo> RightBorder { get; } = new ElementProperty<BorderInfo>();
 
         // TODO(Moravec): Border radius.
 
@@ -30,11 +30,11 @@ namespace Xml2Pdf.DocumentStructure
             base.DumpToStringBuilder(dumpBuilder, indent);
             PrepareIndent(dumpBuilder, indent).Append("(BorderedDocumentElement)").AppendLine();
 
-            DumpElementProperty(dumpBuilder, indent, "Borders", Borders);
-            DumpElementProperty(dumpBuilder, indent, "TopBorder", TopBorder);
-            DumpElementProperty(dumpBuilder, indent, "BottomBorder", BottomBorder);
-            DumpElementProperty(dumpBuilder, indent, "LeftBorder", LeftBorder);
-            DumpElementProperty(dumpBuilder, indent, "RightBorder", RightBorder);
+            DumpElementProperty(dumpBuilder, indent, nameof(Borders), Borders);
+            DumpElementProperty(dumpBuilder, indent, nameof(TopBorder), TopBorder);
+            DumpElementProperty(dumpBuilder, indent, nameof(BottomBorder), BottomBorder);
+            DumpElementProperty(dumpBuilder, indent, nameof(LeftBorder), LeftBorder);
+            DumpElementProperty(dumpBuilder, indent, nameof(RightBorder), RightBorder);
         }
     }
 }
