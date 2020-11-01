@@ -13,28 +13,28 @@
 
         <Table columnCount="3">
             <TableRow>
-                <Cell>
+                <Cell borders="1;solid;red">
                     <Paragraph>1</Paragraph>
                 </Cell>
-                <Cell>
-                    <Paragraph>2</Paragraph>
+                <Cell borders="1;dashed;red">
+                    <Paragraph bold="true">2</Paragraph>
                 </Cell>
-                <Cell>
-                    <Paragraph>3</Paragraph>
+                <Cell borders="1;dotted;red">
+                    <Paragraph textAlign="center">3</Paragraph>
                 </Cell>
             </TableRow>
-            <TableRow>
+            <TableRow bold="true" textAlign="right">
                 <Cell>
-                    <Paragraph>4</Paragraph>
+                    <Paragraph bold="false">4</Paragraph>
                 </Cell>
                 <Cell>
-                    <Paragraph>5</Paragraph>
+                    <Paragraph textAlign="center">5</Paragraph>
                 </Cell>
                 <Cell>
                     <Paragraph>6</Paragraph>
                 </Cell>
             </TableRow>
-            <TableRow>
+            <TableRow borders="2,solid,blue,1.0">
                 <Cell>
                     <Paragraph>7</Paragraph>
                 </Cell>

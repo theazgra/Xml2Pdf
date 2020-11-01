@@ -149,13 +149,17 @@ namespace Xml2Pdf.Renderer
             int colSpan = tableCell.ColumnSpan.ValueOr(1);
 
             Cell cell = new Cell(rowSpan, colSpan);
+            SetTextElementProperties(cell, tableCell);
+            SetTextElementProperties(cell, (tableCell.FirstChild as TextElement));
 
             if (parent.RowHeight.IsInitialized)
                 cell.SetHeight(parent.RowHeight.Value);
 
             Debug.Assert(tableCell.ChildrenCount == 1);
+
             foreach (var cellChild in tableCell.Children)
             {
+                // TODO(Moravec): We have to set text properties on cell.
                 RenderDocumentElement(cellChild, tableCell, cell);
             }
 
@@ -167,6 +171,7 @@ namespace Xml2Pdf.Renderer
             Debug.Assert(parent != null, "DocumentElement parent is null.");
             Debug.Assert(pdfTable != null, "Pdf parent is null.");
             pdfTable.StartNewRow();
+            
 
             if (!tableRowElement.RowHeight.IsInitialized && parent.RowHeight.IsInitialized)
             {
@@ -268,7 +273,7 @@ namespace Xml2Pdf.Renderer
             else
             {
                 float fontSize = element.FontSize.IsInitialized ? element.FontSize.Value : DefaultFontSize;
-                text = new Text(textToRender).SetFontSize(fontSize);
+                text = new Text(textToRender).SetFont(_defaultFont).SetFontSize(fontSize);
             }
 
             // Borders.
@@ -305,6 +310,55 @@ namespace Xml2Pdf.Renderer
                 text.SetUnderline();
 
             return text;
+        }
+
+        private void SetBorderedElementProperties<T>(ElementPropertyContainer<T> container,
+                                                     BorderedDocumentElement element) where T : IElement
+        {
+            // Borders.
+            if (element.Borders.IsInitialized)
+            {
+                container.SetBorder(element.Borders.Value.ToITextBorder());
+            }
+            else
+            {
+                if (element.TopBorder.IsInitialized)
+                    container.SetBorderTop(element.TopBorder.Value.ToITextBorder());
+                if (element.BottomBorder.IsInitialized)
+                    container.SetBorderBottom(element.BottomBorder.Value.ToITextBorder());
+                if (element.LeftBorder.IsInitialized)
+                    container.SetBorderLeft(element.LeftBorder.Value.ToITextBorder());
+                if (element.RightBorder.IsInitialized)
+                    container.SetBorderRight(element.RightBorder.Value.ToITextBorder());
+            }
+        }
+
+
+        private void SetTextElementProperties<T>(ElementPropertyContainer<T> container,
+                                                 TextElement element) where T : IElement
+        {
+            Debug.Assert(element != null);
+            SetBorderedElementProperties(container, element);
+
+            float fontSize = element.FontSize.IsInitialized ? element.FontSize.Value : DefaultFontSize;
+            container.SetFontSize(fontSize);
+
+
+            if (element.HorizontalAlignment.IsInitialized)
+                container.SetHorizontalAlignment(element.HorizontalAlignment.Value);
+            if (element.TextAlignment.IsInitialized)
+                container.SetTextAlignment(element.TextAlignment.Value);
+            if (element.ForegroundColor.IsInitialized)
+                container.SetFontColor(element.ForegroundColor.Value);
+            if (element.BackgroundColor.IsInitialized)
+                container.SetBackgroundColor(element.BackgroundColor.Value);
+
+            if (element.Bold.IsInitialized && element.Bold.Value)
+                container.SetBold();
+            if (element.Italic.IsInitialized && element.Italic.Value)
+                container.SetItalic();
+            if (element.Underline.IsInitialized && element.Underline.IsInitialized)
+                container.SetUnderline();
         }
     }
 }

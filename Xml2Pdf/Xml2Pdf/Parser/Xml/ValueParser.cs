@@ -110,20 +110,41 @@ namespace Xml2Pdf.Parser.Xml
             };
         }
 
-        internal static BorderType ParseBorderType(string value)
+        internal static BorderInfo ParseBorderInfo(string value)
         {
-            return value switch
+            if (value == "none")
+                return new BorderInfo {BorderType = BorderType.NoBorder};
+            var parts = value.Split(';', ',');
+            if (parts.Length < 3)
             {
-                "NoBorder" => BorderType.NoBorder,
-                "Solid" => BorderType.Solid,
-                "Dashed" => BorderType.Dashed,
-                "Dotted" => BorderType.Dotted,
-                "Double" => BorderType.Double,
-                "RoundDots" => BorderType.RoundDots,
-                "Groove3D" => BorderType.Groove3D,
-                "Inset3D" => BorderType.Inset3D,
-                "Outset3D" => BorderType.Outset3D,
-                "Ridge3D" => BorderType.Ridge3D,
+                throw new ValueParseException("Unable to parse BorderInfo. " +
+                                              "Expected values like: [1.5;solid;black] or [1.5,dotted,black,(0.5)]");
+            }
+
+            BorderInfo parsed = new BorderInfo
+            {
+                Width = ParseFloat(parts[0]),
+                BorderType = ParseBorderType(parts[1]),
+                Color = ParseColor(parts[2]),
+                Opacity = parts.Length > 3 ? ParseFloat(parts[3]) : 1.0f
+            };
+            return parsed;
+        }
+
+        private static BorderType ParseBorderType(string value)
+        {
+            return value.ToLower() switch
+            {
+                "noborder" => BorderType.NoBorder,
+                "solid" => BorderType.Solid,
+                "dashed" => BorderType.Dashed,
+                "dotted" => BorderType.Dotted,
+                "double" => BorderType.Double,
+                "rounddots" => BorderType.RoundDots,
+                "groove3d" => BorderType.Groove3D,
+                "inset3d" => BorderType.Inset3D,
+                "outset3d" => BorderType.Outset3D,
+                "ridge3d" => BorderType.Ridge3D,
                 _ => throw new ValueParseException($"Invalid borded type: '{value}'.")
             };
         }

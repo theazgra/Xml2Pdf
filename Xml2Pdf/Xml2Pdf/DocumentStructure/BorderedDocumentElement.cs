@@ -11,18 +11,47 @@ namespace Xml2Pdf.DocumentStructure
         public ElementProperty<BorderInfo> LeftBorder { get; } = new ElementProperty<BorderInfo>();
         public ElementProperty<BorderInfo> RightBorder { get; } = new ElementProperty<BorderInfo>();
 
+        protected virtual bool CanInheritBorderProperties => true;
+
         // TODO(Moravec): Border radius.
 
         protected BorderedDocumentElement()
         {
-            // OnChildAdded += child =>
-            // {
-            //     if (child is BorderedDocumentElement)
-            //     {
-            //         ColorConsole.WriteLine(ConsoleColor.Blue,
-            //                                "Child of BorderedDocumentElement is also BorderedDocumentElement and can inherit properties.");
-            //     }
-            // };
+            OnChildAdded += child =>
+            {
+                if (child is BorderedDocumentElement borderedChild && borderedChild.CanInheritBorderProperties)
+                {
+                    borderedChild.InheritFrom(this);
+                }
+            };
+        }
+
+        private void InheritFrom(BorderedDocumentElement parent)
+        {
+            if (!Borders.IsInitialized && parent.Borders.IsInitialized)
+            {
+                Borders.Value = parent.Borders.Value;
+            }
+
+            if (!TopBorder.IsInitialized && parent.TopBorder.IsInitialized)
+            {
+                TopBorder.Value = parent.TopBorder.Value;
+            }
+
+            if (!BottomBorder.IsInitialized && parent.BottomBorder.IsInitialized)
+            {
+                BottomBorder.Value = parent.BottomBorder.Value;
+            }
+
+            if (!LeftBorder.IsInitialized && parent.LeftBorder.IsInitialized)
+            {
+                LeftBorder.Value = parent.LeftBorder.Value;
+            }
+
+            if (!RightBorder.IsInitialized && parent.RightBorder.IsInitialized)
+            {
+                RightBorder.Value = parent.RightBorder.Value;
+            }
         }
 
         internal override void DumpToStringBuilder(StringBuilder dumpBuilder, int indent)

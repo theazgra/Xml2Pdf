@@ -13,6 +13,7 @@ namespace Xml2Pdf.DocumentStructure
         protected event ChildAdded OnChildAdded;
 
         private List<DocumentElement> _children;
+        public DocumentElement FirstChild => (_children.Count > 0) ? _children[0] : null;
 
         public int ChildrenCount => _children.Count;
 

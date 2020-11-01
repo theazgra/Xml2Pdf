@@ -13,7 +13,7 @@ namespace Xml2Pdf.DocumentStructure.Geometry
 
         public override string ToString()
         {
-            return $"BorderType: {BorderType}; Width: {Width}; Color: {Color.ToPrettyString()}";
+            return $"BorderType: {BorderType}; Width: {Width}; Color: {Color.ToPrettyString()}; Opacity: {Opacity}";
         }
     }
 }

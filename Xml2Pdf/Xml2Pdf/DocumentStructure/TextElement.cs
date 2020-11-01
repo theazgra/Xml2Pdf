@@ -46,15 +46,41 @@ namespace Xml2Pdf.DocumentStructure
 
         public TextElement()
         {
-            // OnChildAdded += child =>
-            // {
-            //     if (child is TextElement)
-            //     {
-            //         ColorConsole.WriteLine(ConsoleColor.Blue,
-            //                                "Child of TextElement is also TextElement and can inherit properties.");
-            //     }
-            // };
+            OnChildAdded += child =>
+            {
+                if (child is TextElement textChild)
+                {
+                    textChild.InheritFrom(this);
+                }
+            };
         }
+
+        private void InheritFrom(TextElement other)
+        {
+            if (!VerticalAlignment.IsInitialized && other.VerticalAlignment.IsInitialized)
+                VerticalAlignment.Value = other.VerticalAlignment.Value;
+            if (!TextAlignment.IsInitialized && other.TextAlignment.IsInitialized)
+                TextAlignment.Value = other.TextAlignment.Value;
+            if (!HorizontalAlignment.IsInitialized && other.HorizontalAlignment.IsInitialized)
+                HorizontalAlignment.Value = other.HorizontalAlignment.Value;
+            if (!Bold.IsInitialized && other.Bold.IsInitialized)
+                Bold.Value = other.Bold.Value;
+            if (!Italic.IsInitialized && other.Italic.IsInitialized)
+                Italic.Value = other.Italic.Value;
+            if (!Superscript.IsInitialized && other.Superscript.IsInitialized)
+                Superscript.Value = other.Superscript.Value;
+            if (!Subscript.IsInitialized && other.Subscript.IsInitialized)
+                Subscript.Value = other.Subscript.Value;
+            if (!Underline.IsInitialized && other.Underline.IsInitialized)
+                Underline.Value = other.Underline.Value;
+            if (!FontSize.IsInitialized && other.FontSize.IsInitialized)
+                FontSize.Value = other.FontSize.Value;
+            if (!ForegroundColor.IsInitialized && other.ForegroundColor.IsInitialized)
+                ForegroundColor.Value = other.ForegroundColor.Value;
+            if (!BackgroundColor.IsInitialized && other.BackgroundColor.IsInitialized)
+                BackgroundColor.Value = other.BackgroundColor.Value;
+        }
+
 
         public bool IsEmpty()
         {
