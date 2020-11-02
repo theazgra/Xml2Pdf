@@ -46,6 +46,8 @@ namespace Xml2Pdf.Parser.Xml
                 {
                     case XmlNodeType.Element:
                         parentElements.Push(ParseDocumentElement(xmlReader, parentElements.Peek()));
+                        if (xmlReader.IsEmptyElement)
+                            parentElements.Pop();
                         // lastParentElement = ;
                         break;
                     case XmlNodeType.Text:

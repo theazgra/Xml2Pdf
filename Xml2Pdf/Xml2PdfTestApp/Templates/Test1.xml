@@ -11,6 +11,8 @@
             <Text>text</Text>
         </Paragraph>
 
+        <Line/>
+
         <Table columnCount="3">
             <TableRow>
                 <Cell borders="1;solid;red">
@@ -57,74 +59,22 @@
     </Page>
     <Page>
         <Table columnWidths="0.2;0.8">
-            <TableRow header="true" bold="true" foreground="red"><Cell>First</Cell><Cell>Second</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow><Cell>Ahoj</Cell><Cell>Svete</Cell></TableRow>
-            <TableRow footer="true" bold="true" foreground="blue"><Cell>First End</Cell><Cell>Second End</Cell></TableRow>
+            <TableRow header="true" bold="true" foreground="red">
+                <Cell>First</Cell>
+                <Cell>Second</Cell>
+            </TableRow>
+            <TableRow>
+                <Cell>Ahoj</Cell>
+                <Cell>Svete</Cell>
+            </TableRow>
+            <TableRow>
+                <Cell>Ahoj</Cell>
+                <Cell>Svete</Cell>
+            </TableRow>
+            <TableRow footer="true" bold="true" foreground="blue">
+                <Cell>First End</Cell>
+                <Cell>Second End</Cell>
+            </TableRow>
         </Table>
     </Page>
 </PdfDocument>
