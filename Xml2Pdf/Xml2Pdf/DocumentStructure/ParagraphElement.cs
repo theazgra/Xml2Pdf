@@ -5,13 +5,13 @@ namespace Xml2Pdf.DocumentStructure
 {
     public class ParagraphElement : TextElement
     {
-        private static readonly Type[] PossibleChildren = {typeof(TextElement)};
+        private static readonly Type[] PossibleChildren = {typeof(TextElement), typeof(ImageElement)};
 
         public override bool IsParentType => true;
         public override Type[] AllowedChildrenTypes => PossibleChildren;
 
         protected override bool CanInheritBorderProperties => false;
-    
+
         internal override void DumpToStringBuilder(StringBuilder dumpBuilder, int indent)
         {
             base.DumpToStringBuilder(dumpBuilder, indent);

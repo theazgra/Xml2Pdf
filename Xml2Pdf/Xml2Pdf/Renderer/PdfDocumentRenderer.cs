@@ -201,20 +201,32 @@ namespace Xml2Pdf.Renderer
 
             Cell cell = new Cell(rowSpan, colSpan);
             SetTextElementProperties(cell, tableCell);
-            SetTextElementProperties(cell, (tableCell.FirstChild as TextElement));
+            if (tableCell.HasChildren)
+                SetTextElementProperties(cell, (tableCell.FirstChild as TextElement));
 
             if (parent.RowHeight.IsInitialized)
                 cell.SetHeight(parent.RowHeight.Value);
 
-            Debug.Assert(tableCell.ChildrenCount == 1);
-
-            foreach (var cellChild in tableCell.Children)
+            if (tableCell.HasChildren)
             {
-                // TODO(Moravec): We have to set text properties on cell.
-                RenderDocumentElement(cellChild, tableCell, cell);
+                Debug.Assert(tableCell.ChildrenCount == 1);
+                foreach (var cellChild in tableCell.Children)
+                {
+                    // TODO(Moravec): We have to set text properties on cell.
+                    RenderDocumentElement(cellChild, tableCell, cell);
+                }
+            }
+            else if (!tableCell.IsEmpty())
+            {
+                cell.Add(new Paragraph(RenderTextElement(tableCell)));
             }
 
-            pdfParentObject.AddCell(cell);
+            if (parent.IsHeader.ValueOr(false))
+                pdfParentObject.AddHeaderCell(cell);
+            else if (parent.IsFooter.ValueOr(false))
+                pdfParentObject.AddFooterCell(cell);
+            else
+                pdfParentObject.AddCell(cell);
         }
 
         private void RenderTableRowElement(TableRowElement tableRowElement, TableElement parent, Table pdfTable)
@@ -303,10 +315,29 @@ namespace Xml2Pdf.Renderer
                                                   "Use only raw text or multiple <Text> elements.");
             }
 
-            if (pdfParentObject is Document doc)
+            AddParagraphToParent(paragraph, pdfParentObject);
+        }
+
+        private void AddParagraphToParent(Paragraph paragraph, object pdfParent)
+        {
+            if (pdfParent is Document doc)
+            {
                 doc.Add(paragraph);
-            else if (pdfParentObject is Cell cell)
+            }
+            else if (pdfParent is Cell cell)
+            {
                 cell.Add(paragraph);
+            }
+            else
+            {
+                throw RenderException.WrongPdfParent(nameof(AddParagraphToParent),
+                                                     new[]
+                                                     {
+                                                         typeof(Document),
+                                                         typeof(Cell)
+                                                     },
+                                                     pdfParent.GetType());
+            }
         }
 
         private Text RenderTextElement(TextElement element, string textToRender = null)

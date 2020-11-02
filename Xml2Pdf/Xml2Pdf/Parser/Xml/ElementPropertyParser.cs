@@ -95,6 +95,9 @@ namespace Xml2Pdf.Parser.Xml
                     case "header":
                         tableRowElement.IsHeader.Value = ValueParser.ParseBool(pair.Value);
                         break;
+                    case "footer":
+                        tableRowElement.IsFooter.Value = ValueParser.ParseBool(pair.Value);
+                        break;
                     default:
                         throw new InvalidDocumentElementPropertyException(tableRowElement, pair.Name, pair.Value);
                 }

@@ -44,7 +44,7 @@ namespace Xml2Pdf.DocumentStructure
                     ColumnWidths.Value[i] = 1.0f / (float) ColumnCount.Value;
                 }
             }
-            else
+            else if (!ColumnWidths.IsInitialized)
             {
                 throw new RenderException("Table element don't have ColumnCount nor ColumnWidths initialized.");
             }

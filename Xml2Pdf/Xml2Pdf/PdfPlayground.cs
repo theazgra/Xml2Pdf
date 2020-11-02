@@ -31,35 +31,34 @@ namespace Xml2Pdf
             var pdf = new PdfDocument(writer);
             var document = new Document(pdf);
             //document.SetMargins();
-            // TODO(Moravec): Pdf size and landscape.
             //new Document(pdf, PageSize.A4.Rotate());
 
 
             var t = new Table(3);
-            t.SetBold();
             t.SetHorizontalAlignment(HorizontalAlignment.CENTER);
-            t.SetWidth(PageSize.A4.GetWidth() * 0.5f);
-            t.SetHeight(PageSize.A4.GetHeight() * 0.4f);
-            // t.StartNewRow();
-            t.AddCell(new Cell().Add(new Paragraph("A")));
-            t.AddCell(new Cell().Add(new Paragraph("B")).SetVerticalAlignment(VerticalAlignment.MIDDLE).SetTextAlignment(TextAlignment.CENTER));
-            t.AddCell(new Cell().Add(new Paragraph("C")));
+            
+            t.AddHeaderCell(new Cell().Add(new Paragraph("A")));
+            t.AddHeaderCell(new Cell().Add(new Paragraph("B")));
+            t.AddHeaderCell(new Cell().Add(new Paragraph("C")));
             t.StartNewRow();
             t.AddCell(new Cell().Add(new Paragraph("A")));
             t.AddCell(new Cell().Add(new Paragraph("B")));
-            t.AddCell(new Cell().Add(new Paragraph(new Text("dede"))));
-            
+            t.AddCell(new Cell().Add(new Paragraph("C")));
+            t.StartNewRow();
+            t.AddFooterCell(new Cell().Add(new Paragraph("A")));
+            t.AddFooterCell(new Cell().Add(new Paragraph("B")));
+            t.AddFooterCell(new Cell().Add(new Paragraph("C")));
             document.Add(t);
-            
+
             // Actual document writing
             var customFont = PdfFontFactory.CreateFont(iText.IO.Font.Constants.StandardFonts.TIMES_ROMAN);
             var paragraph = new Paragraph("This is paragraph text centered")
-                .SetFont(customFont)
-                .SetBold()
-                .SetItalic()
-                .SetTextAlignment(TextAlignment.CENTER)
-                // .SetHorizontalAlignment(HorizontalAlignment.CENTER)
-                .SetFontColor(ColorConstants.RED);
+                            .SetFont(customFont)
+                            .SetBold()
+                            .SetItalic()
+                            .SetTextAlignment(TextAlignment.CENTER)
+                            // .SetHorizontalAlignment(HorizontalAlignment.CENTER)
+                            .SetFontColor(ColorConstants.RED);
 
             //var b = new SolidBorder
 
@@ -68,7 +67,7 @@ namespace Xml2Pdf
 
             List pdfList = new List(ListNumberingType.DECIMAL)
                 .SetSymbolIndent(12);
-            
+
             pdfList.Add(new ListItem("Never gonna give you up"))
                    .Add(new ListItem("Never gonna let you down"))
                    .Add(new ListItem("Never gonna run around and desert you"))
@@ -87,9 +86,6 @@ namespace Xml2Pdf
             document.Add(new AreaBreak(AreaBreakType.NEXT_PAGE));
 
             document.Add(new Paragraph("This text is on third page."));
-
-            //  TODO: SetTextAlignment instead of horizontal alignment
-         
 
 
             // Closing and saving.
