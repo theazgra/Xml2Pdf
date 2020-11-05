@@ -1,17 +1,32 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
 <PdfDocument>
     <Page>
+        <Table columnCount="4">
+            <TableRow header="true">
+                <Cell>Krestni jmeno</Cell>
+                <Cell>Prijmeni</Cell>
+                <Cell>Vek</Cell>
+                <Cell>Manzelka</Cell>
+            </TableRow>
+            <TableRow>
+                <Cell property="FirstName" />
+                <Cell property="LastName" />
+                <Cell property="Age" />
+                <Cell property="Wife" />
+            </TableRow>
+        </Table>
         <Paragraph bold="true">Bold Text</Paragraph>
         <Paragraph italic="true">Italic text</Paragraph>
         <Paragraph underline="true">Underline text</Paragraph>
         <Paragraph underline="true" foreground="red">Underline Red text</Paragraph>
+        <Line border="0.5,solid,red,0.8" />
         <Paragraph>
             <Text>This is paragraph</Text>
             <Text foreground="blue">(added text from &lt;Text&gt; tag)</Text>
             <Text>text</Text>
         </Paragraph>
 
-        <Line/>
+        <Line />
 
         <Table columnCount="3">
             <TableRow>
@@ -49,8 +64,7 @@
             </TableRow>
         </Table>
 
-        <List enumerate="true" indent="5" preText="(" postText=")" foreground="88;88;88" underline="true"
-              borderLeft="2;solid;green">
+        <List enumerate="true" indent="5" preText="(" postText=")" foreground="88;88;88" underline="true" borderLeft="2;solid;green">
             <ListItem>This is very first item in the list.</ListItem>
             <ListItem>This is another item.</ListItem>
             <ListItem underline="false" bold="true">Now I am just playing.</ListItem>

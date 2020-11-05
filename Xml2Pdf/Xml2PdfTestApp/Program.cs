@@ -1,17 +1,35 @@
 ﻿using System;
-using System.IO;
-using System.Runtime.InteropServices;
-using System.Threading;
-using System.Xml;
-using System.Xml.Serialization;
-using Xml2Pdf;
-using Xml2Pdf.DocumentStructure;
+using Xml2Pdf.Format;
 using Xml2Pdf.Format.Formatters;
 using Xml2Pdf.Parser.Xml;
 using Xml2Pdf.Renderer;
 
 namespace Xml2PdfTestApp
 {
+    class Person
+    {
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public uint Age { get; set; }
+        public Person Wife { get; set; }
+    }
+
+    class PersonFormatter : IPropertyFormatter
+    {
+        public int Priority => 10;
+        public Type RegisteredType => typeof(Person);
+
+        public string Format(object value)
+        {
+            if (value is Person person)
+            {
+                return $"{person.FirstName} {person.LastName} of age {person.Age}";
+            }
+
+            throw new FormatException("Unable to format object of type: " + value.GetType().Name);
+        }
+    }
+
     class Program
     {
         static void Main(string[] args)
@@ -46,8 +64,24 @@ namespace Xml2PdfTestApp
             {
                 const string renderTarget = "D:\\tmp\\rendered.pdf";
                 var renderer = new PdfDocumentRenderer();
-                renderer.ValueFormatter.AddFormatter(new ToStringFormatter<object>());
-                renderer.RenderDocument(doc, renderTarget);
+                // renderer.ValueFormatter.AddFormatter(new PersonFormatter());
+                renderer.ValueFormatter.AddFormatFunction<Person>(person =>
+                                                                      $"{person.FirstName} {person.LastName} of age {person.Age}");
+
+                var p = new Person
+                {
+                    FirstName = "Vojtech",
+                    LastName = "Moravec",
+                    Age = 24,
+                    Wife = new Person
+                    {
+                        FirstName = "Eliska",
+                        LastName = "Moravcova",
+                        Age = 22,
+                    }
+                };
+
+                renderer.RenderDocument(doc, renderTarget, p);
                 Console.WriteLine("Document is rendered to {0}", renderTarget);
             }
         }
