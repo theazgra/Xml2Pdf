@@ -12,6 +12,7 @@ using Xml2Pdf.DocumentStructure;
 using Xml2Pdf.DocumentStructure.Geometry;
 using Xml2Pdf.Exceptions;
 using Xml2Pdf.Format;
+using Xml2Pdf.Format.Formatters;
 using Xml2Pdf.Renderer.Interface;
 using Xml2Pdf.Renderer.Mappers;
 using Xml2Pdf.Utilities;
@@ -37,6 +38,7 @@ namespace Xml2Pdf.Renderer
             _objectPropertyMap = new Dictionary<string, object>();
             ValueFormatter = new ValueFormatter();
             _defaultFont = GetDefaultFont();
+            ValueFormatter.AddFormatter(new ToStringFormatter<object>());
         }
 
         private PdfFont GetDefaultFont() => PdfFontFactory.CreateFont(iText.IO.Font.Constants.StandardFonts.HELVETICA);
@@ -102,11 +104,21 @@ namespace Xml2Pdf.Renderer
                 case ListItemElement listItemElement:
                     RenderListItemElement(listItemElement, docParent as iText.Layout.Element.List);
                     break;
+                case LineElement lineElement:
+                    RenderLineElement(lineElement, docParent);
+                    break;
                 default:
                     ColorConsole.WriteLine(ConsoleColor.Red,
                                            $"Missing branch in PdfDocumentRenderer::RenderDocumentElement() for {element.GetType().Name}");
                     break;
             }
+        }
+
+        private void RenderLineElement(LineElement lineElement, object docParent)
+        {
+            var emptyParagraph = new Paragraph();
+            SetBorderedElementProperties(emptyParagraph, lineElement);
+            AddParagraphToParent(emptyParagraph, docParent);
         }
 
         private void RenderListElement(ListElement element, DocumentElement parent, object pdfParentObject)

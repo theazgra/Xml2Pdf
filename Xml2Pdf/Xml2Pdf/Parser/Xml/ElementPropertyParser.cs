@@ -35,6 +35,9 @@ namespace Xml2Pdf.Parser.Xml
                 case ListElement listElement:
                     AssignListElementProperties(listElement, propertyBag);
                     break;
+                case LineElement lineElement:
+                    AssignLineElementProperties(lineElement, propertyBag);
+                    break;
                 case ListItemElement _:
                 case ParagraphElement _:
                 case TextElement _:
@@ -44,6 +47,24 @@ namespace Xml2Pdf.Parser.Xml
                     ColorConsole.WriteLine(ConsoleColor.Red,
                                            $"Missing branch in `ParseAndAssignElementProperty` for '{documentElement.GetType().Name}'");
                     break;
+            }
+        }
+
+        private static void AssignLineElementProperties(LineElement lineElement, PropertyBag<string> propertyBag)
+        {
+            foreach (var pair in propertyBag.UnprocessedPairs())
+            {
+                switch (pair.Name)
+                {
+                    case "width":
+                        lineElement.BottomBorder.Value.Width = ValueParser.ParseFloat(pair.Value);
+                        break;
+                    case "border":
+                        lineElement.BottomBorder.Value = ValueParser.ParseBorderInfo(pair.Value);
+                        break;
+                    default:
+                        throw new InvalidDocumentElementPropertyException(lineElement, pair.Name, pair.Value);
+                }
             }
         }
 
