@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using iText.Kernel.Font;
+using iText.Kernel.Geom;
 using iText.Kernel.Pdf;
 using iText.Layout;
 using iText.Layout.Element;
@@ -25,6 +26,7 @@ namespace Xml2Pdf.Renderer
         private readonly Dictionary<string, object> _objectPropertyMap;
 
         private readonly PdfFont _defaultFont;
+        private Rectangle _effectivePageRectangle;
 
         // TODO(Moravec): This should be configurable in XML.
         private const float DefaultFontSize = 10;
@@ -71,6 +73,7 @@ namespace Xml2Pdf.Renderer
 
 
             _pdfDocument = new Document(pdf, pageSize);
+            _effectivePageRectangle = _pdfDocument.GetPageEffectiveArea(pageSize);
 
             RenderRootDocumentElement(rootDocumentElement);
 
@@ -118,6 +121,10 @@ namespace Xml2Pdf.Renderer
         {
             var emptyParagraph = new Paragraph();
             SetBorderedElementProperties(emptyParagraph, lineElement);
+            if (lineElement.Length.IsInitialized)
+                emptyParagraph.SetWidth(lineElement.Length.Value);
+            if (lineElement.Alignment.IsInitialized)
+                emptyParagraph.SetHorizontalAlignment(lineElement.Alignment.Value);
             AddParagraphToParent(emptyParagraph, docParent);
         }
 
@@ -309,6 +316,7 @@ namespace Xml2Pdf.Renderer
                                             object pdfParentObject)
         {
             var paragraph = new Paragraph();
+            SetTextElementProperties(paragraph, element);
             if (!element.HasChildren)
             {
                 paragraph.Add(RenderTextElement(element));

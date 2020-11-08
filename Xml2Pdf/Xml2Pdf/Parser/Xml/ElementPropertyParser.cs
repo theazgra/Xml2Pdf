@@ -62,6 +62,13 @@ namespace Xml2Pdf.Parser.Xml
                     case "border":
                         lineElement.BottomBorder.Value = ValueParser.ParseBorderInfo(pair.Value);
                         break;
+                    case "length":
+                        lineElement.Length.Value = ValueParser.ParseUnitValue(pair.Value);
+                        break;
+                    case "align":
+                    case "alignment":
+                        lineElement.Alignment.Value = ValueParser.ParseHorizontalAlignment(pair.Value);
+                        break;
                     default:
                         throw new InvalidDocumentElementPropertyException(lineElement, pair.Name, pair.Value);
                 }

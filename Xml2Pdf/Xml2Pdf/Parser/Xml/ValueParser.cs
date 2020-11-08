@@ -200,5 +200,12 @@ namespace Xml2Pdf.Parser.Xml
                          ValueParseException("Invalid VerticalAlignment, valid values are: top, bottom and middle.")
             };
         }
+
+        internal static UnitValue ParseUnitValue(string value)
+        {
+            return value.EndsWith('%')
+                       ? UnitValue.CreatePercentValue(ParseFloat(value.Substring(0, value.Length - 1)))
+                       : UnitValue.CreatePointValue(ParseFloat(value));
+        }
     }
 }

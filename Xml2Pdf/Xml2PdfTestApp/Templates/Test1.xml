@@ -1,6 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
 <PdfDocument>
     <Page>
+        <Paragraph bold="true">Bold Text</Paragraph>
+        <Paragraph italic="true">Italic text</Paragraph>
+        <Paragraph underline="true">Underline text</Paragraph>
+        <Paragraph underline="true" foreground="red">Underline Red text</Paragraph>
+        <Line border="0.5,solid,red,0.8" length="65%" align="right" />
+        <Paragraph>
+            <Text>This is paragraph</Text>
+            <Text foreground="blue">(added text from &lt;Text&gt; tag)</Text>
+            <Text>text</Text>
+        </Paragraph>
+
+        <Paragraph textAlign="justify">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Quisque tincidunt scelerisque libero. Nullam eget nisl. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Duis condimentum augue id magna semper rutrum. Curabitur ligula sapien, pulvinar a vestibulum quis, facilisis vel sapien. Integer pellentesque quam vel velit. Nullam at arcu a est sollicitudin euismod. Fusce aliquam vestibulum ipsum. Phasellus enim erat, vestibulum vel, aliquam a, posuere eu, velit. Duis risus. Praesent id justo in neque elementum ultrices.</Paragraph>
+
         <Table columnCount="4">
             <TableRow header="true">
                 <Cell>Krestni jmeno</Cell>
@@ -14,19 +27,21 @@
                 <Cell property="Age" />
                 <Cell property="Wife" />
             </TableRow>
+            <TableRow footer="true">
+                <Cell>A</Cell>
+                <Cell>B</Cell>
+                <Cell>C</Cell>
+                <Cell>D</Cell>
+            </TableRow>
+            <TableRow>
+                <Cell property="FirstName" />
+                <Cell property="LastName" />
+                <Cell property="Age" />
+                <Cell property="Wife" />
+            </TableRow>
         </Table>
-        <Paragraph bold="true">Bold Text</Paragraph>
-        <Paragraph italic="true">Italic text</Paragraph>
-        <Paragraph underline="true">Underline text</Paragraph>
-        <Paragraph underline="true" foreground="red">Underline Red text</Paragraph>
-        <Line border="0.5,solid,red,0.8" />
-        <Paragraph>
-            <Text>This is paragraph</Text>
-            <Text foreground="blue">(added text from &lt;Text&gt; tag)</Text>
-            <Text>text</Text>
-        </Paragraph>
 
-        <Line />
+        <Line length="40%" align="center" />
 
         <Table columnCount="3">
             <TableRow>
