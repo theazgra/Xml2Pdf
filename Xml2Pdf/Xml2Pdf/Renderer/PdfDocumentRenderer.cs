@@ -245,7 +245,8 @@ namespace Xml2Pdf.Renderer
         {
             Debug.Assert(parent != null, "DocumentElement parent is null.");
             Debug.Assert(pdfTable != null, "Pdf parent is null.");
-            pdfTable.StartNewRow();
+            if (!tableRowElement.IsHeader.ValueOr(false) && !tableRowElement.IsFooter.ValueOr(false))
+                pdfTable.StartNewRow();
 
 
             if (!tableRowElement.RowHeight.IsInitialized && parent.RowHeight.IsInitialized)
