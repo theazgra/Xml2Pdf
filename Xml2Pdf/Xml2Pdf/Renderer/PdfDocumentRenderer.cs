@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Channels;
 using iText.Kernel.Font;
 using iText.Kernel.Geom;
 using iText.Kernel.Pdf;
@@ -96,11 +97,11 @@ namespace Xml2Pdf.Renderer
                 case TableElement tableElement:
                     RenderTableElement(tableElement, parent, docParent);
                     break;
-                case TableRowElement tableRowElement:
-                    RenderTableRowElement(tableRowElement, parent as TableElement, docParent as Table);
-                    break;
                 case TableDataRowElement tableDataRowElement:
                     RenderTableDataRowElement(tableDataRowElement, parent as TableElement, docParent as Table);
+                    break;
+                case TableRowElement tableRowElement:
+                    RenderTableRowElement(tableRowElement, parent as TableElement, docParent as Table);
                     break;
                 case TableCellElement tableCell:
                     RenderTableCell(tableCell, parent as TableRowElement, docParent as Table);
@@ -323,17 +324,32 @@ namespace Xml2Pdf.Renderer
             int rowIndex = 1;
             foreach (var rowObject in tableDataSourceArray)
             {
-                pdfTable.StartNewRow();
-                if (enumerationAsFirstColumn)
+                if (element.HasChildren)
                 {
-                    pdfTable.AddCell(new Cell().Add(new Paragraph(RenderTextElement(element, rowIndex.ToString()))));
-                    rowIndex++;
-                }
+                    pdfTable.StartNewRow();
+                    if (enumerationAsFirstColumn)
+                    {
+                        TableCellElement cell = (TableCellElement) element.FirstChild;
+                        cell.Text = rowIndex.ToString();
+                        RenderTableCell(cell, element, pdfTable);
+                        rowIndex++;
+                    }
 
-                foreach (PropertyInfo cellProperty in objectProperties)
+                    int offset = enumerationAsFirstColumn ? 1 : 0;
+                    for (int cellIndex = 0; cellIndex < objectProperties.Length; cellIndex++)
+                    {
+                        TableCellElement cell = (TableCellElement) element.GetChildrenAtIndex(cellIndex + offset);
+                        cell.Text = ValueFormatter.FormatValue(objectProperties[cellIndex].GetValue(rowObject));
+                        RenderTableCell(cell, element, pdfTable);
+                    }
+                }
+                else
                 {
-                    string text = ValueFormatter.FormatValue(cellProperty.GetValue(rowObject));
-                    pdfTable.AddCell(new Cell().Add(new Paragraph(RenderTextElement(element, text))));
+                    foreach (PropertyInfo cellProperty in objectProperties)
+                    {
+                        string text = ValueFormatter.FormatValue(cellProperty.GetValue(rowObject));
+                        pdfTable.AddCell(new Cell().Add(new Paragraph(RenderTextElement(element, text))));
+                    }
                 }
             }
         }

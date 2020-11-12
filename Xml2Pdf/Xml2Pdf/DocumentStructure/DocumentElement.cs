@@ -60,6 +60,8 @@ namespace Xml2Pdf.DocumentStructure
 
         protected DocumentElement() { }
 
+        public DocumentElement GetChildrenAtIndex(int index) { return _children[index]; }
+
         /// <summary>
         /// Check if this element can have child of given type.
         /// </summary>

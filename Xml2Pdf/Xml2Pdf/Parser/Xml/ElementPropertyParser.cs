@@ -29,11 +29,11 @@ namespace Xml2Pdf.Parser.Xml
                 case TableElement tableElement:
                     AssignTableElementProperties(tableElement, propertyBag);
                     break;
-                case TableRowElement tableRowElement:
-                    AssignTableRowElementProperties(tableRowElement, propertyBag);
-                    break;
                 case TableDataRowElement tableDataRowElement:
                     AssignTableDataRowElementProperties(tableDataRowElement, propertyBag);
+                    break;
+                case TableRowElement tableRowElement:
+                    AssignTableRowElementProperties(tableRowElement, propertyBag);
                     break;
                 case TableCellElement cellElement:
                     AssignTableCellElementProperties(cellElement, propertyBag);
