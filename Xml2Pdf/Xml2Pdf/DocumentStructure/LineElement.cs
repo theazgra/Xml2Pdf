@@ -8,8 +8,8 @@ namespace Xml2Pdf.DocumentStructure
 {
     public class LineElement : BorderedDocumentElement
     {
-        public override bool IsParentType => false;
-        public override Type[] AllowedChildrenTypes => Array.Empty<Type>();
+        protected override bool IsParentType => false;
+        protected override Type[] AllowedChildrenTypes => Array.Empty<Type>();
 
         public ElementProperty<UnitValue> Length { get; } = new ElementProperty<UnitValue>();
         public ElementProperty<HorizontalAlignment> Alignment { get; } = new ElementProperty<HorizontalAlignment>();

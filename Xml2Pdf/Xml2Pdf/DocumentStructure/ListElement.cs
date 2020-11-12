@@ -18,8 +18,8 @@ namespace Xml2Pdf.DocumentStructure
         public ElementProperty<string> PostSymbolText { get; } = new ElementProperty<string>();
         public ElementProperty<bool> Enumeration { get; } = new ElementProperty<bool>();
 
-        public override bool IsParentType => true;
-        public override Type[] AllowedChildrenTypes => PossibleChildren;
+        protected override bool IsParentType => true;
+        protected override Type[] AllowedChildrenTypes => PossibleChildren;
 
 
         internal override void DumpToStringBuilder(StringBuilder dumpBuilder, int indent)

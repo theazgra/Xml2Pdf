@@ -10,8 +10,8 @@ namespace Xml2Pdf.DocumentStructure
         public ElementProperty<int> ColumnSpan { get; } = new ElementProperty<int>();
         public ElementProperty<int> RowSpan { get; } = new ElementProperty<int>();
 
-        public override bool IsParentType => true;
-        public override Type[] AllowedChildrenTypes => PossibleChildren;
+        protected override bool IsParentType => true;
+        protected override Type[] AllowedChildrenTypes => PossibleChildren;
 
         internal override void DumpToStringBuilder(StringBuilder dumpBuilder, int indent)
         {

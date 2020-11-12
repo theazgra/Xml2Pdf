@@ -7,8 +7,8 @@ namespace Xml2Pdf.DocumentStructure
     {
         private static readonly Type[] PossibleChildren = {typeof(TextElement), typeof(ImageElement)};
 
-        public override bool IsParentType => true;
-        public override Type[] AllowedChildrenTypes => PossibleChildren;
+        protected override bool IsParentType => true;
+        protected override Type[] AllowedChildrenTypes => PossibleChildren;
 
         protected override bool CanInheritBorderProperties => false;
 

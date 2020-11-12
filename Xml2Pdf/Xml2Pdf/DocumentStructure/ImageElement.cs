@@ -11,7 +11,7 @@ namespace Xml2Pdf.DocumentStructure
         public float HorizontalScaling { get; set; } = 1.0f;
         public float VerticalScaling { get; set; } = 1.0f;
 
-        public override bool IsParentType => false;
-        public override Type[] AllowedChildrenTypes =>  Array.Empty<Type>();
+        protected override bool IsParentType => false;
+        protected override Type[] AllowedChildrenTypes =>  Array.Empty<Type>();
     }
 }

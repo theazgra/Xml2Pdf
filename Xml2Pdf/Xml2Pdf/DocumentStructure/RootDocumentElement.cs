@@ -17,8 +17,8 @@ namespace Xml2Pdf.DocumentStructure
 
         public int PageCount { get; private set; }
 
-        public override bool IsParentType => true;
-        public override Type[] AllowedChildrenTypes => PossibleChildren;
+        protected override bool IsParentType => true;
+        protected override Type[] AllowedChildrenTypes => PossibleChildren;
 
         public RootDocumentElement()
         {

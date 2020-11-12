@@ -15,8 +15,8 @@ namespace Xml2Pdf.DocumentStructure
         public ElementProperty<float> HorizontalBorderSpacing { get; set; } = new ElementProperty<float>();
         public ElementProperty<float> RowHeight { get; set; } = new ElementProperty<float>();
 
-        public override bool IsParentType => true;
-        public override Type[] AllowedChildrenTypes => PossibleChildren;
+        protected override bool IsParentType => true;
+        protected override Type[] AllowedChildrenTypes => PossibleChildren;
 
         internal override void DumpToStringBuilder(StringBuilder dumpBuilder, int indent)
         {

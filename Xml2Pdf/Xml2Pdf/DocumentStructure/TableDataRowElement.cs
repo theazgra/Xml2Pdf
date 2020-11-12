@@ -9,7 +9,7 @@ namespace Xml2Pdf.DocumentStructure
         public string DataSourceProperty { get; set; }
         public string[] ColumnCellProperties { get; set; }
 
-        public override bool IsParentType => true;
-        public override Type[] AllowedChildrenTypes => PossibleChildren;
+        protected override bool IsParentType => true;
+        protected override Type[] AllowedChildrenTypes => PossibleChildren;
     }
 }

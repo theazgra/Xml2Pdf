@@ -11,8 +11,8 @@ namespace Xml2Pdf.DocumentStructure
         public ElementProperty<bool> IsFooter { get; } = new ElementProperty<bool>();
         public ElementProperty<float> RowHeight { get; } = new ElementProperty<float>();
 
-        public override bool IsParentType => true;
-        public override Type[] AllowedChildrenTypes => PossibleChildren;
+        protected override bool IsParentType => true;
+        protected override Type[] AllowedChildrenTypes => PossibleChildren;
 
 
         internal override void DumpToStringBuilder(StringBuilder dumpBuilder, int indent)
