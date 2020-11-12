@@ -6,7 +6,7 @@ namespace Xml2Pdf.DocumentStructure
 {
     public class TableElement : TextElement
     {
-        private static readonly Type[] PossibleChildren = {typeof(TableRowElement)};
+        private static readonly Type[] PossibleChildren = {typeof(TableRowElement), typeof(TableDataRowElement)};
 
         public ElementProperty<int> ColumnCount { get; set; } = new ElementProperty<int>();
         public ElementProperty<float[]> ColumnWidths { get; set; } = new ElementProperty<float[]>();

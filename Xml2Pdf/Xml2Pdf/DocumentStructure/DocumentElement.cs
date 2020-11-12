@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Text;
+using Org.BouncyCastle.Asn1.X509.Qualified;
 using Xml2Pdf.Exceptions;
 
 namespace Xml2Pdf.DocumentStructure
@@ -91,11 +92,22 @@ namespace Xml2Pdf.DocumentStructure
         {
             if (!elementProperty.IsInitialized)
                 return;
+
+            string prettyValue;
+            if (elementProperty.Value is string[] stringArray)
+                prettyValue = '[' + string.Join(", ", stringArray) + ']';
+            else
+                prettyValue = elementProperty.Value.ToString();
+
+
+            //if (typeof(T))
+
+
             PrepareIndent(dumpBuilder, indentationLevel)
                 .Append(" -")
                 .Append(propertyName)
                 .Append(": '")
-                .Append(elementProperty.Value)
+                .Append(prettyValue)
                 .Append('\'')
                 .AppendLine();
         }

@@ -32,6 +32,12 @@ namespace Xml2Pdf.Parser.Xml
                 case TableRowElement tableRowElement:
                     AssignTableRowElementProperties(tableRowElement, propertyBag);
                     break;
+                case TableDataRowElement tableDataRowElement:
+                    AssignTableDataRowElementProperties(tableDataRowElement, propertyBag);
+                    break;
+                case TableCellElement cellElement:
+                    AssignTableCellElementProperties(cellElement, propertyBag);
+                    break;
                 case ListElement listElement:
                     AssignListElementProperties(listElement, propertyBag);
                     break;
@@ -71,6 +77,30 @@ namespace Xml2Pdf.Parser.Xml
                         break;
                     default:
                         throw new InvalidDocumentElementPropertyException(lineElement, pair.Name, pair.Value);
+                }
+            }
+        }
+
+        private static void AssignTableCellElementProperties(TableCellElement cellElement,
+                                                             PropertyBag<string> propertyBag)
+        {
+            foreach (var pair in propertyBag.UnprocessedPairs())
+            {
+                switch (pair.Name)
+                {
+                    case "columnSpan":
+                    case "colSpan":
+                        cellElement.ColumnSpan.Value = ValueParser.ParseInt(pair.Value);
+                        break;
+                    case "rowSpan":
+                        cellElement.RowSpan.Value = ValueParser.ParseInt(pair.Value);
+                        break;
+                    case "enumerate":
+                    case "increment":
+                        cellElement.Enumerate.Value = ValueParser.ParseBool(pair.Value);
+                        break;
+                    default:
+                        throw new InvalidDocumentElementPropertyException(cellElement, pair.Name, pair.Value);
                 }
             }
         }
@@ -128,6 +158,29 @@ namespace Xml2Pdf.Parser.Xml
                         break;
                     default:
                         throw new InvalidDocumentElementPropertyException(tableRowElement, pair.Name, pair.Value);
+                }
+            }
+        }
+
+        private static void AssignTableDataRowElementProperties(TableDataRowElement tableDataRowElement,
+                                                                PropertyBag<string> propertyBag)
+        {
+            foreach (var pair in propertyBag.UnprocessedPairs())
+            {
+                switch (pair.Name)
+                {
+                    case "rowHeight":
+                        tableDataRowElement.RowHeight.Value = ValueParser.ParseFloat(pair.Value);
+                        break;
+                    case "dataSource":
+                        tableDataRowElement.DataSource.Value = pair.Value;
+                        break;
+                    case "cellProperties":
+                    case "columnProperties":
+                        tableDataRowElement.ColumnCellProperties.Value = ValueParser.ParseStringArray(pair.Value);
+                        break;
+                    default:
+                        throw new InvalidDocumentElementPropertyException(tableDataRowElement, pair.Name, pair.Value);
                 }
             }
         }
@@ -212,7 +265,7 @@ namespace Xml2Pdf.Parser.Xml
                         textElement.Format = pair.Value;
                         break;
                     case "formatProperties":
-                        textElement.FormatProperties = pair.Value.Split(',', ';');
+                        textElement.FormatProperties = ValueParser.ParseStringArray(pair.Value);
                         break;
                 }
             }

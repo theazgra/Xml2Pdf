@@ -38,7 +38,7 @@ namespace Xml2Pdf.Parser.Xml
 
         internal static Margins ParseCompleteMargins(string value)
         {
-            string[] parts = value.Split(',', ';');
+            string[] parts = ParseStringArray(value);
             return parts.Length switch
             {
                 1 => new Margins(ParseFloat(parts[0])),
@@ -59,7 +59,7 @@ namespace Xml2Pdf.Parser.Xml
 
         internal static float[] ParseFloatArray(string value)
         {
-            var parts = value.Split(';', ',');
+            var parts = ParseStringArray(value);
             var coeffs = parts.Select(x => ParseFloat(x)).ToArray();
             return coeffs;
         }
@@ -74,6 +74,8 @@ namespace Xml2Pdf.Parser.Xml
                                                    "Valid values are portrait and landscape.")
             };
         }
+
+        internal static string[] ParseStringArray(string value) => value.Split(',', ';');
 
         internal static PageSize ParsePageSize(string propertyValue)
         {
@@ -114,7 +116,7 @@ namespace Xml2Pdf.Parser.Xml
         {
             if (value == "none")
                 return new BorderInfo {BorderType = BorderType.NoBorder};
-            var parts = value.Split(';', ',');
+            var parts = ParseStringArray(value);
             if (parts.Length < 3)
             {
                 throw new ValueParseException("Unable to parse BorderInfo. " +
@@ -151,7 +153,7 @@ namespace Xml2Pdf.Parser.Xml
 
         internal static Color ParseColor(string value)
         {
-            var parts = value.Split(';', ',');
+            var parts = ParseStringArray(value);
 
             return parts.Length switch
             {

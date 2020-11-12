@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Reflection;
 using iText.Kernel.Font;
 using iText.Kernel.Geom;
 using iText.Kernel.Pdf;
@@ -97,6 +98,9 @@ namespace Xml2Pdf.Renderer
                     break;
                 case TableRowElement tableRowElement:
                     RenderTableRowElement(tableRowElement, parent as TableElement, docParent as Table);
+                    break;
+                case TableDataRowElement tableDataRowElement:
+                    RenderTableDataRowElement(tableDataRowElement, parent as TableElement, docParent as Table);
                     break;
                 case TableCellElement tableCell:
                     RenderTableCell(tableCell, parent as TableRowElement, docParent as Table);
@@ -268,6 +272,72 @@ namespace Xml2Pdf.Renderer
             }
         }
 
+        private void RenderTableDataRowElement(TableDataRowElement element,
+                                               TableElement parent,
+                                               Table pdfTable)
+        {
+            Debug.Assert(parent != null, "DocumentElement parent is null.");
+            Debug.Assert(pdfTable != null, "Pdf parent is null.");
+
+            if (!element.RowHeight.IsInitialized && parent.RowHeight.IsInitialized)
+            {
+                element.RowHeight.Value = parent.RowHeight.Value;
+            }
+
+            // Check that data source properties are initialized.
+            if (!element.DataSource.IsInitialized)
+            {
+                throw new RenderException("dataSource property must be set for TableDataRowElement.");
+            }
+
+
+            if (!(_objectPropertyMap[element.DataSource.Value] is IEnumerable<object> tableDataSource))
+                throw new RenderException("DataSource must be convertible to IEnumerable<object>.");
+
+            var tableDataSourceArray = tableDataSource as object[] ?? tableDataSource.ToArray();
+            if (!tableDataSourceArray.Any())
+                return;
+
+            Type rowObjectType = tableDataSourceArray[0].GetType();
+
+            PropertyInfo[] objectProperties;
+            bool enumerationAsFirstColumn = false;
+            if (element.HasChildren)
+            {
+                if (element.FirstChild is TableCellElement cell && cell.Enumerate.ValueOr(false))
+                    enumerationAsFirstColumn = true;
+
+                objectProperties = element.Children.OfType<TableCellElement>()
+                                          .Where(c => !string.IsNullOrEmpty(c.Property))
+                                          .Select(c => rowObjectType.GetProperty(c.Property))
+                                          .ToArray();
+            }
+            else
+            {
+                objectProperties = element.ColumnCellProperties.Value
+                                          .Select(p => rowObjectType.GetProperty(p))
+                                          .ToArray();
+            }
+
+
+            int rowIndex = 1;
+            foreach (var rowObject in tableDataSourceArray)
+            {
+                pdfTable.StartNewRow();
+                if (enumerationAsFirstColumn)
+                {
+                    pdfTable.AddCell(new Cell().Add(new Paragraph(RenderTextElement(element, rowIndex.ToString()))));
+                    rowIndex++;
+                }
+
+                foreach (PropertyInfo cellProperty in objectProperties)
+                {
+                    string text = ValueFormatter.FormatValue(cellProperty.GetValue(rowObject));
+                    pdfTable.AddCell(new Cell().Add(new Paragraph(RenderTextElement(element, text))));
+                }
+            }
+        }
+
         private void RenderTableElement(TableElement tableElement, DocumentElement parent, object pdfParentObject)
         {
             Table table = new Table(tableElement.GetColumnWidths(),
@@ -283,8 +353,6 @@ namespace Xml2Pdf.Renderer
 
             foreach (var tableRow in tableElement.Children)
             {
-                Debug.Assert(tableRow.GetType() == typeof(TableRowElement),
-                             "Invalid children of TableElement. Invalid type.");
                 RenderDocumentElement(tableRow, tableElement, table);
             }
 
