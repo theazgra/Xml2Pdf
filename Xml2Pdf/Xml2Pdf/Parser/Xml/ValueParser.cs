@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using iText.Kernel.Colors;
 using iText.Kernel.Geom;
@@ -151,14 +153,63 @@ namespace Xml2Pdf.Parser.Xml
             };
         }
 
+        internal static byte HexToByte(ReadOnlySpan<char> hexString)
+        {
+            Debug.Assert(hexString.Length == 2);
+
+            int HexValue(char c)
+            {
+                if (c >= '0' && c <= '9')
+                {
+                    return (c - 48);
+                }
+
+                if (c >= 'a' && c <= 'f')
+                {
+                    return (c - 97 + 10);
+                }
+
+                if (c >= 'A' && c <= 'F')
+                {
+                    return (c - 65 + 10);
+                }
+
+                throw new ValueParseException($"Invalid hex character '{c}'");
+            }
+
+            var h1 = HexValue(hexString[0]);
+            var h0 = HexValue(hexString[1]);
+
+            return (byte) ((h1 * 16) + h0);
+        }
+
         internal static Color ParseColor(string value)
         {
-            var parts = ParseStringArray(value);
+            if (value.StartsWith("0x")) // Parse hex color.
+            {
+                if (value.Length != 8)
+                    throw new ValueParseException("Expected hexadecimal value of length = 6, e.g.: 0x######");
+                byte r, g, b;
+                try
+                {
+                    r = HexToByte(value[2..4]);
+                    g = HexToByte(value[4..6]);
+                    b = HexToByte(value[6..8]);
+                }
+                catch (ValueParseException e)
+                {
+                    throw new ValueParseException("Failed to parse hexadecimal color.", e);
+                }
 
+
+                return new DeviceRgb(r, g, b);
+            }
+
+            var parts = ParseStringArray(value);
             return parts.Length switch
             {
                 1 => GetDefaultColor(value),
-                3 => new DeviceRgb(int.Parse(parts[0]), int.Parse(parts[1]), int.Parse(parts[2])),
+                3 => new DeviceRgb(byte.Parse(parts[0]), byte.Parse(parts[1]), byte.Parse(parts[2])),
                 _ => throw new ValueParseException($"Unknown color '{value}'")
             };
         }

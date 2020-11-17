@@ -1,5 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
 <PdfDocument>
+<!--    <Style>-->
+<!--        <Color name="Purple" value="255,0,255"/>-->
+<!--        <Color name="Purple" value="255,0,255"/>-->
+<!--        <Color name="Purple" value="255,0,255"/>-->
+<!--        <Color name="Purple" value="255,0,255"/>-->
+<!--    </Style>-->
     <Page>
         <!--        <Paragraph bold="true">Bold Text</Paragraph>-->
         <!--        <Paragraph italic="true">Italic text</Paragraph>-->
@@ -48,22 +54,22 @@
         <!--            </TableRow>-->
         <!--        </Table>-->
 
-        <Line length="40%" align="center"/>
+        <Line length="40%" align="center" color="0x2874Ag"/>
 
         <Table columnCount="3">
             <TableRow textAlign="center" header="true">
-<!--                <Cell>#</Cell>-->
+                <!--                <Cell>#</Cell>-->
                 <Cell>Nazev mesta</Cell>
                 <Cell>Populace</Cell>
                 <Cell>Roste mesto?</Cell>
             </TableRow>
             <TableDataRow dataSource="Cities" cellProperties="Name,Population,IsGrowing"/>
-<!--            <TableDataRow dataSource="Cities">-->
-<!--                <Cell colSpan="2" enumerate="true"/>-->
-<!--                <Cell property="Name"/>-->
-<!--                <Cell property="Population"/>-->
-<!--                <Cell property="IsGrowing"/>-->
-<!--            </TableDataRow>-->
+            <!--            <TableDataRow dataSource="Cities">-->
+            <!--                <Cell colSpan="2" enumerate="true"/>-->
+            <!--                <Cell property="Name"/>-->
+            <!--                <Cell property="Population"/>-->
+            <!--                <Cell property="IsGrowing"/>-->
+            <!--            </TableDataRow>-->
         </Table>
 
         <Line length="40%" align="center"/>
