@@ -8,8 +8,9 @@ namespace Xml2Pdf.DocumentStructure
 {
     public class RootDocumentElement : DocumentElement
     {
-        // TODO(Moravec): Add style element?
         private static readonly Type[] PossibleChildren = {typeof(PageElement)};
+
+        public StyleElement Style { get; set; }
 
         public Margins CustomMargins { get; set; }
         public PageSize PageSize { get; set; } = PageSize.A4;
@@ -23,10 +24,12 @@ namespace Xml2Pdf.DocumentStructure
         public RootDocumentElement()
         {
             OnChildAdded += child =>
-                            {
-                                Debug.Assert(child.GetType() == typeof(PageElement));
-                                PageCount++;
-                            };
+            {
+                if (child.GetType() == typeof(PageElement))
+                {
+                    PageCount++;
+                }
+            };
         }
 
         internal override void DumpToStringBuilder(StringBuilder dumpBuilder, int indent)

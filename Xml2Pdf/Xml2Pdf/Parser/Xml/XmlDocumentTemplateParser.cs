@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.ComTypes;
@@ -14,6 +15,8 @@ namespace Xml2Pdf.Parser.Xml
 {
     public class XmlDocumentTemplateParser : IDocumentTemplateParser
     {
+        private StyleParser _styleParser = null;
+
         public RootDocumentElement ParseTemplateFile(string filePath)
         {
             using var fileStream = File.Open(path: filePath, FileMode.Open);
@@ -33,7 +36,7 @@ namespace Xml2Pdf.Parser.Xml
                 xmlReader.Read();
             }
 
-            RootDocumentElement root = ParseDocumentElement(xmlReader, null) as RootDocumentElement;
+            RootDocumentElement root = (RootDocumentElement) ParseDocumentElement(xmlReader, null);
 
             var parentElements = new Stack<DocumentElement>();
             parentElements.Push(root);
@@ -43,10 +46,19 @@ namespace Xml2Pdf.Parser.Xml
                 switch (xmlReader.NodeType)
                 {
                     case XmlNodeType.Element:
+                        if (xmlReader.Name == "Style")
+                        {
+                            _styleParser = new StyleParser();
+                            root.Style = _styleParser.ParseStyle(xmlReader);
+                            continue;
+                        }
+
                         parentElements.Push(ParseDocumentElement(xmlReader, parentElements.Peek()));
                         if (xmlReader.IsEmptyElement)
+                        {
                             parentElements.Pop();
-                        // lastParentElement = ;
+                        }
+
                         break;
                     case XmlNodeType.Text:
                         ParseXmlText(xmlReader, parentElements.Peek());
@@ -90,7 +102,7 @@ namespace Xml2Pdf.Parser.Xml
             }
             else
             {
-                // This will check if current element can be child of lastParsedElement.
+                // This will check if current element can be child of parentElement.
                 parentElement.AddChild(currentElement);
             }
 
