@@ -28,8 +28,6 @@ namespace Xml2Pdf.Parser.Xml
                 IgnoreWhitespace = true
             };
             using var xmlReader = XmlReader.Create(inputStream, xmlReaderSettings);
-            IXmlLineInfo lineInfo = (IXmlLineInfo) xmlReader;
-
             while (!xmlReader.EOF && (xmlReader.NodeType != XmlNodeType.Element && xmlReader.Name != "PdfDocument"))
             {
                 xmlReader.Read();

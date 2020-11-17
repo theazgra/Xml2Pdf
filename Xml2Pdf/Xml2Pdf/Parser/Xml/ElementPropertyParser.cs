@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Xml;
 using Xml2Pdf.DocumentStructure;
 using Xml2Pdf.DocumentStructure.Geometry;
 using Xml2Pdf.Exceptions;
@@ -74,6 +75,9 @@ namespace Xml2Pdf.Parser.Xml
                     case "align":
                     case "alignment":
                         lineElement.Alignment.Value = ValueParser.ParseHorizontalAlignment(pair.Value);
+                        break;
+                    case "color":
+                        lineElement.BottomBorder.Value.Color = ValueParser.ParseColor(pair.Value);
                         break;
                     default:
                         throw new InvalidDocumentElementPropertyException(lineElement, pair.Name, pair.Value);
