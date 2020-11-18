@@ -132,7 +132,7 @@ namespace Xml2Pdf.Renderer
         private void RenderLineElement(LineElement lineElement, object docParent)
         {
             var emptyParagraph = new Paragraph();
-            SetBorderedElementProperties(emptyParagraph, lineElement);
+            emptyParagraph.AddStyle(lineElement.BorderPropertiesToStyle());
             if (lineElement.Length.IsInitialized)
                 emptyParagraph.SetWidth(lineElement.Length.Value);
             if (lineElement.Alignment.IsInitialized)
@@ -180,8 +180,9 @@ namespace Xml2Pdf.Renderer
         private void RenderListItemElement(ListItemElement listChild, List list)
         {
             var listItem = new ListItem(listChild.GetTextToRender(_objectPropertyMap, ValueFormatter));
+            // TODO(Moravec): Is this necessary?
             listItem.SetFont(_defaultFont);
-            SetTextElementProperties(listItem, listChild);
+            listItem.AddStyle(listChild.TextPropertiesToStyle());
             list.Add(listItem);
         }
 
@@ -231,9 +232,11 @@ namespace Xml2Pdf.Renderer
             int colSpan = tableCell.ColumnSpan.ValueOr(1);
 
             Cell cell = new Cell(rowSpan, colSpan);
-            SetTextElementProperties(cell, tableCell);
+            cell.AddStyle(tableCell.TextPropertiesToStyle());
             if (tableCell.HasChildren)
-                SetTextElementProperties(cell, (tableCell.FirstChild as TextElement));
+            {
+                cell.AddStyle(((TextElement) tableCell.FirstChild).TextPropertiesToStyle());
+            }
 
             if (parent.RowHeight.IsInitialized)
                 cell.SetHeight(parent.RowHeight.Value);
@@ -406,7 +409,7 @@ namespace Xml2Pdf.Renderer
             object pdfParentObject)
         {
             var paragraph = new Paragraph();
-            SetTextElementProperties(paragraph, element);
+            // SetTextElementProperties(paragraph, element);
             if (!element.HasChildren)
             {
                 paragraph.Add(RenderTextElement(element));
@@ -481,89 +484,10 @@ namespace Xml2Pdf.Renderer
                 text = new Text(textToRender).SetFont(_defaultFont).SetFontSize(fontSize);
             }
 
-            // Borders.
-            if (element.Borders.IsInitialized)
-            {
-                text.SetBorder(element.Borders.Value.ToITextBorder());
-            }
-            else
-            {
-                if (element.TopBorder.IsInitialized)
-                    text.SetBorderTop(element.TopBorder.Value.ToITextBorder());
-                if (element.BottomBorder.IsInitialized)
-                    text.SetBorderBottom(element.BottomBorder.Value.ToITextBorder());
-                if (element.LeftBorder.IsInitialized)
-                    text.SetBorderLeft(element.LeftBorder.Value.ToITextBorder());
-                if (element.RightBorder.IsInitialized)
-                    text.SetBorderRight(element.RightBorder.Value.ToITextBorder());
-            }
-
-            if (element.HorizontalAlignment.IsInitialized)
-                text.SetHorizontalAlignment(element.HorizontalAlignment.Value);
-            if (element.TextAlignment.IsInitialized)
-                text.SetTextAlignment(element.TextAlignment.Value);
-            if (element.ForegroundColor.IsInitialized)
-                text.SetFontColor(element.ForegroundColor.Value);
-            if (element.BackgroundColor.IsInitialized)
-                text.SetBackgroundColor(element.BackgroundColor.Value);
-
-            if (element.Bold.ValueOr(false))
-                text.SetBold();
-            if (element.Italic.ValueOr(false))
-                text.SetItalic();
-            if (element.Underline.ValueOr(false))
-                text.SetUnderline();
+            var style = element.TextPropertiesToStyle();
+            AddStyleToPdfElement(text, style);
 
             return text;
-        }
-
-        private void SetBorderedElementProperties<T>(ElementPropertyContainer<T> container,
-            BorderedDocumentElement element) where T : IElement
-        {
-            // Borders.
-            if (element.Borders.IsInitialized)
-            {
-                container.SetBorder(element.Borders.Value.ToITextBorder());
-            }
-            else
-            {
-                if (element.TopBorder.IsInitialized)
-                    container.SetBorderTop(element.TopBorder.Value.ToITextBorder());
-                if (element.BottomBorder.IsInitialized)
-                    container.SetBorderBottom(element.BottomBorder.Value.ToITextBorder());
-                if (element.LeftBorder.IsInitialized)
-                    container.SetBorderLeft(element.LeftBorder.Value.ToITextBorder());
-                if (element.RightBorder.IsInitialized)
-                    container.SetBorderRight(element.RightBorder.Value.ToITextBorder());
-            }
-        }
-
-
-        private void SetTextElementProperties<T>(ElementPropertyContainer<T> container,
-            TextElement element) where T : IElement
-        {
-            Debug.Assert(element != null);
-            SetBorderedElementProperties(container, element);
-
-            float fontSize = element.FontSize.IsInitialized ? element.FontSize.Value : DefaultFontSize;
-            container.SetFontSize(fontSize);
-
-
-            if (element.HorizontalAlignment.IsInitialized)
-                container.SetHorizontalAlignment(element.HorizontalAlignment.Value);
-            if (element.TextAlignment.IsInitialized)
-                container.SetTextAlignment(element.TextAlignment.Value);
-            if (element.ForegroundColor.IsInitialized)
-                container.SetFontColor(element.ForegroundColor.Value);
-            if (element.BackgroundColor.IsInitialized)
-                container.SetBackgroundColor(element.BackgroundColor.Value);
-
-            if (element.Bold.ValueOr(false))
-                container.SetBold();
-            if (element.Italic.ValueOr(false))
-                container.SetItalic();
-            if (element.Underline.ValueOr(false))
-                container.SetUnderline();
         }
     }
 }

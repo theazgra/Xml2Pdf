@@ -1,5 +1,7 @@
 ﻿using System.Text;
+using iText.Layout;
 using Xml2Pdf.DocumentStructure.Geometry;
+using Xml2Pdf.Renderer.Mappers;
 
 namespace Xml2Pdf.DocumentStructure
 {
@@ -64,6 +66,30 @@ namespace Xml2Pdf.DocumentStructure
             DumpElementProperty(dumpBuilder, indent, nameof(BottomBorder), BottomBorder);
             DumpElementProperty(dumpBuilder, indent, nameof(LeftBorder), LeftBorder);
             DumpElementProperty(dumpBuilder, indent, nameof(RightBorder), RightBorder);
+        }
+
+        public Style BorderPropertiesToStyle()
+        {
+            Style style = new Style();
+
+            // Borders.
+            if (Borders.IsInitialized)
+            {
+                style.SetBorder(Borders.Value.ToITextBorder());
+            }
+            else
+            {
+                if (TopBorder.IsInitialized)
+                    style.SetBorderTop(TopBorder.Value.ToITextBorder());
+                if (BottomBorder.IsInitialized)
+                    style.SetBorderBottom(BottomBorder.Value.ToITextBorder());
+                if (LeftBorder.IsInitialized)
+                    style.SetBorderLeft(LeftBorder.Value.ToITextBorder());
+                if (RightBorder.IsInitialized)
+                    style.SetBorderRight(RightBorder.Value.ToITextBorder());
+            }
+
+            return style;
         }
     }
 }

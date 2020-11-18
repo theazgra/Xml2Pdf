@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using iText.Kernel.Colors;
-using iText.Layout.Element;
+using iText.Layout;
 using iText.Layout.Properties;
 using Xml2Pdf.Exceptions;
 using Xml2Pdf.Format;
@@ -17,7 +17,7 @@ namespace Xml2Pdf.DocumentStructure
         protected override bool IsParentType => false;
         protected override Type[] AllowedChildrenTypes => Array.Empty<Type>();
 
-#region TextProperties
+        #region TextProperties
 
         public ElementProperty<VerticalAlignment> VerticalAlignment { get; } =
             new ElementProperty<VerticalAlignment>();
@@ -36,7 +36,7 @@ namespace Xml2Pdf.DocumentStructure
         public ElementProperty<Color> ForegroundColor { get; } = new ElementProperty<Color>();
         public ElementProperty<Color> BackgroundColor { get; } = new ElementProperty<Color>();
 
-#endregion
+        #endregion
 
         public string Text { get; set; }
 
@@ -82,7 +82,10 @@ namespace Xml2Pdf.DocumentStructure
         }
 
 
-        public bool IsEmpty() { return Text == null && Property == null && Format == null && FormatProperties == null; }
+        public bool IsEmpty()
+        {
+            return Text == null && Property == null && Format == null && FormatProperties == null;
+        }
 
 
         internal override void DumpToStringBuilder(StringBuilder dumpBuilder, int indent)
@@ -171,6 +174,29 @@ namespace Xml2Pdf.DocumentStructure
             }
 
             return string.Empty;
+        }
+
+        public Style TextPropertiesToStyle()
+        {
+            Style textStyle = BorderPropertiesToStyle();
+
+            if (HorizontalAlignment.IsInitialized)
+                textStyle.SetHorizontalAlignment(HorizontalAlignment.Value);
+            if (TextAlignment.IsInitialized)
+                textStyle.SetTextAlignment(TextAlignment.Value);
+            if (ForegroundColor.IsInitialized)
+                textStyle.SetFontColor(ForegroundColor.Value);
+            if (BackgroundColor.IsInitialized)
+                textStyle.SetBackgroundColor(BackgroundColor.Value);
+
+            if (Bold.ValueOr(false))
+                textStyle.SetBold();
+            if (Italic.ValueOr(false))
+                textStyle.SetItalic();
+            if (Underline.ValueOr(false))
+                textStyle.SetUnderline();
+
+            return textStyle;
         }
     }
 

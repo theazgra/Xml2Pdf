@@ -53,14 +53,14 @@
 
         <Line length="40%" align="center" color="greenIGuess"/>
 
-        <Table columnCount="3">
+        <Table columnCount="5">
             <TableRow textAlign="center" header="true">
-                <!--                <Cell>#</Cell>-->
+                <Cell colSpan="2">#</Cell>
                 <Cell>Nazev mesta</Cell>
                 <Cell>Populace</Cell>
                 <Cell>Roste mesto?</Cell>
             </TableRow>
-            <TableDataRow dataSource="Cities" cellProperties="Name,Population,IsGrowing"/>
+            <!--            <TableDataRow dataSource="Cities" cellProperties="Name,Population,IsGrowing"/>-->
             <TableDataRow dataSource="Cities">
                 <Cell colSpan="2" enumerate="true"/>
                 <Cell property="Name"/>
@@ -95,14 +95,11 @@
                 </Cell>
             </TableRow>
             <TableRow borders="2,solid,blue,1.0">
-                <Cell>
+                <Cell colSpan="2">
                     <Paragraph>7</Paragraph>
                 </Cell>
                 <Cell>
                     <Paragraph>8</Paragraph>
-                </Cell>
-                <Cell>
-                    <Paragraph>9</Paragraph>
                 </Cell>
             </TableRow>
         </Table>
