@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
 <PdfDocument>
     <Style>
-        <Color name="purple" value="0x76448A"/>
+        <Color name="greenIGuess" value="0x27AE60"/>
     </Style>
     <Page>
         <Paragraph bold="true">Bold Text</Paragraph>
@@ -51,7 +51,7 @@
             </TableRow>
         </Table>
 
-        <Line length="40%" align="center" color="blue"/>
+        <Line length="40%" align="center" color="greenIGuess"/>
 
         <Table columnCount="3">
             <TableRow textAlign="center" header="true">

@@ -8,12 +8,13 @@ using iText.Kernel.Geom;
 using iText.Layout.Properties;
 using Xml2Pdf.DocumentStructure.Geometry;
 using Xml2Pdf.Exceptions;
+using Xml2Pdf.Utilities;
 
 namespace Xml2Pdf.Parser.Xml
 {
     internal static class ValueParser
     {
-        private static readonly Dictionary<string, Color> DefaultColorMap = new Dictionary<string, Color>
+        private readonly static Dictionary<string, Color> ColorMap = new Dictionary<string, Color>
         {
             {"black", ColorConstants.BLACK},
             {"blue", ColorConstants.BLUE},
@@ -30,11 +31,13 @@ namespace Xml2Pdf.Parser.Xml
             {"yellow", ColorConstants.YELLOW}
         };
 
+        internal static void InjectNewColor(string colorName, Color color) { ColorMap.Add(colorName.ToLower(), color); }
+
         private static Color GetDefaultColor(string colorName)
         {
             string lc = colorName.ToLower();
-            if (DefaultColorMap.ContainsKey(lc))
-                return DefaultColorMap[lc];
+            if (ColorMap.ContainsKey(lc))
+                return ColorMap[lc];
             throw new ValueParseException($"Invalid color with name '{colorName}'");
         }
 
