@@ -5,10 +5,12 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Channels;
+using iText.Kernel.Colors;
 using iText.Kernel.Font;
 using iText.Kernel.Geom;
 using iText.Kernel.Pdf;
 using iText.Layout;
+using iText.Layout.Borders;
 using iText.Layout.Element;
 using iText.Layout.Properties;
 using Xml2Pdf.DocumentStructure;
@@ -24,15 +26,18 @@ namespace Xml2Pdf.Renderer
 {
     public class PdfDocumentRenderer : IDocumentRenderer
     {
+        // TODO(Moravec): This should be configurable in XML.
+        private const float DefaultFontSize = 10;
+        private const float DefaultSmallFontSize = 6;
+
+
         private Document _pdfDocument = null;
         private readonly Dictionary<string, object> _objectPropertyMap;
 
         private readonly PdfFont _defaultFont;
         private Rectangle _effectivePageRectangle;
 
-        // TODO(Moravec): This should be configurable in XML.
-        private const float DefaultFontSize = 10;
-        private const float DefaultSmallFontSize = 6;
+        private ElementStyle _style;
 
 
         public ValueFormatter ValueFormatter { get; }
@@ -66,12 +71,14 @@ namespace Xml2Pdf.Renderer
                 LoadDataObjectToPropertyMap(dataObject);
             }
 
+            _style = rootDocumentElement.Style;
+
             using var writer = new PdfWriter(savePath);
             var pdf = new PdfDocument(writer);
 
             var pageSize = rootDocumentElement.PageOrientation == PageOrientation.Portrait
-                               ? rootDocumentElement.PageSize
-                               : rootDocumentElement.PageSize.Rotate();
+                ? rootDocumentElement.PageSize
+                : rootDocumentElement.PageSize.Rotate();
 
 
             _pdfDocument = new Document(pdf, pageSize);
@@ -117,7 +124,7 @@ namespace Xml2Pdf.Renderer
                     break;
                 default:
                     ColorConsole.WriteLine(ConsoleColor.Red,
-                                           $"Missing branch in PdfDocumentRenderer::RenderDocumentElement() for {element.GetType().Name}");
+                        $"Missing branch in PdfDocumentRenderer::RenderDocumentElement() for {element.GetType().Name}");
                     break;
             }
         }
@@ -136,7 +143,7 @@ namespace Xml2Pdf.Renderer
         private void RenderListElement(ListElement element, DocumentElement parent, object pdfParentObject)
         {
             iText.Layout.Element.List list;
-            if (element.Enumeration.IsInitialized && element.Enumeration.Value)
+            if (element.Enumeration.ValueOr(false))
                 list = new List(ListNumberingType.DECIMAL);
             else
                 list = new List();
@@ -165,8 +172,8 @@ namespace Xml2Pdf.Renderer
             else
             {
                 throw RenderException.WrongPdfParent(nameof(RenderListElement),
-                                                     typeof(Document),
-                                                     pdfParentObject.GetType());
+                    typeof(Document),
+                    pdfParentObject.GetType());
             }
         }
 
@@ -187,9 +194,9 @@ namespace Xml2Pdf.Renderer
                 if (rootElement.CustomMargins.AreComplete())
                 {
                     _pdfDocument.SetMargins(rootElement.CustomMargins.Top.Value,
-                                            rootElement.CustomMargins.Right.Value,
-                                            rootElement.CustomMargins.Bottom.Value,
-                                            rootElement.CustomMargins.Left.Value);
+                        rootElement.CustomMargins.Right.Value,
+                        rootElement.CustomMargins.Bottom.Value,
+                        rootElement.CustomMargins.Left.Value);
                 }
                 else
                 {
@@ -274,8 +281,8 @@ namespace Xml2Pdf.Renderer
         }
 
         private void RenderTableDataRowElement(TableDataRowElement element,
-                                               TableElement parent,
-                                               Table pdfTable)
+            TableElement parent,
+            Table pdfTable)
         {
             Debug.Assert(parent != null, "DocumentElement parent is null.");
             Debug.Assert(pdfTable != null, "Pdf parent is null.");
@@ -309,15 +316,15 @@ namespace Xml2Pdf.Renderer
                     enumerationAsFirstColumn = true;
 
                 objectProperties = element.Children.OfType<TableCellElement>()
-                                          .Where(c => !string.IsNullOrEmpty(c.Property))
-                                          .Select(c => rowObjectType.GetProperty(c.Property))
-                                          .ToArray();
+                    .Where(c => !string.IsNullOrEmpty(c.Property))
+                    .Select(c => rowObjectType.GetProperty(c.Property))
+                    .ToArray();
             }
             else
             {
                 objectProperties = element.ColumnCellProperties.Value
-                                          .Select(p => rowObjectType.GetProperty(p))
-                                          .ToArray();
+                    .Select(p => rowObjectType.GetProperty(p))
+                    .ToArray();
             }
 
 
@@ -356,8 +363,7 @@ namespace Xml2Pdf.Renderer
 
         private void RenderTableElement(TableElement tableElement, DocumentElement parent, object pdfParentObject)
         {
-            Table table = new Table(tableElement.GetColumnWidths(),
-                                    (tableElement.LargeTable.IsInitialized && tableElement.LargeTable.Value));
+            Table table = new Table(tableElement.GetColumnWidths(), tableElement.LargeTable.ValueOr(false));
 
             // TODO(Moravec): Customizable.
             table.SetWidth(new UnitValue(UnitValue.PERCENT, 100.0f));
@@ -379,14 +385,14 @@ namespace Xml2Pdf.Renderer
             else
             {
                 throw RenderException.WrongPdfParent(nameof(RenderTableElement),
-                                                     typeof(Document),
-                                                     pdfParentObject.GetType());
+                    typeof(Document),
+                    pdfParentObject.GetType());
             }
         }
 
         private void RenderPageElement(PageElement pageElement,
-                                       DocumentElement parent,
-                                       object pdfParentObject)
+            DocumentElement parent,
+            object pdfParentObject)
         {
             foreach (var childElement in pageElement.Children)
             {
@@ -396,8 +402,8 @@ namespace Xml2Pdf.Renderer
 
 
         private void RenderParagraphElement(ParagraphElement element,
-                                            DocumentElement parent,
-                                            object pdfParentObject)
+            DocumentElement parent,
+            object pdfParentObject)
         {
             var paragraph = new Paragraph();
             SetTextElementProperties(paragraph, element);
@@ -423,6 +429,17 @@ namespace Xml2Pdf.Renderer
             AddParagraphToParent(paragraph, pdfParentObject);
         }
 
+        /// <summary>
+        /// Add iText style to iText element helper.
+        /// </summary>
+        /// <param name="e">iText Pdf element.</param>
+        /// <param name="s">iText style.</param>
+        /// <typeparam name="T">Type of the element implementation.</typeparam>
+        private void AddStyleToPdfElement<T>(AbstractElement<T> e, Style s) where T : IElement
+        {
+            e.AddStyle(s);
+        }
+
         private void AddParagraphToParent(Paragraph paragraph, object pdfParent)
         {
             if (pdfParent is Document doc)
@@ -436,25 +453,25 @@ namespace Xml2Pdf.Renderer
             else
             {
                 throw RenderException.WrongPdfParent(nameof(AddParagraphToParent),
-                                                     new[]
-                                                     {
-                                                         typeof(Document),
-                                                         typeof(Cell)
-                                                     },
-                                                     pdfParent.GetType());
+                    new[]
+                    {
+                        typeof(Document),
+                        typeof(Cell)
+                    },
+                    pdfParent.GetType());
             }
         }
 
         private Text RenderTextElement(TextElement element, string textToRender = null)
         {
-            Text text = null;
+            Text text;
             textToRender ??= element.GetTextToRender(_objectPropertyMap, ValueFormatter);
 
-            if (element.Superscript.IsInitialized && element.Superscript.Value)
+            if (element.Superscript.ValueOr(false))
             {
                 text = new Text(textToRender).SetFont(_defaultFont).SetTextRise(7).SetFontSize(DefaultFontSize);
             }
-            else if (element.Subscript.IsInitialized && element.Subscript.Value)
+            else if (element.Subscript.ValueOr(false))
             {
                 text = new Text(textToRender).SetFont(_defaultFont).SetTextRise(-7).SetFontSize(DefaultFontSize);
             }
@@ -490,18 +507,18 @@ namespace Xml2Pdf.Renderer
             if (element.BackgroundColor.IsInitialized)
                 text.SetBackgroundColor(element.BackgroundColor.Value);
 
-            if (element.Bold.IsInitialized && element.Bold.Value)
+            if (element.Bold.ValueOr(false))
                 text.SetBold();
-            if (element.Italic.IsInitialized && element.Italic.Value)
+            if (element.Italic.ValueOr(false))
                 text.SetItalic();
-            if (element.Underline.IsInitialized && element.Underline.IsInitialized)
+            if (element.Underline.ValueOr(false))
                 text.SetUnderline();
 
             return text;
         }
 
         private void SetBorderedElementProperties<T>(ElementPropertyContainer<T> container,
-                                                     BorderedDocumentElement element) where T : IElement
+            BorderedDocumentElement element) where T : IElement
         {
             // Borders.
             if (element.Borders.IsInitialized)
@@ -523,7 +540,7 @@ namespace Xml2Pdf.Renderer
 
 
         private void SetTextElementProperties<T>(ElementPropertyContainer<T> container,
-                                                 TextElement element) where T : IElement
+            TextElement element) where T : IElement
         {
             Debug.Assert(element != null);
             SetBorderedElementProperties(container, element);
@@ -541,11 +558,11 @@ namespace Xml2Pdf.Renderer
             if (element.BackgroundColor.IsInitialized)
                 container.SetBackgroundColor(element.BackgroundColor.Value);
 
-            if (element.Bold.IsInitialized && element.Bold.Value)
+            if (element.Bold.ValueOr(false))
                 container.SetBold();
-            if (element.Italic.IsInitialized && element.Italic.Value)
+            if (element.Italic.ValueOr(false))
                 container.SetItalic();
-            if (element.Underline.IsInitialized && element.Underline.IsInitialized)
+            if (element.Underline.ValueOr(false))
                 container.SetUnderline();
         }
     }
