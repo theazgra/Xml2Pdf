@@ -8,10 +8,5 @@ namespace Xml2Pdf.DocumentStructure
     {
         public Style ParagraphStyle { get; set; }
 
-        public ElementStyle()
-        {
-            ParagraphStyle = new Style();
-            ParagraphStyle.SetBold().SetTextAlignment(TextAlignment.RIGHT);
-        }
     }
 }

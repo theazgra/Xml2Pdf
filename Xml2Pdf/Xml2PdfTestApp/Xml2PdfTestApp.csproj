@@ -9,8 +9,4 @@
       <ProjectReference Include="..\Xml2Pdf\Xml2Pdf.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Templates" />
-    </ItemGroup>
-
 </Project>

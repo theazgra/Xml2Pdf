@@ -429,18 +429,10 @@ namespace Xml2Pdf.Renderer
                                                   "Use only raw text or multiple <Text> elements.");
             }
 
-            AddParagraphToParent(paragraph, pdfParentObject);
-        }
+            if (_style?.ParagraphStyle != null)
+                paragraph.AddStyle(_style.ParagraphStyle);
 
-        /// <summary>
-        /// Add iText style to iText element helper.
-        /// </summary>
-        /// <param name="e">iText Pdf element.</param>
-        /// <param name="s">iText style.</param>
-        /// <typeparam name="T">Type of the element implementation.</typeparam>
-        private void AddStyleToPdfElement<T>(AbstractElement<T> e, Style s) where T : IElement
-        {
-            e.AddStyle(s);
+            AddParagraphToParent(paragraph, pdfParentObject);
         }
 
         private void AddParagraphToParent(Paragraph paragraph, object pdfParent)
@@ -472,11 +464,11 @@ namespace Xml2Pdf.Renderer
 
             if (element.Superscript.ValueOr(false))
             {
-                text = new Text(textToRender).SetFont(_defaultFont).SetTextRise(7).SetFontSize(DefaultFontSize);
+                text = new Text(textToRender).SetFont(_defaultFont).SetTextRise(4).SetFontSize(DefaultFontSize);
             }
             else if (element.Subscript.ValueOr(false))
             {
-                text = new Text(textToRender).SetFont(_defaultFont).SetTextRise(-7).SetFontSize(DefaultFontSize);
+                text = new Text(textToRender).SetFont(_defaultFont).SetTextRise(-4).SetFontSize(DefaultFontSize);
             }
             else
             {
@@ -484,8 +476,7 @@ namespace Xml2Pdf.Renderer
                 text = new Text(textToRender).SetFont(_defaultFont).SetFontSize(fontSize);
             }
 
-            var style = element.TextPropertiesToStyle();
-            AddStyleToPdfElement(text, style);
+            text.AddStyle(element.TextPropertiesToStyle());
 
             return text;
         }

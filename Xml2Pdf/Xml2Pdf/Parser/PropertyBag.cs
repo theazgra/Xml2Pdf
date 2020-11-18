@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 
 namespace Xml2Pdf.Parser
@@ -28,6 +30,11 @@ namespace Xml2Pdf.Parser
             Value = value;
         }
 
+        internal PropertyPair(ValueTuple<string, T> pair)
+        {
+            (Name, Value) = pair;
+        }
+
         public void Deconstruct(out string name, out T value)
         {
             name = Name;
@@ -38,7 +45,16 @@ namespace Xml2Pdf.Parser
     internal class PropertyBag<T>
     {
         private readonly PropertyPair<T>[] _bag;
-        internal PropertyBag(int bagSize) { _bag = new PropertyPair<T>[bagSize]; }
+
+        internal PropertyBag(int bagSize)
+        {
+            _bag = new PropertyPair<T>[bagSize];
+        }
+
+        internal PropertyBag(IEnumerable<PropertyPair<T>> bag)
+        {
+            _bag = bag.ToArray();
+        }
 
         internal PropertyPair<T> this[int index]
         {
