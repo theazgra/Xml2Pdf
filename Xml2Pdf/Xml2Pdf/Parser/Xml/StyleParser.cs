@@ -10,9 +10,9 @@ namespace Xml2Pdf.Parser.Xml
 {
     internal class StyleParser
     {
-        public StyleElement ParseStyle(XmlReader xmlReader)
+        public ElementStyle ParseStyle(XmlReader xmlReader)
         {
-            StyleElement result = new StyleElement();
+            ElementStyle result = new ElementStyle();
             bool isStyleElementClosed = false;
             while (!isStyleElementClosed && xmlReader.Read())
             {

@@ -8,8 +8,4 @@
       <PackageReference Include="itext7" Version="7.1.13" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="DocumentStructure\Styles" />
-    </ItemGroup>
-
 </Project>

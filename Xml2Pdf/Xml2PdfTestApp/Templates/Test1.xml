@@ -15,7 +15,7 @@
             <Text>text</Text>
         </Paragraph>
 
-        <Paragraph textAlign="justify">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Quisque tincidunt
+        <Paragraph textAlign="justifyAll">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Quisque tincidunt
             scelerisque libero. Nullam eget nisl. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet,
             consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam
             aliquam quaerat voluptatem. Duis condimentum augue id magna semper rutrum. Curabitur ligula sapien, pulvinar
