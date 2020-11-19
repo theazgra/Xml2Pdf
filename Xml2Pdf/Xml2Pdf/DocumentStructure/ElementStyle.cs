@@ -1,4 +1,6 @@
-﻿using iText.Layout;
+﻿using System.Collections.Generic;
+using iText.Kernel.Font;
+using iText.Layout;
 
 namespace Xml2Pdf.DocumentStructure
 {
@@ -9,5 +11,7 @@ namespace Xml2Pdf.DocumentStructure
         public Style ListItemStyle { get; set; }
         public Style LineStyle { get; set; }
         public Style TableStyle { get; set; }
+
+        public Dictionary<string, PdfFont> CustomFonts { get; set; } = new Dictionary<string, PdfFont>();
     }
 }

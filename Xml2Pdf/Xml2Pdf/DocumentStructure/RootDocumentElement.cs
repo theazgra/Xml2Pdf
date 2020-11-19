@@ -16,6 +16,8 @@ namespace Xml2Pdf.DocumentStructure
         public PageSize PageSize { get; set; } = PageSize.A4;
         public PageOrientation PageOrientation { get; set; } = PageOrientation.Portrait;
 
+        public ElementProperty<string> DocumentFont { get; } = new ElementProperty<string>();
+
         public int PageCount { get; private set; }
 
         protected override bool IsParentType => true;
@@ -42,6 +44,8 @@ namespace Xml2Pdf.DocumentStructure
                 .AppendLine();
             if (CustomMargins != null)
                 PrepareIndent(dumpBuilder, indent).Append(" #Margins: ").Append(CustomMargins);
+
+            DumpElementProperty(dumpBuilder, indent, nameof(DocumentFont), DocumentFont);
 
             foreach (var child in Children)
             {

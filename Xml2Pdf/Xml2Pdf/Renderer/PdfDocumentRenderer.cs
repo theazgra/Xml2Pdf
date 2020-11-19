@@ -3,15 +3,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
-using System.Threading.Channels;
-using iText.Kernel.Colors;
 using iText.Kernel.Font;
 using iText.Kernel.Geom;
 using iText.Kernel.Pdf;
 using iText.Layout;
-using iText.Layout.Borders;
 using iText.Layout.Element;
 using iText.Layout.Properties;
 using Xml2Pdf.DocumentStructure;
@@ -20,7 +16,6 @@ using Xml2Pdf.Exceptions;
 using Xml2Pdf.Format;
 using Xml2Pdf.Format.Formatters;
 using Xml2Pdf.Renderer.Interface;
-using Xml2Pdf.Renderer.Mappers;
 using Xml2Pdf.Utilities;
 
 namespace Xml2Pdf.Renderer
@@ -35,7 +30,7 @@ namespace Xml2Pdf.Renderer
         private Document _pdfDocument = null;
         private readonly Dictionary<string, object> _objectPropertyMap;
 
-        private readonly PdfFont _defaultFont;
+        private PdfFont _documentFont;
         private Rectangle _effectivePageRectangle;
 
         private ElementStyle _style;
@@ -47,7 +42,6 @@ namespace Xml2Pdf.Renderer
         {
             _objectPropertyMap = new Dictionary<string, object>();
             ValueFormatter = new ValueFormatter();
-            _defaultFont = GetDefaultFont();
             ValueFormatter.AddFormatter(new ToStringFormatter<object>());
         }
 
@@ -67,12 +61,25 @@ namespace Xml2Pdf.Renderer
 
         public bool RenderDocument(RootDocumentElement rootDocumentElement, string savePath, object dataObject)
         {
+            _style = rootDocumentElement.Style;
             if (dataObject != null)
             {
                 LoadDataObjectToPropertyMap(dataObject);
             }
 
-            _style = rootDocumentElement.Style;
+            if (rootDocumentElement.DocumentFont.IsInitialized)
+            {
+                if (_style == null || !_style.CustomFonts.ContainsKey(rootDocumentElement.DocumentFont.Value))
+                {
+                    throw new RenderException("DocumentFont wasn't specified as <CustomFont> in <Style> node.");
+                }
+
+                _documentFont = _style.CustomFonts[rootDocumentElement.DocumentFont.Value];
+            }
+            else
+            {
+                _documentFont = GetDefaultFont();
+            }
 
             using var writer = new PdfWriter(savePath);
             var pdf = new PdfDocument(writer);
@@ -185,7 +192,7 @@ namespace Xml2Pdf.Renderer
         private void RenderListItemElement(ListItemElement listChild, List list)
         {
             var listItem = new ListItem(listChild.GetTextToRender(_objectPropertyMap, ValueFormatter));
-
+            listItem.SetFont(_documentFont);
             if (_style?.ListItemStyle != null)
                 listItem.AddStyle(_style.ListItemStyle);
 
@@ -477,16 +484,16 @@ namespace Xml2Pdf.Renderer
 
             if (element.Superscript.ValueOr(false))
             {
-                text = new Text(textToRender).SetFont(_defaultFont).SetTextRise(4).SetFontSize(DefaultFontSize);
+                text = new Text(textToRender).SetFont(_documentFont).SetTextRise(4).SetFontSize(DefaultFontSize);
             }
             else if (element.Subscript.ValueOr(false))
             {
-                text = new Text(textToRender).SetFont(_defaultFont).SetTextRise(-4).SetFontSize(DefaultFontSize);
+                text = new Text(textToRender).SetFont(_documentFont).SetTextRise(-4).SetFontSize(DefaultFontSize);
             }
             else
             {
                 float fontSize = element.FontSize.IsInitialized ? element.FontSize.Value : DefaultFontSize;
-                text = new Text(textToRender).SetFont(_defaultFont).SetFontSize(fontSize);
+                text = new Text(textToRender).SetFont(_documentFont).SetFontSize(fontSize);
             }
 
             text.AddStyle(element.TextPropertiesToStyle());

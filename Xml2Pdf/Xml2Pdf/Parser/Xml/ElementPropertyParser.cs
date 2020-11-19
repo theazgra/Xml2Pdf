@@ -276,7 +276,8 @@ namespace Xml2Pdf.Parser.Xml
             }
         }
 
-        private static void AssignBorderedDocumentElementProperties(BorderedDocumentElement borderedElement, PropertyBag<string> propertyBag)
+        private static void AssignBorderedDocumentElementProperties(BorderedDocumentElement borderedElement,
+            PropertyBag<string> propertyBag)
         {
             foreach (var pair in propertyBag.UnprocessedPairs())
             {
@@ -308,6 +309,10 @@ namespace Xml2Pdf.Parser.Xml
             {
                 switch (name)
                 {
+                    case "font":
+                    case "documentFont":
+                        rootDocumentElement.DocumentFont.Value = value;
+                        break;
                     case "margins":
                         rootDocumentElement.CustomMargins = ValueParser.ParseCompleteMargins(value);
                         break;

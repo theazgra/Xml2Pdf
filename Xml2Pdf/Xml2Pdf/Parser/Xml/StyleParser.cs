@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text;
 using System.Xml;
-using Common.Logging.Configuration;
+using iText.Kernel.Font;
 using iText.Layout;
-using Microsoft.Extensions.DependencyModel.Resolution;
 using Xml2Pdf.DocumentStructure;
 using Xml2Pdf.Exceptions;
 using Xml2Pdf.Utilities;
@@ -14,8 +12,6 @@ namespace Xml2Pdf.Parser.Xml
 {
     internal class StyleParser
     {
-        private const string EntryName = "Entry";
-
         public ElementStyle ParseStyle(XmlReader xmlReader)
         {
             ElementStyle result = new ElementStyle();
@@ -29,6 +25,10 @@ namespace Xml2Pdf.Parser.Xml
                         {
                             case "Color":
                                 ParseAndInjectColor(xmlReader);
+                                break;
+                            case "Font":
+                            case "CustomFont":
+                                ParseAndInjectCustomFont(xmlReader, result.CustomFonts);
                                 break;
                             case "ParagraphStyle":
                                 result.ParagraphStyle = ParseTextStyle(xmlReader.Name, xmlReader);
@@ -69,6 +69,29 @@ namespace Xml2Pdf.Parser.Xml
 
             Debug.Assert(isStyleElementClosed);
             return result;
+        }
+
+        private void ParseAndInjectCustomFont(XmlReader xmlReader, Dictionary<string, PdfFont> customFontsMap)
+        {
+            string fontName = xmlReader.GetAttribute("name");
+            string fontPath = xmlReader.GetAttribute("path");
+
+            if (string.IsNullOrEmpty(fontName) || string.IsNullOrEmpty(fontPath))
+            {
+                throw new ValueParseException("Unable to parse custom font. Specify both name and path.");
+            }
+
+            PdfFont loadedFont;
+            try
+            {
+                loadedFont = PdfFontFactory.CreateFont(fontPath, true);
+            }
+            catch (Exception e)
+            {
+                throw new ValueParseException($"Failed to load custom font '{fontName}' from path: '{fontPath}'", e);
+            }
+
+            customFontsMap.Add(fontName, loadedFont);
         }
 
         private PropertyBag<string> ReadWhileInEnclosingNode(XmlReader xmlReader, string enclosingNodeName)
