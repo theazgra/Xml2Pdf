@@ -6,15 +6,15 @@ using iText.Kernel.Font;
 using iText.Layout;
 using Xml2Pdf.DocumentStructure;
 using Xml2Pdf.Exceptions;
+using Xml2Pdf.Renderer;
 using Xml2Pdf.Utilities;
 
 namespace Xml2Pdf.Parser.Xml
 {
     internal class StyleParser
     {
-        public ElementStyle ParseStyle(XmlReader xmlReader)
+        public void ParseStyle(XmlReader xmlReader, ElementStyle result)
         {
-            ElementStyle result = new ElementStyle();
             bool isStyleElementClosed = false;
             while (!isStyleElementClosed && xmlReader.Read())
             {
@@ -31,13 +31,13 @@ namespace Xml2Pdf.Parser.Xml
                                 ParseAndInjectCustomFont(xmlReader, result.CustomFonts);
                                 break;
                             case "ParagraphStyle":
-                                result.ParagraphStyle = ParseTextStyle(xmlReader.Name, xmlReader);
+                                result.ParagraphStyle = ParseTextStyle(xmlReader.Name, xmlReader, result.CustomFonts);
                                 break;
                             case "TableCellStyle":
-                                result.TableCellStyle = ParseTextStyle(xmlReader.Name, xmlReader);
+                                result.TableCellStyle = ParseTextStyle(xmlReader.Name, xmlReader, result.CustomFonts);
                                 break;
                             case "ListItemStyle":
-                                result.ListItemStyle = ParseTextStyle(xmlReader.Name, xmlReader);
+                                result.ListItemStyle = ParseTextStyle(xmlReader.Name, xmlReader, result.CustomFonts);
                                 break;
                             case "TableStyle":
                                 result.TableStyle = ParseBorderedElementStyle(xmlReader.Name, xmlReader);
@@ -68,7 +68,6 @@ namespace Xml2Pdf.Parser.Xml
             }
 
             Debug.Assert(isStyleElementClosed);
-            return result;
         }
 
         private void ParseAndInjectCustomFont(XmlReader xmlReader, Dictionary<string, PdfFont> customFontsMap)
@@ -118,15 +117,15 @@ namespace Xml2Pdf.Parser.Xml
             return null;
         }
 
-        private Style ParseTextStyle(string enclosingNodeName, XmlReader xmlReader)
+        private StyleWrapper ParseTextStyle(string enclosingNodeName, XmlReader xmlReader, Dictionary<string, PdfFont> customFonts)
         {
             var propertyBag = ReadWhileInEnclosingNode(xmlReader, enclosingNodeName);
             TextElement textElement = new TextElement();
             ElementPropertyParser.ParseAndAssignElementProperties(textElement, propertyBag);
-            return textElement.TextPropertiesToStyle();
+            return textElement.TextPropertiesToStyle(customFonts);
         }
 
-        private Style ParseBorderedElementStyle(string enclosingNodeName, XmlReader xmlReader)
+        private StyleWrapper ParseBorderedElementStyle(string enclosingNodeName, XmlReader xmlReader)
         {
             var propertyBag = ReadWhileInEnclosingNode(xmlReader, enclosingNodeName);
             BorderedDocumentElement borderedElement = new LineElement();

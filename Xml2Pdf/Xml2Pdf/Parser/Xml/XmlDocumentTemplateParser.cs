@@ -49,7 +49,7 @@ namespace Xml2Pdf.Parser.Xml
                         if (xmlReader.Name == "Style")
                         {
                             _styleParser = new StyleParser();
-                            root.Style = _styleParser.ParseStyle(xmlReader);
+                            _styleParser.ParseStyle(xmlReader, root.Style);
                             continue;
                         }
 

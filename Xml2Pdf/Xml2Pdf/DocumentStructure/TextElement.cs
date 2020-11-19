@@ -4,10 +4,12 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using iText.Kernel.Colors;
+using iText.Kernel.Font;
 using iText.Layout;
 using iText.Layout.Properties;
 using Xml2Pdf.Exceptions;
 using Xml2Pdf.Format;
+using Xml2Pdf.Renderer;
 using Xml2Pdf.Utilities;
 
 namespace Xml2Pdf.DocumentStructure
@@ -180,10 +182,14 @@ namespace Xml2Pdf.DocumentStructure
             return string.Empty;
         }
 
-        public Style TextPropertiesToStyle()
+        public StyleWrapper TextPropertiesToStyle(Dictionary<string, PdfFont> customFonts)
         {
-            Style textStyle = BorderPropertiesToStyle();
+            StyleWrapper textStyle = BorderPropertiesToStyle();
 
+            if (FontSize.IsInitialized)
+                textStyle.SetFontSize(FontSize.Value);
+            if (FontName.IsInitialized && customFonts.ContainsKey(FontName.Value))
+                textStyle.SetFont(customFonts[FontName.Value]);
             if (HorizontalAlignment.IsInitialized)
                 textStyle.SetHorizontalAlignment(HorizontalAlignment.Value);
             if (TextAlignment.IsInitialized)
@@ -199,6 +205,7 @@ namespace Xml2Pdf.DocumentStructure
                 textStyle.SetItalic();
             if (Underline.ValueOr(false))
                 textStyle.SetUnderline();
+
 
             return textStyle;
         }

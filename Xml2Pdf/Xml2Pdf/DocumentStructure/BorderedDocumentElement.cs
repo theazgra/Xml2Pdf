@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using iText.Layout;
 using Xml2Pdf.DocumentStructure.Geometry;
+using Xml2Pdf.Renderer;
 using Xml2Pdf.Renderer.Mappers;
 
 namespace Xml2Pdf.DocumentStructure
@@ -68,9 +69,9 @@ namespace Xml2Pdf.DocumentStructure
             DumpElementProperty(dumpBuilder, indent, nameof(RightBorder), RightBorder);
         }
 
-        public Style BorderPropertiesToStyle()
+        public StyleWrapper BorderPropertiesToStyle()
         {
-            Style style = new Style();
+            StyleWrapper style = new StyleWrapper();
 
             // Borders.
             if (Borders.IsInitialized)

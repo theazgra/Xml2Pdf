@@ -10,7 +10,7 @@ namespace Xml2Pdf.DocumentStructure
     {
         private static readonly Type[] PossibleChildren = {typeof(PageElement)};
 
-        public ElementStyle Style { get; set; }
+        public ElementStyle Style { get; } = new ElementStyle();
 
         public Margins CustomMargins { get; set; }
         public PageSize PageSize { get; set; } = PageSize.A4;
