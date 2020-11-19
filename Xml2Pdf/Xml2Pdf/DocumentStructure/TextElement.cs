@@ -27,6 +27,7 @@ namespace Xml2Pdf.DocumentStructure
         public ElementProperty<HorizontalAlignment> HorizontalAlignment { get; } =
             new ElementProperty<HorizontalAlignment>();
 
+        public ElementProperty<string> FontName { get; } = new ElementProperty<string>();
         public ElementProperty<bool> Bold { get; } = new ElementProperty<bool>();
         public ElementProperty<bool> Italic { get; } = new ElementProperty<bool>();
         public ElementProperty<bool> Superscript { get; } = new ElementProperty<bool>();
@@ -57,6 +58,8 @@ namespace Xml2Pdf.DocumentStructure
 
         private void InheritFrom(TextElement other)
         {
+            if (!FontName.IsInitialized && other.FontName.IsInitialized)
+                FontName.Value = other.FontName.Value;
             if (!VerticalAlignment.IsInitialized && other.VerticalAlignment.IsInitialized)
                 VerticalAlignment.Value = other.VerticalAlignment.Value;
             if (!TextAlignment.IsInitialized && other.TextAlignment.IsInitialized)
@@ -93,11 +96,12 @@ namespace Xml2Pdf.DocumentStructure
             base.DumpToStringBuilder(dumpBuilder, indent);
             PrepareIndent(dumpBuilder, indent).Append("(TextElement)").AppendLine();
 
+            DumpElementProperty(dumpBuilder, indent, nameof(FontName), FontName);
+            DumpElementProperty(dumpBuilder, indent, nameof(Bold), Bold);
+            DumpElementProperty(dumpBuilder, indent, nameof(Italic), Italic);
             DumpElementProperty(dumpBuilder, indent, nameof(TextAlignment), TextAlignment);
             DumpElementProperty(dumpBuilder, indent, nameof(HorizontalAlignment), HorizontalAlignment);
             DumpElementProperty(dumpBuilder, indent, nameof(VerticalAlignment), VerticalAlignment);
-            DumpElementProperty(dumpBuilder, indent, nameof(Bold), Bold);
-            DumpElementProperty(dumpBuilder, indent, nameof(Italic), Italic);
             DumpElementProperty(dumpBuilder, indent, nameof(Superscript), Superscript);
             DumpElementProperty(dumpBuilder, indent, nameof(Subscript), Subscript);
             DumpElementProperty(dumpBuilder, indent, nameof(Underline), Underline);

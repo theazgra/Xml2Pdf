@@ -189,15 +189,14 @@ namespace Xml2Pdf.Renderer
             }
         }
 
-        private void RenderListItemElement(ListItemElement listChild, List list)
+        private void RenderListItemElement(ListItemElement element, List list)
         {
-            var listItem = new ListItem(listChild.GetTextToRender(_objectPropertyMap, ValueFormatter));
-            listItem.SetFont(_documentFont);
+            var listItem = new ListItem(element.GetTextToRender(_objectPropertyMap, ValueFormatter));
+            listItem.SetFont(GetFontByNameOrDefaultFont(element.FontName));
             if (_style?.ListItemStyle != null)
                 listItem.AddStyle(_style.ListItemStyle);
 
-            listItem.AddStyle(listChild.TextPropertiesToStyle());
-
+            listItem.AddStyle(element.TextPropertiesToStyle());
             list.Add(listItem);
         }
 
@@ -477,24 +476,38 @@ namespace Xml2Pdf.Renderer
             }
         }
 
+        /// <summary>
+        /// Get the custom font by its name or return document font.
+        /// </summary>
+        /// <param name="fontNameProperty">Font name property.</param>
+        /// <returns>PDF font.</returns>
+        private PdfFont GetFontByNameOrDefaultFont(ElementProperty<string> fontNameProperty)
+        {
+            if (fontNameProperty.IsInitialized && _style != null && _style.CustomFonts.ContainsKey(fontNameProperty.Value))
+                return _style.CustomFonts[fontNameProperty.Value];
+            return _documentFont;
+        }
+
         private Text RenderTextElement(TextElement element, string textToRender = null)
         {
             Text text;
             textToRender ??= element.GetTextToRender(_objectPropertyMap, ValueFormatter);
+            var font = GetFontByNameOrDefaultFont(element.FontName);
 
             if (element.Superscript.ValueOr(false))
             {
-                text = new Text(textToRender).SetFont(_documentFont).SetTextRise(4).SetFontSize(DefaultFontSize);
+                text = new Text(textToRender).SetFont(font).SetTextRise(4).SetFontSize(DefaultFontSize);
             }
             else if (element.Subscript.ValueOr(false))
             {
-                text = new Text(textToRender).SetFont(_documentFont).SetTextRise(-4).SetFontSize(DefaultFontSize);
+                text = new Text(textToRender).SetFont(font).SetTextRise(-4).SetFontSize(DefaultFontSize);
             }
             else
             {
                 float fontSize = element.FontSize.IsInitialized ? element.FontSize.Value : DefaultFontSize;
-                text = new Text(textToRender).SetFont(_documentFont).SetFontSize(fontSize);
+                text = new Text(textToRender).SetFont(font).SetFontSize(fontSize);
             }
+
 
             text.AddStyle(element.TextPropertiesToStyle());
 

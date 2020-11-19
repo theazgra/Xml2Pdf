@@ -227,6 +227,10 @@ namespace Xml2Pdf.Parser.Xml
             {
                 switch (pair.Name)
                 {
+                    case "font":
+                    case "fontName":
+                        textElement.FontName.Value = pair.Value;
+                        break;
                     case "horizontalAlignment":
                         textElement.HorizontalAlignment.Value = ValueParser.ParseHorizontalAlignment(pair.Value);
                         break;
