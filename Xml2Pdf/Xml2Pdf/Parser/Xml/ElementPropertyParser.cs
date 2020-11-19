@@ -317,6 +317,9 @@ namespace Xml2Pdf.Parser.Xml
                     case "documentFont":
                         rootDocumentElement.DocumentFont.Value = value;
                         break;
+                    case "fontSize":
+                        rootDocumentElement.DocumentFontSize.Value = ValueParser.ParseFloat(value);
+                        break;
                     case "margins":
                         rootDocumentElement.CustomMargins = ValueParser.ParseCompleteMargins(value);
                         break;

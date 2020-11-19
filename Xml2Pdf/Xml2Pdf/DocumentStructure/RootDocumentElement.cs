@@ -17,6 +17,7 @@ namespace Xml2Pdf.DocumentStructure
         public PageOrientation PageOrientation { get; set; } = PageOrientation.Portrait;
 
         public ElementProperty<string> DocumentFont { get; } = new ElementProperty<string>();
+        public ElementProperty<float> DocumentFontSize { get; } = new ElementProperty<float>();
 
         public int PageCount { get; private set; }
 
@@ -46,6 +47,7 @@ namespace Xml2Pdf.DocumentStructure
                 PrepareIndent(dumpBuilder, indent).Append(" #Margins: ").Append(CustomMargins);
 
             DumpElementProperty(dumpBuilder, indent, nameof(DocumentFont), DocumentFont);
+            DumpElementProperty(dumpBuilder, indent, nameof(DocumentFontSize), DocumentFontSize);
 
             foreach (var child in Children)
             {

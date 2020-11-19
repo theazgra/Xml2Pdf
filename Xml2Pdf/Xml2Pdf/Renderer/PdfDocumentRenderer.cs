@@ -22,18 +22,16 @@ namespace Xml2Pdf.Renderer
 {
     public class PdfDocumentRenderer : IDocumentRenderer
     {
-        // TODO(Moravec): This should be configurable in XML.
-        private const float DefaultFontSize = 10;
-        private const float DefaultSmallFontSize = 6;
-
+        private const float ScriptFontCoefficient = 0.7f;
 
         private Document _pdfDocument = null;
         private readonly Dictionary<string, object> _objectPropertyMap;
 
-        private PdfFont _documentFont;
         private Rectangle _effectivePageRectangle;
-
         private ElementStyle _style;
+
+        private float _documentFontSize = 10;
+        private PdfFont _documentFont;
 
 
         public ValueFormatter ValueFormatter { get; }
@@ -56,6 +54,25 @@ namespace Xml2Pdf.Renderer
             }
         }
 
+        private void InitializeDocumentProperties(RootDocumentElement element)
+        {
+            if (element.DocumentFont.IsInitialized)
+            {
+                if (_style == null || !_style.CustomFonts.ContainsKey(element.DocumentFont.Value))
+                {
+                    throw new RenderException("DocumentFont wasn't specified as <CustomFont> in <Style> node.");
+                }
+
+                _documentFont = _style.CustomFonts[element.DocumentFont.Value];
+            }
+            else
+            {
+                _documentFont = GetDefaultFont();
+            }
+
+            _documentFontSize = element.DocumentFontSize.ValueOr(_documentFontSize);
+        }
+
         public bool RenderDocument(RootDocumentElement rootDocumentElement, string savePath) =>
             RenderDocument(rootDocumentElement, savePath, null);
 
@@ -67,19 +84,7 @@ namespace Xml2Pdf.Renderer
                 LoadDataObjectToPropertyMap(dataObject);
             }
 
-            if (rootDocumentElement.DocumentFont.IsInitialized)
-            {
-                if (_style == null || !_style.CustomFonts.ContainsKey(rootDocumentElement.DocumentFont.Value))
-                {
-                    throw new RenderException("DocumentFont wasn't specified as <CustomFont> in <Style> node.");
-                }
-
-                _documentFont = _style.CustomFonts[rootDocumentElement.DocumentFont.Value];
-            }
-            else
-            {
-                _documentFont = GetDefaultFont();
-            }
+            InitializeDocumentProperties(rootDocumentElement);
 
             using var writer = new PdfWriter(savePath);
             var pdf = new PdfDocument(writer);
@@ -192,7 +197,7 @@ namespace Xml2Pdf.Renderer
         private void RenderListItemElement(ListItemElement element, List list)
         {
             var listItem = new ListItem(element.GetTextToRender(_objectPropertyMap, ValueFormatter));
-            listItem.SetFont(GetFontByNameOrDefaultFont(element.FontName));
+            listItem.SetFont(GetFontByNameOrDefaultFont(element.FontName)).SetFontSize(element.FontSize.ValueOr(_documentFontSize));
             if (_style?.ListItemStyle != null)
                 listItem.AddStyle(_style.ListItemStyle);
 
@@ -492,19 +497,19 @@ namespace Xml2Pdf.Renderer
         {
             Text text;
             textToRender ??= element.GetTextToRender(_objectPropertyMap, ValueFormatter);
+            float fontSize = element.FontSize.ValueOr(_documentFontSize);
             var font = GetFontByNameOrDefaultFont(element.FontName);
 
             if (element.Superscript.ValueOr(false))
             {
-                text = new Text(textToRender).SetFont(font).SetTextRise(4).SetFontSize(DefaultFontSize);
+                text = new Text(textToRender).SetFont(font).SetTextRise(4).SetFontSize(fontSize * ScriptFontCoefficient);
             }
             else if (element.Subscript.ValueOr(false))
             {
-                text = new Text(textToRender).SetFont(font).SetTextRise(-4).SetFontSize(DefaultFontSize);
+                text = new Text(textToRender).SetFont(font).SetTextRise(-4).SetFontSize(fontSize * ScriptFontCoefficient);
             }
             else
             {
-                float fontSize = element.FontSize.IsInitialized ? element.FontSize.Value : DefaultFontSize;
                 text = new Text(textToRender).SetFont(font).SetFontSize(fontSize);
             }
 
