@@ -364,21 +364,19 @@ namespace Xml2Pdf.Renderer
             }
         }
 
-        private void RenderTableElement(TableElement tableElement, DocumentElement parent, object pdfParentObject)
+        private void RenderTableElement(TableElement element, DocumentElement parent, object pdfParentObject)
         {
-            Table table = new Table(tableElement.GetColumnWidths(), tableElement.LargeTable.ValueOr(false));
+            Table table = new Table(element.GetColumnWidths(), element.LargeTable.ValueOr(false));
+            table.SetWidth(element.TableWidth.ValueOr(UnitValue.CreatePercentValue(100.0f)));
 
-            // TODO(Moravec): Customizable.
-            table.SetWidth(new UnitValue(UnitValue.PERCENT, 100.0f));
+            if (element.VerticalBorderSpacing.IsInitialized)
+                table.SetVerticalBorderSpacing(element.VerticalBorderSpacing.Value);
+            if (element.HorizontalBorderSpacing.IsInitialized)
+                table.SetHorizontalBorderSpacing(element.HorizontalBorderSpacing.Value);
 
-            if (tableElement.VerticalBorderSpacing.IsInitialized)
-                table.SetVerticalBorderSpacing(tableElement.VerticalBorderSpacing.Value);
-            if (tableElement.HorizontalBorderSpacing.IsInitialized)
-                table.SetHorizontalBorderSpacing(tableElement.HorizontalBorderSpacing.Value);
-
-            foreach (var tableRow in tableElement.Children)
+            foreach (var tableRow in element.Children)
             {
-                RenderDocumentElement(tableRow, tableElement, table);
+                RenderDocumentElement(tableRow, element, table);
             }
 
             if (pdfParentObject is Document document)

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Text;
+using iText.Layout.Element;
+using iText.Layout.Properties;
 using Xml2Pdf.Exceptions;
 
 namespace Xml2Pdf.DocumentStructure
@@ -8,6 +10,7 @@ namespace Xml2Pdf.DocumentStructure
     {
         private static readonly Type[] PossibleChildren = {typeof(TableRowElement), typeof(TableDataRowElement)};
 
+        public ElementProperty<UnitValue> TableWidth { get; } = new ElementProperty<UnitValue>();
         public ElementProperty<int> ColumnCount { get; set; } = new ElementProperty<int>();
         public ElementProperty<float[]> ColumnWidths { get; set; } = new ElementProperty<float[]>();
         public ElementProperty<bool> LargeTable { get; set; } = new ElementProperty<bool>();
@@ -21,6 +24,7 @@ namespace Xml2Pdf.DocumentStructure
         internal override void DumpToStringBuilder(StringBuilder dumpBuilder, int indent)
         {
             base.DumpToStringBuilder(dumpBuilder, indent);
+            DumpElementProperty(dumpBuilder, indent, nameof(TableWidth), TableWidth);
             DumpElementProperty(dumpBuilder, indent, nameof(ColumnCount), ColumnCount);
             DumpElementProperty(dumpBuilder, indent, nameof(ColumnWidths), ColumnWidths);
             DumpElementProperty(dumpBuilder, indent, nameof(LargeTable), LargeTable);

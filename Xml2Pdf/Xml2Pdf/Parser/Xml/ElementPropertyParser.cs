@@ -9,8 +9,7 @@ namespace Xml2Pdf.Parser.Xml
 {
     internal static class ElementPropertyParser
     {
-        internal static void ParseAndAssignElementProperties(DocumentElement documentElement,
-                                                             PropertyBag<string> propertyBag)
+        internal static void ParseAndAssignElementProperties(DocumentElement documentElement, PropertyBag<string> propertyBag)
         {
             if (documentElement is BorderedDocumentElement borderedElement)
             {
@@ -52,7 +51,7 @@ namespace Xml2Pdf.Parser.Xml
                     return;
                 default:
                     ColorConsole.WriteLine(ConsoleColor.Red,
-                                           $"Missing branch in `ParseAndAssignElementProperty` for '{documentElement.GetType().Name}'");
+                        $"Missing branch in `ParseAndAssignElementProperty` for '{documentElement.GetType().Name}'");
                     break;
             }
         }
@@ -85,8 +84,7 @@ namespace Xml2Pdf.Parser.Xml
             }
         }
 
-        private static void AssignTableCellElementProperties(TableCellElement cellElement,
-                                                             PropertyBag<string> propertyBag)
+        private static void AssignTableCellElementProperties(TableCellElement cellElement, PropertyBag<string> propertyBag)
         {
             foreach (var pair in propertyBag.UnprocessedPairs())
             {
@@ -145,7 +143,7 @@ namespace Xml2Pdf.Parser.Xml
         }
 
         private static void AssignTableRowElementProperties(TableRowElement tableRowElement,
-                                                            PropertyBag<string> propertyBag)
+            PropertyBag<string> propertyBag)
         {
             foreach (var pair in propertyBag.UnprocessedPairs())
             {
@@ -166,8 +164,7 @@ namespace Xml2Pdf.Parser.Xml
             }
         }
 
-        private static void AssignTableDataRowElementProperties(TableDataRowElement tableDataRowElement,
-                                                                PropertyBag<string> propertyBag)
+        private static void AssignTableDataRowElementProperties(TableDataRowElement tableDataRowElement, PropertyBag<string> propertyBag)
         {
             foreach (var pair in propertyBag.UnprocessedPairs())
             {
@@ -195,6 +192,10 @@ namespace Xml2Pdf.Parser.Xml
             {
                 switch (pair.Name)
                 {
+                    case "width":
+                    case "tableWidth":
+                        tableElement.TableWidth.Value = ValueParser.ParseUnitValue(pair.Value);
+                        break;
                     case "columnCount":
                         tableElement.ColumnCount.Value = ValueParser.ParseInt(pair.Value);
                         break;
@@ -275,8 +276,7 @@ namespace Xml2Pdf.Parser.Xml
             }
         }
 
-        private static void AssignBorderedDocumentElementProperties(BorderedDocumentElement borderedElement,
-                                                                    PropertyBag<string> propertyBag)
+        private static void AssignBorderedDocumentElementProperties(BorderedDocumentElement borderedElement, PropertyBag<string> propertyBag)
         {
             foreach (var pair in propertyBag.UnprocessedPairs())
             {
@@ -302,8 +302,7 @@ namespace Xml2Pdf.Parser.Xml
         }
 
 
-        private static void AssignRootDocumentElementProperties(RootDocumentElement rootDocumentElement,
-                                                                PropertyBag<string> propertyBag)
+        private static void AssignRootDocumentElementProperties(RootDocumentElement rootDocumentElement, PropertyBag<string> propertyBag)
         {
             foreach (var (name, value) in propertyBag.UnprocessedPairs())
             {
