@@ -200,7 +200,7 @@ namespace Xml2Pdf.Parser.Xml
                         tableElement.ColumnCount.Value = ValueParser.ParseInt(pair.Value);
                         break;
                     case "columnWidths":
-                        tableElement.ColumnWidths.Value = ValueParser.ParseFloatArray(pair.Value);
+                        tableElement.ColumnWidths.Value = ValueParser.ParseUnitValueArray(pair.Value);
                         tableElement.ColumnCount.Value = tableElement.ColumnWidths.Value.Length;
                         break;
                     case "largeTable":

@@ -12,7 +12,7 @@ namespace Xml2Pdf.DocumentStructure
 
         public ElementProperty<UnitValue> TableWidth { get; } = new ElementProperty<UnitValue>();
         public ElementProperty<int> ColumnCount { get; set; } = new ElementProperty<int>();
-        public ElementProperty<float[]> ColumnWidths { get; set; } = new ElementProperty<float[]>();
+        public ElementProperty<UnitValue[]> ColumnWidths { get; set; } = new ElementProperty<UnitValue[]>();
         public ElementProperty<bool> LargeTable { get; set; } = new ElementProperty<bool>();
         public ElementProperty<float> VerticalBorderSpacing { get; set; } = new ElementProperty<float>();
         public ElementProperty<float> HorizontalBorderSpacing { get; set; } = new ElementProperty<float>();
@@ -38,14 +38,14 @@ namespace Xml2Pdf.DocumentStructure
             }
         }
 
-        public float[] GetColumnWidths()
+        public UnitValue[] GetColumnWidths()
         {
             if (!ColumnWidths.IsInitialized && ColumnCount.IsInitialized)
             {
-                ColumnWidths.Value = new float[ColumnCount.Value];
+                ColumnWidths.Value = new UnitValue[ColumnCount.Value];
                 for (int i = 0; i < ColumnCount.Value; i++)
                 {
-                    ColumnWidths.Value[i] = 1.0f / (float) ColumnCount.Value;
+                    ColumnWidths.Value[i] = UnitValue.CreatePercentValue(100.0f / ColumnCount.Value);
                 }
             }
             else if (!ColumnWidths.IsInitialized)

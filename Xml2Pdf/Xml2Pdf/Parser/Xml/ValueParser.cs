@@ -31,7 +31,10 @@ namespace Xml2Pdf.Parser.Xml
             {"yellow", ColorConstants.YELLOW}
         };
 
-        internal static void InjectNewColor(string colorName, Color color) { ColorMap.Add(colorName.ToLower(), color); }
+        internal static void InjectNewColor(string colorName, Color color)
+        {
+            ColorMap.Add(colorName.ToLower(), color);
+        }
 
         private static Color GetDefaultColor(string colorName)
         {
@@ -49,11 +52,11 @@ namespace Xml2Pdf.Parser.Xml
                 1 => new Margins(ParseFloat(parts[0])),
                 2 => new Margins(ParseFloat(parts[0]), float.Parse(parts[1])),
                 4 => new Margins(ParseFloat(parts[0]),
-                                 ParseFloat(parts[1]),
-                                 ParseFloat(parts[2]),
-                                 ParseFloat(parts[3])),
+                    ParseFloat(parts[1]),
+                    ParseFloat(parts[2]),
+                    ParseFloat(parts[3])),
                 _ => throw new
-                         ValueParseException("Unable to parse margins. Expected 1, 2 or 4 floats separated by ';' or ','")
+                    ValueParseException("Unable to parse margins. Expected 1, 2 or 4 floats separated by ';' or ','")
             };
         }
 
@@ -65,8 +68,7 @@ namespace Xml2Pdf.Parser.Xml
         internal static float[] ParseFloatArray(string value)
         {
             var parts = ParseStringArray(value);
-            var coeffs = parts.Select(x => ParseFloat(x)).ToArray();
-            return coeffs;
+            return parts.Select(ParseFloat).ToArray();
         }
 
         internal static PageOrientation ParsePageOrientation(string propertyValue)
@@ -217,7 +219,10 @@ namespace Xml2Pdf.Parser.Xml
             };
         }
 
-        internal static bool ParseBool(string value) { return (value == "true" || value == "yes"); }
+        internal static bool ParseBool(string value)
+        {
+            return (value == "true" || value == "yes");
+        }
 
         internal static HorizontalAlignment ParseHorizontalAlignment(string value)
         {
@@ -227,7 +232,7 @@ namespace Xml2Pdf.Parser.Xml
                 "center" => HorizontalAlignment.CENTER,
                 "right" => HorizontalAlignment.RIGHT,
                 _ => throw new
-                         ValueParseException("Invalid HorizontalAlignment, valid values are: left, center and right")
+                    ValueParseException("Invalid HorizontalAlignment, valid values are: left, center and right")
             };
         }
 
@@ -241,7 +246,7 @@ namespace Xml2Pdf.Parser.Xml
                 "justify" => TextAlignment.JUSTIFIED,
                 "justifyAll" => TextAlignment.JUSTIFIED_ALL,
                 _ => throw new
-                         ValueParseException("Invalid HorizontalAlignment, valid values are: left, center and right")
+                    ValueParseException("Invalid HorizontalAlignment, valid values are: left, center and right")
             };
         }
 
@@ -253,15 +258,17 @@ namespace Xml2Pdf.Parser.Xml
                 "bottom" => VerticalAlignment.BOTTOM,
                 "middle" => VerticalAlignment.MIDDLE,
                 _ => throw new
-                         ValueParseException("Invalid VerticalAlignment, valid values are: top, bottom and middle.")
+                    ValueParseException("Invalid VerticalAlignment, valid values are: top, bottom and middle.")
             };
         }
 
         internal static UnitValue ParseUnitValue(string value)
         {
             return value.EndsWith('%')
-                       ? UnitValue.CreatePercentValue(ParseFloat(value.Substring(0, value.Length - 1)))
-                       : UnitValue.CreatePointValue(ParseFloat(value));
+                ? UnitValue.CreatePercentValue(ParseFloat(value.Substring(0, value.Length - 1)))
+                : UnitValue.CreatePointValue(ParseFloat(value));
         }
+
+        internal static UnitValue[] ParseUnitValueArray(string value) => ParseStringArray(value).Select(ParseUnitValue).ToArray();
     }
 }
