@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Channels;
 using iText.Kernel.Colors;
@@ -132,6 +133,10 @@ namespace Xml2Pdf.Renderer
         private void RenderLineElement(LineElement lineElement, object docParent)
         {
             var emptyParagraph = new Paragraph();
+
+            if (_style?.LineStyle != null)
+                emptyParagraph.AddStyle(_style.LineStyle);
+
             emptyParagraph.AddStyle(lineElement.BorderPropertiesToStyle());
             if (lineElement.Length.IsInitialized)
                 emptyParagraph.SetWidth(lineElement.Length.Value);
@@ -180,9 +185,12 @@ namespace Xml2Pdf.Renderer
         private void RenderListItemElement(ListItemElement listChild, List list)
         {
             var listItem = new ListItem(listChild.GetTextToRender(_objectPropertyMap, ValueFormatter));
-            // TODO(Moravec): Is this necessary?
-            listItem.SetFont(_defaultFont);
+
+            if (_style?.ListItemStyle != null)
+                listItem.AddStyle(_style.ListItemStyle);
+
             listItem.AddStyle(listChild.TextPropertiesToStyle());
+
             list.Add(listItem);
         }
 
@@ -232,6 +240,10 @@ namespace Xml2Pdf.Renderer
             int colSpan = tableCell.ColumnSpan.ValueOr(1);
 
             Cell cell = new Cell(rowSpan, colSpan);
+
+            if (_style?.TableCellStyle != null)
+                cell.AddStyle(_style.TableCellStyle);
+
             cell.AddStyle(tableCell.TextPropertiesToStyle());
             if (tableCell.HasChildren)
             {
@@ -246,7 +258,6 @@ namespace Xml2Pdf.Renderer
                 Debug.Assert(tableCell.ChildrenCount == 1);
                 foreach (var cellChild in tableCell.Children)
                 {
-                    // TODO(Moravec): We have to set text properties on cell.
                     RenderDocumentElement(cellChild, tableCell, cell);
                 }
             }
@@ -367,6 +378,10 @@ namespace Xml2Pdf.Renderer
         private void RenderTableElement(TableElement element, DocumentElement parent, object pdfParentObject)
         {
             Table table = new Table(element.GetColumnWidths(), element.LargeTable.ValueOr(false));
+
+            if (_style?.TableStyle != null)
+                table.AddStyle(_style.TableStyle);
+
             table.SetWidth(element.TableWidth.ValueOr(UnitValue.CreatePercentValue(100.0f)));
 
             if (element.VerticalBorderSpacing.IsInitialized)

@@ -33,6 +33,19 @@ namespace Xml2Pdf.Parser.Xml
                             case "ParagraphStyle":
                                 result.ParagraphStyle = ParseTextStyle(xmlReader.Name, xmlReader);
                                 break;
+                            case "TableCellStyle":
+                                result.TableCellStyle = ParseTextStyle(xmlReader.Name, xmlReader);
+                                break;
+                            case "ListItemStyle":
+                                result.ListItemStyle = ParseTextStyle(xmlReader.Name, xmlReader);
+                                break;
+                            case "TableStyle":
+                                result.TableStyle = ParseBorderedElementStyle(xmlReader.Name, xmlReader);
+                                break;
+                            case "LineStyle":
+                                result.LineStyle = ParseBorderedElementStyle(xmlReader.Name, xmlReader);
+                                break;
+
                             default:
                                 ColorConsole.WriteLine(ConsoleColor.DarkBlue,
                                     $"Unhandled style node. '{xmlReader.Name}'");
@@ -87,12 +100,15 @@ namespace Xml2Pdf.Parser.Xml
             var propertyBag = ReadWhileInEnclosingNode(xmlReader, enclosingNodeName);
             TextElement textElement = new TextElement();
             ElementPropertyParser.ParseAndAssignElementProperties(textElement, propertyBag);
-            // StringBuilder sb = new StringBuilder();
-            // textElement.DumpToStringBuilder(sb, 0);
-            // Console.WriteLine("-------------------------------------------");
-            // Console.WriteLine(sb.ToString());
-            // Console.WriteLine("-------------------------------------------");
             return textElement.TextPropertiesToStyle();
+        }
+
+        private Style ParseBorderedElementStyle(string enclosingNodeName, XmlReader xmlReader)
+        {
+            var propertyBag = ReadWhileInEnclosingNode(xmlReader, enclosingNodeName);
+            BorderedDocumentElement borderedElement = new LineElement();
+            ElementPropertyParser.ParseAndAssignElementProperties(borderedElement, propertyBag);
+            return borderedElement.BorderPropertiesToStyle();
         }
 
         private (string name, string value) GetNameValueAttributePair(XmlReader xmlReader)
