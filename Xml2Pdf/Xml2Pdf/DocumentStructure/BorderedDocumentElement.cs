@@ -14,10 +14,6 @@ namespace Xml2Pdf.DocumentStructure
         public ElementProperty<BorderInfo> LeftBorder { get; } = new ElementProperty<BorderInfo>();
         public ElementProperty<BorderInfo> RightBorder { get; } = new ElementProperty<BorderInfo>();
 
-        protected virtual bool CanInheritBorderProperties => true;
-
-        // TODO(Moravec): Border radius.
-
         protected BorderedDocumentElement() { }
 
         internal override void DumpToStringBuilder(StringBuilder dumpBuilder, int indent)

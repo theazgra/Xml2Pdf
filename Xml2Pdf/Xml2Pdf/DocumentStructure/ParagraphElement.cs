@@ -10,8 +10,6 @@ namespace Xml2Pdf.DocumentStructure
         protected override bool IsParentType => true;
         protected override Type[] AllowedChildrenTypes => PossibleChildren;
 
-        protected override bool CanInheritBorderProperties => false;
-
         internal override void DumpToStringBuilder(StringBuilder dumpBuilder, int indent)
         {
             base.DumpToStringBuilder(dumpBuilder, indent);

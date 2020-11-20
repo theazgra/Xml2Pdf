@@ -16,25 +16,48 @@ namespace Xml2Pdf.Parser.Xml
     {
         private readonly static Dictionary<string, Color> ColorMap = new Dictionary<string, Color>
         {
-            {"black", ColorConstants.BLACK},
-            {"blue", ColorConstants.BLUE},
-            {"cyan", ColorConstants.CYAN},
-            {"darkGray", ColorConstants.DARK_GRAY},
-            {"gray", ColorConstants.GRAY},
-            {"green", ColorConstants.GREEN},
-            {"lightGray", ColorConstants.LIGHT_GRAY},
-            {"magenta", ColorConstants.MAGENTA},
-            {"orange", ColorConstants.ORANGE},
-            {"pink", ColorConstants.PINK},
-            {"red", ColorConstants.RED},
-            {"white", ColorConstants.WHITE},
-            {"yellow", ColorConstants.YELLOW}
+            {
+                "black", ColorConstants.BLACK
+            },
+            {
+                "blue", ColorConstants.BLUE
+            },
+            {
+                "cyan", ColorConstants.CYAN
+            },
+            {
+                "darkGray", ColorConstants.DARK_GRAY
+            },
+            {
+                "gray", ColorConstants.GRAY
+            },
+            {
+                "green", ColorConstants.GREEN
+            },
+            {
+                "lightGray", ColorConstants.LIGHT_GRAY
+            },
+            {
+                "magenta", ColorConstants.MAGENTA
+            },
+            {
+                "orange", ColorConstants.ORANGE
+            },
+            {
+                "pink", ColorConstants.PINK
+            },
+            {
+                "red", ColorConstants.RED
+            },
+            {
+                "white", ColorConstants.WHITE
+            },
+            {
+                "yellow", ColorConstants.YELLOW
+            }
         };
 
-        internal static void InjectNewColor(string colorName, Color color)
-        {
-            ColorMap.Add(colorName.ToLower(), color);
-        }
+        internal static void InjectNewColor(string colorName, Color color) { ColorMap.Add(colorName.ToLower(), color); }
 
         private static Color GetDefaultColor(string colorName)
         {
@@ -51,10 +74,11 @@ namespace Xml2Pdf.Parser.Xml
             {
                 1 => new Margins(ParseFloat(parts[0])),
                 2 => new Margins(ParseFloat(parts[0]), float.Parse(parts[1])),
-                4 => new Margins(ParseFloat(parts[0]),
-                    ParseFloat(parts[1]),
-                    ParseFloat(parts[2]),
-                    ParseFloat(parts[3])),
+                4 => new Margins(
+                                 ParseFloat(parts[0]),
+                                 ParseFloat(parts[1]),
+                                 ParseFloat(parts[2]),
+                                 ParseFloat(parts[3])),
                 _ => throw new
                     ValueParseException("Unable to parse margins. Expected 1, 2 or 4 floats separated by ';' or ','")
             };
@@ -77,7 +101,8 @@ namespace Xml2Pdf.Parser.Xml
             {
                 "portrait" => PageOrientation.Portrait,
                 "landscape" => PageOrientation.Landscape,
-                _ => throw new ValueParseException($"Invalid value '{propertyValue}' for page orientation. " +
+                _ => throw new ValueParseException(
+                                                   $"Invalid value '{propertyValue}' for page orientation. " +
                                                    "Valid values are portrait and landscape.")
             };
         }
@@ -122,11 +147,15 @@ namespace Xml2Pdf.Parser.Xml
         internal static BorderInfo ParseBorderInfo(string value)
         {
             if (value == "none")
-                return new BorderInfo {BorderType = BorderType.NoBorder};
+                return new BorderInfo
+                {
+                    BorderType = BorderType.NoBorder
+                };
             var parts = ParseStringArray(value);
             if (parts.Length < 3)
             {
-                throw new ValueParseException("Unable to parse BorderInfo. " +
+                throw new ValueParseException(
+                                              "Unable to parse BorderInfo. " +
                                               "Expected values like: [1.5;solid;black] or [1.5,dotted,black,(0.5)]");
             }
 
@@ -219,10 +248,7 @@ namespace Xml2Pdf.Parser.Xml
             };
         }
 
-        internal static bool ParseBool(string value)
-        {
-            return (value == "true" || value == "yes");
-        }
+        internal static bool ParseBool(string value) { return (value == "true" || value == "yes"); }
 
         internal static HorizontalAlignment ParseHorizontalAlignment(string value)
         {
@@ -270,5 +296,13 @@ namespace Xml2Pdf.Parser.Xml
         }
 
         internal static UnitValue[] ParseUnitValueArray(string value) => ParseStringArray(value).Select(ParseUnitValue).ToArray();
+
+        public static IntPoint ParseIntPointFloat(string pairValue)
+        {
+            var parts = ParseStringArray(pairValue);
+            if (parts.Length != 2)
+                throw new ValueParseException("IntPoint must have two values.");
+            return new IntPoint(ParseInt(parts[0]), ParseInt(parts[1]));
+        }
     }
 }

@@ -4,8 +4,8 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
+using iText.IO.Image;
 using iText.Kernel.Font;
-using iText.Kernel.Geom;
 using iText.Kernel.Pdf;
 using iText.Layout;
 using iText.Layout.Element;
@@ -45,6 +45,29 @@ namespace Xml2Pdf.Renderer
             ValueFormatter = new ValueFormatter();
             ValueFormatter.AddFormatter(new ToStringFormatter<object>());
         }
+
+        private T CheckedReadProperty<T>(string name)
+        {
+            if (!_objectPropertyMap.ContainsKey(name))
+                throw new ArgumentException($"Property with name {name} wasn't found in the data object.");
+            object value = _objectPropertyMap[name];
+
+            if (value == null)
+                throw new ArgumentException($"Property with name {name} is null.");
+
+            var tType = typeof(T);
+            var valueType = value.GetType();
+
+            if (valueType != tType)
+            {
+                throw new ArgumentException(
+                                            $"Property with name {name} has invalid type. " +
+                                            $"Requested type: '{tType.Name}'. Read type: '{valueType.Name}'");
+            }
+
+            return (T) value;
+        }
+
 
         /// <summary>
         /// Load all object properties to lookup dictionary with its values.
@@ -199,12 +222,47 @@ namespace Xml2Pdf.Renderer
                 case TableCellElement tableCell:
                     RenderTableCell(tableCell, parent as TableRowElement, pdfParent as Table, inheritedStyle);
                     break;
+                case ImageElement imageElement:
+                    RenderImageElement(imageElement, parent, pdfParent, inheritedStyle);
+                    break;
                 default:
                     ColorConsole.WriteLine(
                                            ConsoleColor.Red,
                                            $"Missing branch in PdfDocumentRenderer::RenderDocumentElement() for {element.GetType().Name}");
                     break;
             }
+        }
+
+        private void RenderImageElement(ImageElement element, DocumentElement parent, object pdfParent, StyleWrapper inheritedStyle)
+        {
+            ImageData imgData = null;
+            if (element.Path.IsInitialized)
+            {
+                imgData = ImageDataFactory.Create(element.Path.Value);
+            }
+            else if (element.SourceProperty.IsInitialized)
+            {
+                byte[] data = CheckedReadProperty<byte[]>(element.SourceProperty.Value);
+                imgData = ImageDataFactory.Create(data);
+            }
+
+            Image image = new Image(imgData);
+            image.AddStyle(inheritedStyle);
+
+            if (element.FixedPosition.IsInitialized)
+                image.SetFixedPosition(element.FixedPosition.Value.X, element.FixedPosition.Value.Y);
+
+            if (element.Width.IsInitialized)
+                image.SetWidth(element.Width.Value);
+
+            image.Scale(element.HorizontalScaling.ValueOr(1.0f), element.VerticalScaling.ValueOr(1.0f));
+
+            if (pdfParent is Document pdfDoc)
+                pdfDoc.Add(image);
+            else if (pdfParent is Cell cell)
+                cell.Add(image);
+            else if (pdfParent is Paragraph p)
+                p.Add(image);
         }
 
         private void RenderPageElement(PageElement element, DocumentElement parent, object pdfParent, StyleWrapper inheritedStyle)

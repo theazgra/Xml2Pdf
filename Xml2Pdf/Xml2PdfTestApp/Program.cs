@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using iText.Kernel.Font;
 using Xml2Pdf.Format;
 using Xml2Pdf.Format.Formatters;
@@ -22,6 +23,8 @@ namespace Xml2PdfTestApp
         public uint Age { get; set; }
         public Person Wife { get; set; }
         public List<City> Cities { get; set; }
+
+        public byte[] ImageData { get; set; }
     }
 
     class PersonFormatter : IPropertyFormatter
@@ -60,8 +63,8 @@ namespace Xml2PdfTestApp
                 }
             }
 
-            string filePath = @"D:\codes\Xml2Pdf\Xml2Pdf\Xml2PdfTestApp\Templates\Test1.xml";
-            // string filePath = @"D:\codes\Xml2Pdf\Xml2Pdf\Xml2PdfTestApp\Templates\Test2.xml";
+            // string filePath = @"D:\codes\Xml2Pdf\Xml2Pdf\Xml2PdfTestApp\Templates\Test1.xml";
+            string filePath = @"D:\codes\Xml2Pdf\Xml2Pdf\Xml2PdfTestApp\Templates\Test2.xml";
 
             XmlDocumentTemplateParser parser = new XmlDocumentTemplateParser();
             var doc = parser.ParseTemplateFile(filePath);
@@ -75,14 +78,30 @@ namespace Xml2PdfTestApp
                 var renderer = new PdfDocumentRenderer();
                 // renderer.ValueFormatter.AddFormatter(new PersonFormatter());
                 renderer.ValueFormatter.AddFormatFunction<bool>(b => b ? "Ano" : "Ne");
-                renderer.ValueFormatter.AddFormatFunction<Person>(person =>
+                renderer.ValueFormatter.AddFormatFunction<Person>(
+                                                                  person =>
                                                                       $"{person.FirstName} {person.LastName} of age {person.Age}");
 
                 List<City> cities = new List<City>
                 {
-                    new City {Name = "Strahovice", Population = 900, IsGrowing = false},
-                    new City {Name = "Hnevosice", Population = 1150, IsGrowing = false},
-                    new City {Name = "Rohov", Population = 740, IsGrowing = true},
+                    new City
+                    {
+                        Name = "Strahovice",
+                        Population = 900,
+                        IsGrowing = false
+                    },
+                    new City
+                    {
+                        Name = "Hnevosice",
+                        Population = 1150,
+                        IsGrowing = false
+                    },
+                    new City
+                    {
+                        Name = "Rohov",
+                        Population = 740,
+                        IsGrowing = true
+                    },
                 };
 
                 var p = new Person
@@ -96,7 +115,8 @@ namespace Xml2PdfTestApp
                         LastName = "Moravcova",
                         Age = 22,
                     },
-                    Cities = cities
+                    Cities = cities,
+                    ImageData = File.ReadAllBytes(@"D:\Desktop\bus.png")
                 };
 
 
