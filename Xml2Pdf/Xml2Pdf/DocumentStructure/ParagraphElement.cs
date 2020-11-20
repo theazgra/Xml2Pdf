@@ -5,7 +5,7 @@ namespace Xml2Pdf.DocumentStructure
 {
     public class ParagraphElement : TextElement
     {
-        private static readonly Type[] PossibleChildren = {typeof(TextElement), typeof(ImageElement)};
+        private static readonly Type[] PossibleChildren = {typeof(LeafTextElement), typeof(ImageElement)};
 
         protected override bool IsParentType => true;
         protected override Type[] AllowedChildrenTypes => PossibleChildren;

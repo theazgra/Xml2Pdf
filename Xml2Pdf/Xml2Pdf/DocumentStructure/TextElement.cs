@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using iText.Kernel.Colors;
 using iText.Kernel.Font;
-using iText.Layout;
 using iText.Layout.Properties;
 using Xml2Pdf.Exceptions;
 using Xml2Pdf.Format;
@@ -14,7 +13,7 @@ using Xml2Pdf.Utilities;
 
 namespace Xml2Pdf.DocumentStructure
 {
-    public class TextElement : BorderedDocumentElement
+    public abstract class TextElement : BorderedDocumentElement
     {
         protected override bool IsParentType => false;
         protected override Type[] AllowedChildrenTypes => Array.Empty<Type>();

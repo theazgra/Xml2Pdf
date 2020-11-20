@@ -120,7 +120,7 @@ namespace Xml2Pdf.Parser.Xml
         private StyleWrapper ParseTextStyle(string enclosingNodeName, XmlReader xmlReader, Dictionary<string, PdfFont> customFonts)
         {
             var propertyBag = ReadWhileInEnclosingNode(xmlReader, enclosingNodeName);
-            TextElement textElement = new TextElement();
+            TextElement textElement = new LeafTextElement();
             ElementPropertyParser.ParseAndAssignElementProperties(textElement, propertyBag);
             return textElement.TextPropertiesToStyle(customFonts);
         }

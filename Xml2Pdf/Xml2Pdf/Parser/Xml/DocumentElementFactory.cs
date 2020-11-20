@@ -10,7 +10,7 @@ namespace Xml2Pdf.Parser.Xml
             return elementName switch
             {
                 "Paragraph" => new ParagraphElement(),
-                "Text" => new TextElement(),
+                "Text" => new LeafTextElement(),
                 "PdfDocument" => new RootDocumentElement(),
                 "Page" => new PageElement(),
                 "Line" => new LineElement(),
