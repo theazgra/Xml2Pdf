@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using iText.Kernel.Font;
 using Xml2Pdf.Format;
 using Xml2Pdf.Format.Formatters;
 using Xml2Pdf.Parser.Xml;
@@ -43,8 +44,6 @@ namespace Xml2PdfTestApp
     {
         static void Main(string[] args)
         {
-            // PdfPlayground.Play();
-            // return;
             bool dump = false;
             bool render = false;
 
@@ -62,6 +61,7 @@ namespace Xml2PdfTestApp
             }
 
             string filePath = @"D:\codes\Xml2Pdf\Xml2Pdf\Xml2PdfTestApp\Templates\Test1.xml";
+            // string filePath = @"D:\codes\Xml2Pdf\Xml2Pdf\Xml2PdfTestApp\Templates\Test2.xml";
 
             XmlDocumentTemplateParser parser = new XmlDocumentTemplateParser();
             var doc = parser.ParseTemplateFile(filePath);

@@ -18,44 +18,7 @@ namespace Xml2Pdf.DocumentStructure
 
         // TODO(Moravec): Border radius.
 
-        protected BorderedDocumentElement()
-        {
-            OnChildAdded += child =>
-            {
-                if (child is BorderedDocumentElement borderedChild && borderedChild.CanInheritBorderProperties)
-                {
-                    borderedChild.InheritFrom(this);
-                }
-            };
-        }
-
-        private void InheritFrom(BorderedDocumentElement parent)
-        {
-            if (!Borders.IsInitialized && parent.Borders.IsInitialized)
-            {
-                Borders.Value = parent.Borders.Value;
-            }
-
-            if (!TopBorder.IsInitialized && parent.TopBorder.IsInitialized)
-            {
-                TopBorder.Value = parent.TopBorder.Value;
-            }
-
-            if (!BottomBorder.IsInitialized && parent.BottomBorder.IsInitialized)
-            {
-                BottomBorder.Value = parent.BottomBorder.Value;
-            }
-
-            if (!LeftBorder.IsInitialized && parent.LeftBorder.IsInitialized)
-            {
-                LeftBorder.Value = parent.LeftBorder.Value;
-            }
-
-            if (!RightBorder.IsInitialized && parent.RightBorder.IsInitialized)
-            {
-                RightBorder.Value = parent.RightBorder.Value;
-            }
-        }
+        protected BorderedDocumentElement() { }
 
         internal override void DumpToStringBuilder(StringBuilder dumpBuilder, int indent)
         {

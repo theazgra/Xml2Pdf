@@ -22,17 +22,19 @@ namespace Xml2Pdf.Renderer
 {
     public class PdfDocumentRenderer : IDocumentRenderer
     {
+        private static PdfFont DefaultFont = PdfFontFactory.CreateFont(iText.IO.Font.Constants.StandardFonts.HELVETICA);
+
         private const int FontPropertyId = 20;
         private const float ScriptFontCoefficient = 0.7f;
 
         private Document _pdfDocument = null;
         private readonly Dictionary<string, object> _objectPropertyMap;
 
-        private Rectangle _effectivePageRectangle;
+        // private Rectangle _effectivePageRectangle;
         private ElementStyle _style = new ElementStyle();
 
-        private float _documentFontSize = 10;
-        private PdfFont _documentFont;
+        private PdfFont _docFont;
+        private float _docFontSize = 10;
 
 
         public ValueFormatter ValueFormatter { get; }
@@ -44,17 +46,25 @@ namespace Xml2Pdf.Renderer
             ValueFormatter.AddFormatter(new ToStringFormatter<object>());
         }
 
-        private PdfFont GetDefaultFont() => PdfFontFactory.CreateFont(iText.IO.Font.Constants.StandardFonts.HELVETICA);
-
-
+        /// <summary>
+        /// Load all object properties to lookup dictionary with its values.
+        /// </summary>
+        /// <param name="dataObject">Object which properties to load.</param>
         private void LoadDataObjectToPropertyMap(object dataObject)
         {
+            if (dataObject == null)
+                return;
             foreach (var property in dataObject.GetType().GetProperties())
             {
                 _objectPropertyMap.Add(property.Name, property.GetValue(dataObject));
             }
         }
 
+        /// <summary>
+        /// Initialize document properties, which are used for rendering.
+        /// </summary>
+        /// <param name="element">Root element.</param>
+        /// <exception cref="RenderException">is thrown if document font wasn't specified.</exception>
         private void InitializeDocumentProperties(RootDocumentElement element)
         {
             if (element.DocumentFont.IsInitialized)
@@ -64,14 +74,14 @@ namespace Xml2Pdf.Renderer
                     throw new RenderException("DocumentFont wasn't specified as <CustomFont> in <Style> node.");
                 }
 
-                _documentFont = _style.CustomFonts[element.DocumentFont.Value];
+                _docFont = _style.CustomFonts[element.DocumentFont.Value];
             }
             else
             {
-                _documentFont = GetDefaultFont();
+                _docFont = DefaultFont;
             }
 
-            _documentFontSize = element.DocumentFontSize.ValueOr(_documentFontSize);
+            _docFontSize = element.DocumentFontSize.ValueOr(_docFontSize);
         }
 
         public bool RenderDocument(RootDocumentElement rootDocumentElement, string savePath) =>
@@ -80,11 +90,7 @@ namespace Xml2Pdf.Renderer
         public bool RenderDocument(RootDocumentElement rootDocumentElement, string savePath, object dataObject)
         {
             _style = rootDocumentElement.Style;
-            if (dataObject != null)
-            {
-                LoadDataObjectToPropertyMap(dataObject);
-            }
-
+            LoadDataObjectToPropertyMap(dataObject);
             InitializeDocumentProperties(rootDocumentElement);
 
             using var writer = new PdfWriter(savePath);
@@ -96,7 +102,7 @@ namespace Xml2Pdf.Renderer
 
 
             _pdfDocument = new Document(pdf, pageSize);
-            _effectivePageRectangle = _pdfDocument.GetPageEffectiveArea(pageSize);
+            // _effectivePageRectangle = _pdfDocument.GetPageEffectiveArea(pageSize);
 
             RenderRootDocumentElement(rootDocumentElement);
 
@@ -105,138 +111,16 @@ namespace Xml2Pdf.Renderer
             return true;
         }
 
-        private void RenderDocumentElement(DocumentElement element, DocumentElement parent, object docParent, StyleWrapper style)
-        {
-            if (style == null)
-                style = new StyleWrapper();
-            switch (element)
-            {
-                case PageElement pageElement:
-                    RenderPageElement(pageElement, parent, docParent);
-                    break;
-                case ParagraphElement paragraphElement:
-                    RenderParagraphElement(paragraphElement, docParent, style);
-                    break;
-                case TableElement tableElement:
-                    RenderTableElement(tableElement, docParent);
-                    break;
-                case TableDataRowElement tableDataRowElement:
-                    RenderTableDataRowElement(tableDataRowElement, parent as TableElement, docParent as Table);
-                    break;
-                case TableRowElement tableRowElement:
-                    RenderTableRowElement(tableRowElement, parent as TableElement, docParent as Table);
-                    break;
-                case TableCellElement tableCell:
-                    RenderTableCell(tableCell, parent as TableRowElement, docParent as Table);
-                    break;
-                case ListElement listElement:
-                    RenderListElement(listElement, parent, docParent);
-                    break;
-                case ListItemElement listItemElement:
-                    RenderListItemElement(listItemElement, docParent as List);
-                    break;
-                case LineElement lineElement:
-                    RenderLineElement(lineElement, docParent);
-                    break;
-                default:
-                    ColorConsole.WriteLine(ConsoleColor.Red,
-                        $"Missing branch in PdfDocumentRenderer::RenderDocumentElement() for {element.GetType().Name}");
-                    break;
-            }
-        }
-
-        private void RenderLineElement(LineElement lineElement, object docParent)
-        {
-            var emptyParagraph = new Paragraph();
-
-            AddCombinedStylesToElement(emptyParagraph, _style.LineStyle, lineElement.BorderPropertiesToStyle());
-
-            if (lineElement.Length.IsInitialized)
-                emptyParagraph.SetWidth(lineElement.Length.Value);
-            if (lineElement.Alignment.IsInitialized)
-                emptyParagraph.SetHorizontalAlignment(lineElement.Alignment.Value);
-            AddParagraphToParent(emptyParagraph, docParent);
-        }
-
         /// <summary>
-        /// Add combined styles to the iText pdf element.
+        /// Get default font style with document font and document font size.
         /// </summary>
-        /// <param name="element">Pdf element.</param>
-        /// <param name="styles">Styles, later styles override the previous ones.</param>
-        private void AddCombinedStylesToElement<T>(AbstractElement<T> element, params StyleWrapper[] styles) where T : IElement
+        /// <returns>Default page style.</returns>
+        private StyleWrapper GetDefaultPageStyle()
         {
-            if (styles.Length == 0)
-                return;
-
-            // Find first not null.
-            int index = 0;
-            StyleWrapper style = null;
-            for (index = 0; index < styles.Length; index++)
-            {
-                if (styles[index] != null)
-                {
-                    style = styles[index];
-                    break;
-                }
-            }
-
-            if (style == null)
-                return;
-
-            for (; index < styles.Length; index++)
-            {
-                style.CombineAndOverrideProperties(styles[index]);
-            }
-
-            element.AddStyle(style);
-        }
-
-        private void RenderListElement(ListElement element, DocumentElement parent, object pdfParentObject)
-        {
-            var list = element.Enumeration.ValueOr(false) ? new List(ListNumberingType.DECIMAL) : new List();
-
-
-            if (element.Indentation.IsInitialized)
-                list.SetSymbolIndent(element.Indentation.Value);
-            if (element.ListSymbol.IsInitialized)
-                list.SetListSymbol(element.ListSymbol.Value);
-            if (element.StartIndex.IsInitialized)
-                list.SetItemStartIndex(element.StartIndex.Value);
-            if (element.PreSymbolText.IsInitialized)
-                list.SetPreSymbolText(element.PreSymbolText.Value);
-            if (element.PostSymbolText.IsInitialized)
-                list.SetPostSymbolText(element.PostSymbolText.Value);
-
-            foreach (var listChild in element.Children)
-            {
-                RenderListItemElement(listChild as ListItemElement, list);
-            }
-
-            if (pdfParentObject is Document document)
-            {
-                document.Add(list);
-            }
-            else
-            {
-                throw RenderException.WrongPdfParent(nameof(RenderListElement),
-                    typeof(Document),
-                    pdfParentObject.GetType());
-            }
-        }
-
-        private void RenderListItemElement(ListItemElement element, List list)
-        {
-            var listItem = new ListItem(element.GetTextToRender(_objectPropertyMap, ValueFormatter));
-
-            var style = element.TextPropertiesToStyle(_style.CustomFonts);
-            style.CombineAndOverrideProperties(_style.ListItemStyle);
-            if (element.FontName.IsInitialized && _style.CustomFonts.ContainsKey(element.FontName.Value))
-            {
-                style.SetProperty(FontPropertyId, _style.CustomFonts[element.FontName.Value]);
-            }
-
-            listItem.AddStyle(style);
-            list.Add(listItem);
+            StyleWrapper defaultStyle = new StyleWrapper();
+            defaultStyle.SetFont(_docFont);
+            defaultStyle.SetFontSize(_docFontSize);
+            return defaultStyle;
         }
 
         [SuppressMessage("ReSharper", "PossibleInvalidOperationException")]
@@ -247,10 +131,11 @@ namespace Xml2Pdf.Renderer
             {
                 if (rootElement.CustomMargins.AreComplete())
                 {
-                    _pdfDocument.SetMargins(rootElement.CustomMargins.Top.Value,
-                        rootElement.CustomMargins.Right.Value,
-                        rootElement.CustomMargins.Bottom.Value,
-                        rootElement.CustomMargins.Left.Value);
+                    _pdfDocument.SetMargins(
+                                            rootElement.CustomMargins.Top.Value,
+                                            rootElement.CustomMargins.Right.Value,
+                                            rootElement.CustomMargins.Bottom.Value,
+                                            rootElement.CustomMargins.Left.Value);
                 }
                 else
                 {
@@ -267,16 +152,254 @@ namespace Xml2Pdf.Renderer
 
             for (int i = 0; i < rootElement.ChildrenCount; i++)
             {
-                var childElement = rootElement.Children.ElementAt(i);
-                Debug.Assert(childElement is PageElement, "Invalid child element for RootElement");
-                RenderDocumentElement(childElement, null, _pdfDocument, null);
+                var childElement = rootElement.GetChildrenAtIndex(i);
+                var defaultStyle = GetDefaultPageStyle();
+
+                RenderDocumentElement(childElement, null, _pdfDocument, defaultStyle);
 
                 if (i < (rootElement.ChildrenCount - 1))
                     _pdfDocument.Add(new AreaBreak());
             }
         }
 
-        private void RenderTableCell(TableCellElement tableCell, TableRowElement parent, Table pdfParentObject)
+
+        private void RenderDocumentElement(DocumentElement element,
+                                           DocumentElement parent,
+                                           object pdfParent,
+                                           StyleWrapper inheritedStyle)
+        {
+            Debug.Assert(inheritedStyle != null, "Inherited style should always be set.");
+
+            switch (element)
+            {
+                case PageElement pageElement:
+                    RenderPageElement(pageElement, parent, pdfParent, inheritedStyle);
+                    break;
+                case ParagraphElement paragraphElement:
+                    RenderParagraphElement(paragraphElement, parent, pdfParent, inheritedStyle);
+                    break;
+                case LineElement lineElement:
+                    RenderLineElement(lineElement, pdfParent);
+                    break;
+                case ListElement listElement:
+                    RenderListElement(listElement, parent, pdfParent, inheritedStyle);
+                    break;
+                case ListItemElement listItemElement:
+                    RenderListItemElement(listItemElement, pdfParent as List, inheritedStyle);
+                    break;
+                case TableElement tableElement:
+                    RenderTableElement(tableElement, pdfParent, inheritedStyle);
+                    break;
+                case TableDataRowElement tableDataRowElement:
+                    RenderTableDataRowElement(tableDataRowElement, parent as TableElement, pdfParent as Table, inheritedStyle);
+                    break;
+                case TableRowElement tableRowElement:
+                    RenderTableRowElement(tableRowElement, parent as TableElement, pdfParent as Table, inheritedStyle);
+                    break;
+                case TableCellElement tableCell:
+                    RenderTableCell(tableCell, parent as TableRowElement, pdfParent as Table, inheritedStyle);
+                    break;
+                default:
+                    ColorConsole.WriteLine(
+                                           ConsoleColor.Red,
+                                           $"Missing branch in PdfDocumentRenderer::RenderDocumentElement() for {element.GetType().Name}");
+                    break;
+            }
+        }
+
+        private void RenderPageElement(PageElement element, DocumentElement parent, object pdfParent, StyleWrapper inheritedStyle)
+        {
+            foreach (var childElement in element.Children)
+            {
+                RenderDocumentElement(childElement, element, pdfParent, inheritedStyle);
+            }
+        }
+
+        private void RenderParagraphElement(ParagraphElement element,
+                                            DocumentElement parent,
+                                            object pdfParent,
+                                            StyleWrapper inheritedStyle)
+        {
+            var paragraph = new Paragraph();
+
+            StyleWrapper paragraphStyle = inheritedStyle.CombineStyles(_style.ParagraphStyle)
+                                                        .CombineStyles(element.TextPropertiesToStyle(_style.CustomFonts));
+
+            paragraph.AddStyle(paragraphStyle);
+
+            if (!element.HasChildren)
+            {
+                paragraph.Add(RenderTextElement(element, paragraphStyle));
+            }
+            else if (element.IsEmpty())
+            {
+                paragraph.Add(RenderTextElement(element.Children.ElementAt(0) as TextElement, paragraphStyle));
+
+                for (int i = 1; i < element.ChildrenCount; i++)
+                {
+                    paragraph.Add(" ").Add(RenderTextElement(element.Children.ElementAt(i) as TextElement, paragraphStyle));
+                }
+            }
+            else
+            {
+                throw new NotImplementedException(
+                                                  "Mix of raw text and <Text> elements is not supported yet. " +
+                                                  "Use only raw text or multiple <Text> elements.");
+            }
+
+            AddParagraphToParent(paragraph, pdfParent);
+        }
+
+        private Text RenderTextElement(TextElement element, StyleWrapper inheritedStyle, string rawText = null)
+        {
+            Text text;
+            rawText ??= element.GetTextToRender(_objectPropertyMap, ValueFormatter);
+
+            StyleWrapper textStyle = inheritedStyle.CombineStyles(element.TextPropertiesToStyle(_style.CustomFonts));
+
+
+            if (element.Superscript.ValueOr(false))
+            {
+                text = new Text(rawText).SetTextRise(4).SetFontSize(textStyle.GetFontSize() * ScriptFontCoefficient);
+            }
+            else if (element.Subscript.ValueOr(false))
+            {
+                text = new Text(rawText).SetTextRise(-4).SetFontSize(textStyle.GetFontSize() * ScriptFontCoefficient);
+            }
+            else
+            {
+                text = new Text(rawText);
+            }
+
+            text.AddStyle(textStyle);
+            return text;
+        }
+
+        private void RenderLineElement(LineElement lineElement, object docParent)
+        {
+            var emptyParagraph = new Paragraph();
+
+            StyleWrapper lineStyle = _style.LineStyle != null
+                ? _style.LineStyle.CombineStyles(lineElement.BorderPropertiesToStyle())
+                : lineElement.BorderPropertiesToStyle();
+
+
+            if (lineElement.Length.IsInitialized)
+                lineStyle.SetWidth(lineElement.Length.Value);
+            if (lineElement.Alignment.IsInitialized)
+                lineStyle.SetHorizontalAlignment(lineElement.Alignment.Value);
+
+            emptyParagraph.AddStyle(lineStyle);
+            AddParagraphToParent(emptyParagraph, docParent);
+        }
+
+        private void RenderListElement(ListElement element, DocumentElement parent, object pdfParentObject, StyleWrapper inheritedStyle)
+        {
+            var list = element.Enumeration.ValueOr(false) ? new List(ListNumberingType.DECIMAL) : new List();
+
+            StyleWrapper listStyle = inheritedStyle.CombineStyles(element.TextPropertiesToStyle(_style.CustomFonts));
+
+            if (element.Indentation.IsInitialized)
+                list.SetSymbolIndent(element.Indentation.Value);
+            if (element.ListSymbol.IsInitialized)
+                list.SetListSymbol(element.ListSymbol.Value);
+            if (element.StartIndex.IsInitialized)
+                list.SetItemStartIndex(element.StartIndex.Value);
+            if (element.PreSymbolText.IsInitialized)
+                list.SetPreSymbolText(element.PreSymbolText.Value);
+            if (element.PostSymbolText.IsInitialized)
+                list.SetPostSymbolText(element.PostSymbolText.Value);
+
+
+            foreach (var listChild in element.Children)
+            {
+                RenderDocumentElement(listChild, element, list, listStyle);
+            }
+
+            if (pdfParentObject is Document document)
+            {
+                document.Add(list);
+            }
+            else
+            {
+                throw RenderException.WrongPdfParent(nameof(RenderListElement), typeof(Document), pdfParentObject.GetType());
+            }
+        }
+
+        private void RenderListItemElement(ListItemElement element, List list, StyleWrapper inheritedStyle)
+        {
+            var listItem = new ListItem(element.GetTextToRender(_objectPropertyMap, ValueFormatter));
+
+            StyleWrapper listItemStyle = inheritedStyle.CombineStyles(_style.ListItemStyle)
+                                                       .CombineStyles(element.TextPropertiesToStyle(_style.CustomFonts));
+
+
+            listItem.AddStyle(listItemStyle);
+            list.Add(listItem);
+        }
+
+        private void RenderTableElement(TableElement element, object pdfParent, StyleWrapper inheritedStyle)
+        {
+            Table table = new Table(element.GetColumnWidths(), element.LargeTable.ValueOr(false));
+
+
+            var tableStyle = inheritedStyle.CombineStyles(_style.TableStyle)
+                                           .CombineStyles(element.TextPropertiesToStyle(_style.CustomFonts));
+
+            table.SetWidth(element.TableWidth.ValueOr(UnitValue.CreatePercentValue(100.0f)));
+
+            if (element.VerticalBorderSpacing.IsInitialized)
+                table.SetVerticalBorderSpacing(element.VerticalBorderSpacing.Value);
+            if (element.HorizontalBorderSpacing.IsInitialized)
+                table.SetHorizontalBorderSpacing(element.HorizontalBorderSpacing.Value);
+
+            table.AddStyle(tableStyle);
+
+            foreach (var tableRow in element.Children)
+            {
+                RenderDocumentElement(tableRow, element, table, tableStyle);
+            }
+
+            if (pdfParent is Document document)
+            {
+                document.Add(table);
+            }
+            else
+            {
+                throw RenderException.WrongPdfParent(
+                                                     nameof(RenderTableElement),
+                                                     typeof(Document),
+                                                     pdfParent.GetType());
+            }
+        }
+
+        private void RenderTableRowElement(TableRowElement tableRowElement,
+                                           TableElement parent,
+                                           Table pdfTable,
+                                           StyleWrapper inheritedStyle)
+        {
+            Debug.Assert(parent != null, "DocumentElement parent is null.");
+            Debug.Assert(pdfTable != null, "Pdf parent is null.");
+
+            if (!tableRowElement.IsHeader.ValueOr(false) && !tableRowElement.IsFooter.ValueOr(false))
+                pdfTable.StartNewRow();
+
+            var tableRowStyle = inheritedStyle.CombineStyles(tableRowElement.TextPropertiesToStyle(_style.CustomFonts));
+
+            if (!tableRowElement.RowHeight.IsInitialized && parent.RowHeight.IsInitialized)
+            {
+                tableRowElement.RowHeight.Value = parent.RowHeight.Value;
+                tableRowStyle.SetHeight(parent.RowHeight.Value);
+            }
+
+            foreach (var tableCell in tableRowElement.Children)
+            {
+                Debug.Assert(tableCell.GetType() == typeof(TableCellElement));
+                RenderDocumentElement(tableCell, tableRowElement, pdfTable, tableRowStyle);
+            }
+        }
+
+        private void RenderTableCell(TableCellElement tableCell, TableRowElement parent, Table pdfParentObject, StyleWrapper inheritedStyle)
         {
             Debug.Assert(parent != null, "DocumentElement parent is null.");
             Debug.Assert(pdfParentObject != null, "Pdf parent is null.");
@@ -286,31 +409,32 @@ namespace Xml2Pdf.Renderer
 
             Cell cell = new Cell(rowSpan, colSpan);
 
-            StyleWrapper cellStyle = tableCell.TextPropertiesToStyle(_style.CustomFonts);
-            if (_style.TableCellStyle != null)
-                cellStyle.CombineAndOverrideProperties(_style.TableCellStyle);
+            var cellStyle = inheritedStyle
+                            .CombineStyles(_style.TableCellStyle)
+                            .CombineStyles(tableCell.TextPropertiesToStyle(_style.CustomFonts));
+
 
             if (tableCell.HasChildren)
             {
-                cellStyle.CombineAndOverrideProperties(((TextElement) tableCell.FirstChild).TextPropertiesToStyle(_style.CustomFonts));
+                cellStyle = cellStyle.CombineStyles(((TextElement) tableCell.FirstChild).TextPropertiesToStyle(_style.CustomFonts));
             }
 
             if (parent.RowHeight.IsInitialized)
                 cell.SetHeight(parent.RowHeight.Value);
 
-            AddCombinedStylesToElement(cell, cellStyle);
+            cell.AddStyle(cellStyle);
 
             if (tableCell.HasChildren)
             {
                 Debug.Assert(tableCell.ChildrenCount == 1);
                 foreach (var cellChild in tableCell.Children)
                 {
-                    RenderDocumentElement(cellChild, tableCell, cell, cellStyle);
+                    RenderDocumentElement(cellChild, tableCell, cell, cellStyle.RemoveBorderProperties());
                 }
             }
             else if (!tableCell.IsEmpty())
             {
-                cell.Add(new Paragraph(RenderTextElement(tableCell, cellStyle)));
+                cell.Add(new Paragraph(RenderTextElement(tableCell, cellStyle.RemoveBorderProperties())));
             }
 
             if (parent.IsHeader.ValueOr(false))
@@ -321,27 +445,11 @@ namespace Xml2Pdf.Renderer
                 pdfParentObject.AddCell(cell);
         }
 
-        private void RenderTableRowElement(TableRowElement tableRowElement, TableElement parent, Table pdfTable)
-        {
-            Debug.Assert(parent != null, "DocumentElement parent is null.");
-            Debug.Assert(pdfTable != null, "Pdf parent is null.");
-            if (!tableRowElement.IsHeader.ValueOr(false) && !tableRowElement.IsFooter.ValueOr(false))
-                pdfTable.StartNewRow();
 
-
-            if (!tableRowElement.RowHeight.IsInitialized && parent.RowHeight.IsInitialized)
-            {
-                tableRowElement.RowHeight.Value = parent.RowHeight.Value;
-            }
-
-            foreach (var tableCell in tableRowElement.Children)
-            {
-                Debug.Assert(tableCell.GetType() == typeof(TableCellElement));
-                RenderDocumentElement(tableCell, tableRowElement, pdfTable, null);
-            }
-        }
-
-        private void RenderTableDataRowElement(TableDataRowElement element, TableElement parent, Table pdfTable)
+        private void RenderTableDataRowElement(TableDataRowElement element,
+                                               TableElement parent,
+                                               Table pdfTable,
+                                               StyleWrapper inheritedStyle)
         {
             Debug.Assert(parent != null, "DocumentElement parent is null.");
             Debug.Assert(pdfTable != null, "Pdf parent is null.");
@@ -375,17 +483,19 @@ namespace Xml2Pdf.Renderer
                     enumerationAsFirstColumn = true;
 
                 objectProperties = element.Children.OfType<TableCellElement>()
-                    .Where(c => !string.IsNullOrEmpty(c.Property))
-                    .Select(c => rowObjectType.GetProperty(c.Property))
-                    .ToArray();
+                                          .Where(c => !string.IsNullOrEmpty(c.Property))
+                                          .Select(c => rowObjectType.GetProperty(c.Property))
+                                          .ToArray();
             }
             else
             {
                 objectProperties = element.ColumnCellProperties.Value
-                    .Select(p => rowObjectType.GetProperty(p))
-                    .ToArray();
+                                          .Select(p => rowObjectType.GetProperty(p))
+                                          .ToArray();
             }
 
+            var rowStyle = inheritedStyle.CombineStyles(element.TextPropertiesToStyle(_style.CustomFonts));
+            // TODO(Moravec): Finish down here.
 
             int rowIndex = 1;
             foreach (var rowObject in tableDataSourceArray)
@@ -397,7 +507,7 @@ namespace Xml2Pdf.Renderer
                     {
                         TableCellElement cell = (TableCellElement) element.FirstChild;
                         cell.Text = rowIndex.ToString();
-                        RenderTableCell(cell, element, pdfTable);
+                        RenderTableCell(cell, element, pdfTable, rowStyle);
                         rowIndex++;
                     }
 
@@ -406,88 +516,21 @@ namespace Xml2Pdf.Renderer
                     {
                         TableCellElement cell = (TableCellElement) element.GetChildrenAtIndex(cellIndex + offset);
                         cell.Text = ValueFormatter.FormatValue(objectProperties[cellIndex].GetValue(rowObject));
-                        RenderTableCell(cell, element, pdfTable);
+                        RenderTableCell(cell, element, pdfTable, rowStyle);
                     }
                 }
                 else
                 {
                     foreach (PropertyInfo cellProperty in objectProperties)
                     {
-                        string text = ValueFormatter.FormatValue(cellProperty.GetValue(rowObject));
-                        pdfTable.AddCell(new Cell().Add(new Paragraph(RenderTextElement(element,
-                            element.TextPropertiesToStyle(_style.CustomFonts), text))));
+                        TableCellElement cell = new TableCellElement
+                        {
+                            Text = ValueFormatter.FormatValue(cellProperty.GetValue(rowObject))
+                        };
+                        RenderTableCell(cell, element, pdfTable, rowStyle);
                     }
                 }
             }
-        }
-
-        private void RenderTableElement(TableElement element, object pdfParentObject)
-        {
-            Table table = new Table(element.GetColumnWidths(), element.LargeTable.ValueOr(false));
-
-            if (_style.TableStyle != null)
-                table.AddStyle(_style.TableStyle);
-
-            table.SetWidth(element.TableWidth.ValueOr(UnitValue.CreatePercentValue(100.0f)));
-
-            if (element.VerticalBorderSpacing.IsInitialized)
-                table.SetVerticalBorderSpacing(element.VerticalBorderSpacing.Value);
-            if (element.HorizontalBorderSpacing.IsInitialized)
-                table.SetHorizontalBorderSpacing(element.HorizontalBorderSpacing.Value);
-
-            foreach (var tableRow in element.Children)
-            {
-                RenderDocumentElement(tableRow, element, table, _style.TableStyle);
-            }
-
-            if (pdfParentObject is Document document)
-            {
-                document.Add(table);
-            }
-            else
-            {
-                throw RenderException.WrongPdfParent(nameof(RenderTableElement),
-                    typeof(Document),
-                    pdfParentObject.GetType());
-            }
-        }
-
-        private void RenderPageElement(PageElement pageElement, DocumentElement parent, object pdfParentObject)
-        {
-            foreach (var childElement in pageElement.Children)
-            {
-                RenderDocumentElement(childElement, pageElement, pdfParentObject, new StyleWrapper());
-            }
-        }
-
-
-        private void RenderParagraphElement(ParagraphElement element, object pdfParentObject, StyleWrapper style)
-        {
-            var paragraph = new Paragraph();
-
-            if (_style.ParagraphStyle != null)
-                style.CombineAndOverrideProperties(_style.ParagraphStyle);
-
-            if (!element.HasChildren)
-            {
-                paragraph.Add(RenderTextElement(element, style));
-            }
-            else if (element.IsEmpty())
-            {
-                paragraph.Add(RenderTextElement(element.Children.ElementAt(0) as TextElement, style));
-
-                for (int i = 1; i < element.ChildrenCount; i++)
-                {
-                    paragraph.Add(" ").Add(RenderTextElement(element.Children.ElementAt(i) as TextElement, style));
-                }
-            }
-            else
-            {
-                throw new NotImplementedException("Mix of raw text and <Text> elements is not supported yet. " +
-                                                  "Use only raw text or multiple <Text> elements.");
-            }
-
-            AddParagraphToParent(paragraph, pdfParentObject);
         }
 
         private void AddParagraphToParent(Paragraph paragraph, object pdfParent)
@@ -502,57 +545,25 @@ namespace Xml2Pdf.Renderer
             }
             else
             {
-                throw RenderException.WrongPdfParent(nameof(AddParagraphToParent),
-                    new[]
-                    {
-                        typeof(Document),
-                        typeof(Cell)
-                    },
-                    pdfParent.GetType());
+                var possibleTypes = new[]
+                {
+                    typeof(Document), typeof(Cell)
+                };
+                throw RenderException.WrongPdfParent(nameof(AddParagraphToParent), possibleTypes, pdfParent.GetType());
             }
         }
 
-        /// <summary>
-        /// Get the custom font by its name or return document font.
-        /// </summary>
-        /// <param name="fontNameProperty">Font name property.</param>
-        /// <returns>PDF font.</returns>
-        private PdfFont GetFontByNameOrDefaultFont(ElementProperty<string> fontNameProperty)
-        {
-            if (fontNameProperty.IsInitialized && _style != null && _style.CustomFonts.ContainsKey(fontNameProperty.Value))
-                return _style.CustomFonts[fontNameProperty.Value];
-            return _documentFont;
-        }
-
-        private Text RenderTextElement(TextElement element, StyleWrapper style, string textToRender = null)
-        {
-            Text text;
-            textToRender ??= element.GetTextToRender(_objectPropertyMap, ValueFormatter);
-            style.CombineAndOverrideProperties(element.TextPropertiesToStyle(_style.CustomFonts));
-            if (element.FontName.IsInitialized && _style.CustomFonts.ContainsKey(element.FontName.Value))
-                style.SetFont(_style.CustomFonts[element.FontName.Value]);
-            if (element.FontSize.IsInitialized)
-                style.SetFontSize(element.FontSize.Value);
-
-            // TODO(Moravec): This is hack to computer script size. FIX IT.
-            float fontSize = element.FontSize.ValueOr(_documentFontSize);
-
-            if (element.Superscript.ValueOr(false))
-            {
-                text = new Text(textToRender).SetTextRise(4).SetFontSize(fontSize * ScriptFontCoefficient);
-            }
-            else if (element.Subscript.ValueOr(false))
-            {
-                text = new Text(textToRender).SetTextRise(-4).SetFontSize(fontSize * ScriptFontCoefficient);
-            }
-            else
-            {
-                text = new Text(textToRender);
-            }
-
-
-            text.AddStyle(style);
-            return text;
-        }
+        //
+        // /// <summary>
+        // /// Get the custom font by its name or return document font.
+        // /// </summary>
+        // /// <param name="fontNameProperty">Font name property.</param>
+        // /// <returns>PDF font.</returns>
+        // private PdfFont GetFontByNameOrDefaultFont(ElementProperty<string> fontNameProperty)
+        // {
+        //     if (fontNameProperty.IsInitialized && _style != null && _style.CustomFonts.ContainsKey(fontNameProperty.Value))
+        //         return _style.CustomFonts[fontNameProperty.Value];
+        //     return _documentFont;
+        // }
     }
 }

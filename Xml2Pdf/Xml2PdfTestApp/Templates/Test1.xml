@@ -1,14 +1,32 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
-<PdfDocument>
+<PdfDocument font="lato-light" fontSize="9.5">
     <Style>
         <Color name="greenIGuess" value="0x27AE60"/>
+        <ListItemStyle>
+            <Entry name="italic" value="true"/>
+        </ListItemStyle>
+        <TableCellStyle>
+            <Entry name="fontSize" value="8"/>
+            <Entry name="foreground" value="0xAA0000"/>
+            <Entry name="textAlign" value="right"/>
+        </TableCellStyle>
+        <CustomFont name="lato-light" path="C:\Windows\Fonts\LatoWeb-Light.ttf"/>
+        <CustomFont name="papyrus" path="C:\Windows\Fonts\PAPYRUS.TTF"/>
     </Style>
     <Page>
+        <Paragraph>
+            <Text>X</Text>
+            <Text subscript="true">2</Text>
+        </Paragraph>
+        <Paragraph>
+            <Text>X</Text>
+            <Text superscript="true">2</Text>
+        </Paragraph>
         <Paragraph bold="true">Bold Text</Paragraph>
-        <Paragraph italic="true">Italic text</Paragraph>
+        <Paragraph italic="true" font="papyrus">Italic text</Paragraph>
         <Paragraph underline="true">Underline text</Paragraph>
         <Paragraph underline="true" foreground="red">Underline Red text</Paragraph>
-        <Line border="0.5,solid,red,0.8" length="65%" align="right"/>
+        <Line border="0.5,solid,red,0.8" length="50%" align="center"/>
         <Paragraph>
             <Text>This is paragraph</Text>
             <Text foreground="blue">(added text from &lt;Text&gt; tag)</Text>
@@ -24,7 +42,44 @@
             posuere eu, velit. Duis risus. Praesent id justo in neque elementum ultrices.
         </Paragraph>
 
-        <Table columnCount="4">
+
+
+        <Table columnCount="3">
+            <TableRow borders="1;solid;red">
+                <Cell>
+                    <Paragraph>1</Paragraph>
+                </Cell>
+                <Cell>
+                    <Paragraph>2</Paragraph>
+                </Cell>
+                <Cell>
+                    <Paragraph>3</Paragraph>
+                </Cell>
+            </TableRow>
+            <TableRow>
+                <Cell>
+                    <Paragraph>4</Paragraph>
+                </Cell>
+                <Cell>
+                    <Paragraph>5</Paragraph>
+                </Cell>
+                <Cell>
+                    <Paragraph>6</Paragraph>
+                </Cell>
+            </TableRow>
+            <TableRow borders="1;solid;green">
+                <Cell>
+                    <Paragraph>7</Paragraph>
+                </Cell>
+                <Cell colSpan="2">
+                    <Paragraph>8</Paragraph>
+                </Cell>
+            </TableRow>
+        </Table>
+
+        <Line />
+
+        <Table columnCount="4" width="50%" columnWidths="20%,20%,20%,40%" horizontalAlignment="center">
             <TableRow header="true">
                 <Cell>Krestni jmeno</Cell>
                 <Cell>Prijmeni</Cell>
@@ -51,9 +106,9 @@
             </TableRow>
         </Table>
 
-        <Line length="40%" align="center" color="greenIGuess"/>
+        <Line length="40%" align="center" color="green"/>
 
-        <Table columnCount="5">
+        <Table columnCount="5" width="75%">
             <TableRow textAlign="center" header="true">
                 <Cell colSpan="2">#</Cell>
                 <Cell>Nazev mesta</Cell>
@@ -71,65 +126,12 @@
 
         <Line length="40%" align="center"/>
 
-        <Table columnCount="3">
-            <TableRow>
-                <Cell borders="1;solid;red">
-                    <Paragraph>1</Paragraph>
-                </Cell>
-                <Cell borders="1;dashed;red">
-                    <Paragraph bold="true">2</Paragraph>
-                </Cell>
-                <Cell borders="1;dotted;red">
-                    <Paragraph textAlign="center">3</Paragraph>
-                </Cell>
-            </TableRow>
-            <TableRow bold="true" textAlign="right">
-                <Cell>
-                    <Paragraph bold="false">4</Paragraph>
-                </Cell>
-                <Cell>
-                    <Paragraph textAlign="center">5</Paragraph>
-                </Cell>
-                <Cell>
-                    <Paragraph>6</Paragraph>
-                </Cell>
-            </TableRow>
-            <TableRow borders="2,solid,blue,1.0">
-                <Cell colSpan="2">
-                    <Paragraph>7</Paragraph>
-                </Cell>
-                <Cell>
-                    <Paragraph>8</Paragraph>
-                </Cell>
-            </TableRow>
-        </Table>
 
-        <List enumerate="true" indent="5" preText="(" postText=")" foreground="88;88;88" underline="true"
-              borderLeft="2;solid;green">
-            <ListItem>This is very first item in the list.</ListItem>
-            <ListItem>This is another item.</ListItem>
-            <ListItem underline="false" bold="true">Now I am just playing.</ListItem>
+        <List enumerate="true" indent="5" postText=")">
+            <ListItem foreground="0x0000cc">This is very first item in the list.</ListItem>
+            <ListItem italic="true">This is another item.</ListItem>
+            <ListItem bold="true">Now I am just playing.</ListItem>
         </List>
 
     </Page>
-    <!--    <Page>-->
-    <!--        <Table columnWidths="0.2;0.8">-->
-    <!--            <TableRow header="true" bold="true" foreground="red">-->
-    <!--                <Cell>First</Cell>-->
-    <!--                <Cell>Second</Cell>-->
-    <!--            </TableRow>-->
-    <!--            <TableRow>-->
-    <!--                <Cell>Ahoj</Cell>-->
-    <!--                <Cell>Svete</Cell>-->
-    <!--            </TableRow>-->
-    <!--            <TableRow>-->
-    <!--                <Cell>Ahoj</Cell>-->
-    <!--                <Cell>Svete</Cell>-->
-    <!--            </TableRow>-->
-    <!--            <TableRow footer="true" bold="true" foreground="blue">-->
-    <!--                <Cell>First End</Cell>-->
-    <!--                <Cell>Second End</Cell>-->
-    <!--            </TableRow>-->
-    <!--        </Table>-->
-    <!--    </Page>-->
 </PdfDocument>
