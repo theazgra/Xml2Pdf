@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using iText.Kernel.Font;
 using Xml2Pdf.Format;
 using Xml2Pdf.Format.Formatters;
@@ -50,7 +51,14 @@ namespace Xml2PdfTestApp
             bool dump = false;
             bool render = false;
 
-            foreach (string arg in args)
+            if (args.Length < 1)
+            {
+                Console.Error.WriteLine("No template file was provided");
+                return;
+            }
+
+            string templateFile = args[0];
+            foreach (string arg in args.Skip(1))
             {
                 switch (arg)
                 {
@@ -64,10 +72,10 @@ namespace Xml2PdfTestApp
             }
 
             // string filePath = @"D:\codes\Xml2Pdf\Xml2Pdf\Xml2PdfTestApp\Templates\Test1.xml";
-            string filePath = @"D:\codes\Xml2Pdf\Xml2Pdf\Xml2PdfTestApp\Templates\Test2.xml";
+            // string filePath = @"D:\codes\Xml2Pdf\Xml2Pdf\Xml2PdfTestApp\Templates\Test2.xml";
 
             XmlDocumentTemplateParser parser = new XmlDocumentTemplateParser();
-            var doc = parser.ParseTemplateFile(filePath);
+            var doc = parser.ParseTemplateFile(templateFile);
 
             if (dump)
                 Console.WriteLine(doc.DumpDocumentTree());

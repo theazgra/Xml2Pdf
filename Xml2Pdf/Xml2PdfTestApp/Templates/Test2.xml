@@ -17,7 +17,7 @@
         <!--        <Paragraph>Fusce wisi. Integer imperdiet lectus quis justo. Curabitur sagittis hendrerit ante. Nulla pulvinar eleifend sem. Nullam dapibus fermentum ipsum. Maecenas aliquet accumsan leo. In laoreet, magna id viverra tincidunt, sem odio bibendum justo, vel imperdiet sapien wisi sed libero. Aliquam ante. Vestibulum erat nulla, ullamcorper nec, rutrum non, nonummy ac, erat. Mauris dictum facilisis augue. Aliquam id dolor. Sed convallis magna eu sem. Integer vulputate sem a nibh rutrum consequat. In dapibus augue non sapien. Aliquam ornare wisi eu metus. Nam quis nulla. Nullam at arcu a est sollicitudin euismod. Fusce nibh.</Paragraph>-->
 
         <Paragraph>Test</Paragraph>
-        <Image property="ImageData" position="40,400" width="50%" hScaling="0.7"/>
+        <Image property="ImageData" position="40,400" width="50%" hScaling="0.7" vScaling="2"/>
 <!--        path="D:\Desktop\bus.png"-->
     </Page>
 </PdfDocument>

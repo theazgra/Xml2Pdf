@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using System.Collections.Generic;
+using System.Text;
+using iText.Kernel.Font;
 using iText.Layout;
 using Xml2Pdf.DocumentStructure.Geometry;
 using Xml2Pdf.Renderer;
@@ -28,9 +30,9 @@ namespace Xml2Pdf.DocumentStructure
             DumpElementProperty(dumpBuilder, indent, nameof(RightBorder), RightBorder);
         }
 
-        public StyleWrapper BorderPropertiesToStyle()
+        public override StyleWrapper GetElementStyle(Dictionary<string, PdfFont> customFonts)
         {
-            StyleWrapper style = new StyleWrapper();
+            var style = base.GetElementStyle(customFonts);
 
             // Borders.
             if (Borders.IsInitialized)

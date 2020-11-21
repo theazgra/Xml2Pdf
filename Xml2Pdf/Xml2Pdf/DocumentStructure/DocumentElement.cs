@@ -1,15 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Net.Http.Headers;
 using System.Text;
-using Org.BouncyCastle.Asn1.X509.Qualified;
+using iText.Kernel.Font;
+using Xml2Pdf.DocumentStructure.Geometry;
 using Xml2Pdf.Exceptions;
+using Xml2Pdf.Renderer;
 
 namespace Xml2Pdf.DocumentStructure
 {
     public abstract class DocumentElement
     {
+#region TreeStructureProperties
+
         protected const int DumpIndentationOffset = 2;
 
         /// <summary>
@@ -58,6 +62,14 @@ namespace Xml2Pdf.DocumentStructure
         /// </summary>
         protected abstract Type[] AllowedChildrenTypes { get; }
 
+#endregion
+
+#region DocumentElementProperties
+
+        public ElementProperty<Margins> Margins { get; } = new ElementProperty<Margins>();
+
+#endregion
+
         protected DocumentElement() { }
 
         public DocumentElement GetChildrenAtIndex(int index) { return _children[index]; }
@@ -77,6 +89,40 @@ namespace Xml2Pdf.DocumentStructure
         internal virtual void DumpToStringBuilder(StringBuilder dumpBuilder, int indent)
         {
             PrepareIndent(dumpBuilder, indent).Append('<').Append(GetType().Name).Append('>').AppendLine();
+            DumpElementProperty(dumpBuilder, indent, nameof(Margins), Margins);
+        }
+
+        /// <summary>
+        /// Add current element properties to style. This is virtual function so the call is propagated all the way to the base class.
+        /// </summary>
+        /// <returns>Style with element properties.</returns>
+        [SuppressMessage("ReSharper", "PossibleInvalidOperationException")]
+        public virtual StyleWrapper GetElementStyle(Dictionary<string, PdfFont> customFonts)
+        {
+            StyleWrapper style = new StyleWrapper();
+            if (Margins.IsInitialized)
+            {
+                if (Margins.Value.AreComplete())
+                {
+                    style.SetMargins(Margins.Value.Top.Value,
+                                     Margins.Value.Right.Value,
+                                     Margins.Value.Bottom.Value,
+                                     Margins.Value.Left.Value);
+                }
+                else
+                {
+                    if (Margins.Value.Top.HasValue)
+                        style.SetMarginTop(Margins.Value.Top.Value);
+                    if (Margins.Value.Bottom.HasValue)
+                        style.SetMarginBottom(Margins.Value.Bottom.Value);
+                    if (Margins.Value.Left.HasValue)
+                        style.SetMarginLeft(Margins.Value.Left.Value);
+                    if (Margins.Value.Right.HasValue)
+                        style.SetMarginRight(Margins.Value.Right.Value);
+                }
+            }
+
+            return style;
         }
 
         /// <summary>

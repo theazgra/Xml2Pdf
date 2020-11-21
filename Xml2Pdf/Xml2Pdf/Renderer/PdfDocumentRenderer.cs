@@ -22,7 +22,7 @@ namespace Xml2Pdf.Renderer
 {
     public class PdfDocumentRenderer : IDocumentRenderer
     {
-        private static PdfFont DefaultFont = PdfFontFactory.CreateFont(iText.IO.Font.Constants.StandardFonts.HELVETICA);
+        private static readonly PdfFont DefaultFont = PdfFontFactory.CreateFont(iText.IO.Font.Constants.StandardFonts.HELVETICA);
 
         private const int FontPropertyId = 20;
         private const float ScriptFontCoefficient = 0.7f;
@@ -150,26 +150,26 @@ namespace Xml2Pdf.Renderer
         private void RenderRootDocumentElement(RootDocumentElement rootElement)
         {
             // Document margins.
-            if (rootElement.CustomMargins != null)
+            if (rootElement.Margins.IsInitialized)
             {
-                if (rootElement.CustomMargins.AreComplete())
+                if (rootElement.Margins.Value.AreComplete())
                 {
                     _pdfDocument.SetMargins(
-                                            rootElement.CustomMargins.Top.Value,
-                                            rootElement.CustomMargins.Right.Value,
-                                            rootElement.CustomMargins.Bottom.Value,
-                                            rootElement.CustomMargins.Left.Value);
+                                            rootElement.Margins.Value.Top.Value,
+                                            rootElement.Margins.Value.Right.Value,
+                                            rootElement.Margins.Value.Bottom.Value,
+                                            rootElement.Margins.Value.Left.Value);
                 }
                 else
                 {
-                    if (rootElement.CustomMargins.Top.HasValue)
-                        _pdfDocument.SetTopMargin(rootElement.CustomMargins.Top.Value);
-                    if (rootElement.CustomMargins.Bottom.HasValue)
-                        _pdfDocument.SetBottomMargin(rootElement.CustomMargins.Bottom.Value);
-                    if (rootElement.CustomMargins.Left.HasValue)
-                        _pdfDocument.SetLeftMargin(rootElement.CustomMargins.Left.Value);
-                    if (rootElement.CustomMargins.Right.HasValue)
-                        _pdfDocument.SetRightMargin(rootElement.CustomMargins.Right.Value);
+                    if (rootElement.Margins.Value.Top.HasValue)
+                        _pdfDocument.SetTopMargin(rootElement.Margins.Value.Top.Value);
+                    if (rootElement.Margins.Value.Bottom.HasValue)
+                        _pdfDocument.SetBottomMargin(rootElement.Margins.Value.Bottom.Value);
+                    if (rootElement.Margins.Value.Left.HasValue)
+                        _pdfDocument.SetLeftMargin(rootElement.Margins.Value.Left.Value);
+                    if (rootElement.Margins.Value.Right.HasValue)
+                        _pdfDocument.SetRightMargin(rootElement.Margins.Value.Right.Value);
                 }
             }
 
@@ -281,7 +281,7 @@ namespace Xml2Pdf.Renderer
             var paragraph = new Paragraph();
 
             StyleWrapper paragraphStyle = inheritedStyle.CombineStyles(_style.ParagraphStyle)
-                                                        .CombineStyles(element.TextPropertiesToStyle(_style.CustomFonts));
+                                                        .CombineStyles(element.GetElementStyle(_style.CustomFonts));
 
             paragraph.AddStyle(paragraphStyle);
 
@@ -313,7 +313,7 @@ namespace Xml2Pdf.Renderer
             Text text;
             rawText ??= element.GetTextToRender(_objectPropertyMap, ValueFormatter);
 
-            StyleWrapper textStyle = inheritedStyle.CombineStyles(element.TextPropertiesToStyle(_style.CustomFonts));
+            StyleWrapper textStyle = inheritedStyle.CombineStyles(element.GetElementStyle(_style.CustomFonts));
 
 
             if (element.Superscript.ValueOr(false))
@@ -338,8 +338,8 @@ namespace Xml2Pdf.Renderer
             var emptyParagraph = new Paragraph();
 
             StyleWrapper lineStyle = _style.LineStyle != null
-                ? _style.LineStyle.CombineStyles(lineElement.BorderPropertiesToStyle())
-                : lineElement.BorderPropertiesToStyle();
+                ? _style.LineStyle.CombineStyles(lineElement.GetElementStyle(_style.CustomFonts))
+                : lineElement.GetElementStyle(_style.CustomFonts);
 
 
             if (lineElement.Length.IsInitialized)
@@ -355,7 +355,7 @@ namespace Xml2Pdf.Renderer
         {
             var list = element.Enumeration.ValueOr(false) ? new List(ListNumberingType.DECIMAL) : new List();
 
-            StyleWrapper listStyle = inheritedStyle.CombineStyles(element.TextPropertiesToStyle(_style.CustomFonts));
+            StyleWrapper listStyle = inheritedStyle.CombineStyles(element.GetElementStyle(_style.CustomFonts));
 
             if (element.Indentation.IsInitialized)
                 list.SetSymbolIndent(element.Indentation.Value);
@@ -389,7 +389,7 @@ namespace Xml2Pdf.Renderer
             var listItem = new ListItem(element.GetTextToRender(_objectPropertyMap, ValueFormatter));
 
             StyleWrapper listItemStyle = inheritedStyle.CombineStyles(_style.ListItemStyle)
-                                                       .CombineStyles(element.TextPropertiesToStyle(_style.CustomFonts));
+                                                       .CombineStyles(element.GetElementStyle(_style.CustomFonts));
 
 
             listItem.AddStyle(listItemStyle);
@@ -402,7 +402,7 @@ namespace Xml2Pdf.Renderer
 
 
             var tableStyle = inheritedStyle.CombineStyles(_style.TableStyle)
-                                           .CombineStyles(element.TextPropertiesToStyle(_style.CustomFonts));
+                                           .CombineStyles(element.GetElementStyle(_style.CustomFonts));
 
             table.SetWidth(element.TableWidth.ValueOr(UnitValue.CreatePercentValue(100.0f)));
 
@@ -442,7 +442,7 @@ namespace Xml2Pdf.Renderer
             if (!tableRowElement.IsHeader.ValueOr(false) && !tableRowElement.IsFooter.ValueOr(false))
                 pdfTable.StartNewRow();
 
-            var tableRowStyle = inheritedStyle.CombineStyles(tableRowElement.TextPropertiesToStyle(_style.CustomFonts));
+            var tableRowStyle = inheritedStyle.CombineStyles(tableRowElement.GetElementStyle(_style.CustomFonts));
 
             if (!tableRowElement.RowHeight.IsInitialized && parent.RowHeight.IsInitialized)
             {
@@ -469,12 +469,12 @@ namespace Xml2Pdf.Renderer
 
             var cellStyle = inheritedStyle
                             .CombineStyles(_style.TableCellStyle)
-                            .CombineStyles(tableCell.TextPropertiesToStyle(_style.CustomFonts));
+                            .CombineStyles(tableCell.GetElementStyle(_style.CustomFonts));
 
 
             if (tableCell.HasChildren)
             {
-                cellStyle = cellStyle.CombineStyles(((TextElement) tableCell.FirstChild).TextPropertiesToStyle(_style.CustomFonts));
+                cellStyle = cellStyle.CombineStyles(((TextElement) tableCell.FirstChild).GetElementStyle(_style.CustomFonts));
             }
 
             if (parent.RowHeight.IsInitialized)
@@ -552,7 +552,7 @@ namespace Xml2Pdf.Renderer
                                           .ToArray();
             }
 
-            var rowStyle = inheritedStyle.CombineStyles(element.TextPropertiesToStyle(_style.CustomFonts));
+            var rowStyle = inheritedStyle.CombineStyles(element.GetElementStyle(_style.CustomFonts));
             // TODO(Moravec): Finish down here.
 
             int rowIndex = 1;

@@ -1,6 +1,4 @@
-﻿using iText.Signatures;
-
-namespace Xml2Pdf.DocumentStructure.Geometry
+﻿namespace Xml2Pdf.DocumentStructure.Geometry
 {
     public class Margins
     {

@@ -18,7 +18,7 @@ namespace Xml2Pdf.DocumentStructure
         protected override bool IsParentType => false;
         protected override Type[] AllowedChildrenTypes => Array.Empty<Type>();
 
-        #region TextProperties
+#region TextProperties
 
         public ElementProperty<VerticalAlignment> VerticalAlignment { get; } =
             new ElementProperty<VerticalAlignment>();
@@ -38,7 +38,7 @@ namespace Xml2Pdf.DocumentStructure
         public ElementProperty<Color> ForegroundColor { get; } = new ElementProperty<Color>();
         public ElementProperty<Color> BackgroundColor { get; } = new ElementProperty<Color>();
 
-        #endregion
+#endregion
 
         public string Text { get; set; }
 
@@ -46,14 +46,9 @@ namespace Xml2Pdf.DocumentStructure
         public string Format { get; set; }
         public string[] FormatProperties { get; set; }
 
-        public TextElement()
-        {
-        }
+        public TextElement() { }
 
-        public bool IsEmpty()
-        {
-            return Text == null && Property == null && Format == null && FormatProperties == null;
-        }
+        public bool IsEmpty() { return Text == null && Property == null && Format == null && FormatProperties == null; }
 
 
         internal override void DumpToStringBuilder(StringBuilder dumpBuilder, int indent)
@@ -145,32 +140,30 @@ namespace Xml2Pdf.DocumentStructure
             return string.Empty;
         }
 
-        public StyleWrapper TextPropertiesToStyle(Dictionary<string, PdfFont> customFonts)
+        public override StyleWrapper GetElementStyle(Dictionary<string, PdfFont> customFonts)
         {
-            StyleWrapper textStyle = BorderPropertiesToStyle();
-
+            var style = base.GetElementStyle(customFonts);
             if (FontSize.IsInitialized)
-                textStyle.SetFontSize(FontSize.Value);
+                style.SetFontSize(FontSize.Value);
             if (FontName.IsInitialized && customFonts.ContainsKey(FontName.Value))
-                textStyle.SetFont(customFonts[FontName.Value]);
+                style.SetFont(customFonts[FontName.Value]);
             if (HorizontalAlignment.IsInitialized)
-                textStyle.SetHorizontalAlignment(HorizontalAlignment.Value);
+                style.SetHorizontalAlignment(HorizontalAlignment.Value);
             if (TextAlignment.IsInitialized)
-                textStyle.SetTextAlignment(TextAlignment.Value);
+                style.SetTextAlignment(TextAlignment.Value);
             if (ForegroundColor.IsInitialized)
-                textStyle.SetFontColor(ForegroundColor.Value);
+                style.SetFontColor(ForegroundColor.Value);
             if (BackgroundColor.IsInitialized)
-                textStyle.SetBackgroundColor(BackgroundColor.Value);
+                style.SetBackgroundColor(BackgroundColor.Value);
 
             if (Bold.ValueOr(false))
-                textStyle.SetBold();
+                style.SetBold();
             if (Italic.ValueOr(false))
-                textStyle.SetItalic();
+                style.SetItalic();
             if (Underline.ValueOr(false))
-                textStyle.SetUnderline();
+                style.SetUnderline();
 
-
-            return textStyle;
+            return style;
         }
     }
 

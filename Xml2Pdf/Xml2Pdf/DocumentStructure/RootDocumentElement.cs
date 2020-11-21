@@ -12,7 +12,7 @@ namespace Xml2Pdf.DocumentStructure
 
         public ElementStyle Style { get; } = new ElementStyle();
 
-        public Margins CustomMargins { get; set; }
+        // public Margins CustomMargins { get; set; }
         public PageSize PageSize { get; set; } = PageSize.A4;
         public PageOrientation PageOrientation { get; set; } = PageOrientation.Portrait;
 
@@ -43,8 +43,8 @@ namespace Xml2Pdf.DocumentStructure
                 .Append(" -PageOrientation=")
                 .Append(PageOrientation)
                 .AppendLine();
-            if (CustomMargins != null)
-                PrepareIndent(dumpBuilder, indent).Append(" #Margins: ").Append(CustomMargins);
+            // if (CustomMargins != null)
+                // PrepareIndent(dumpBuilder, indent).Append(" #Margins: ").Append(CustomMargins);
 
             DumpElementProperty(dumpBuilder, indent, nameof(DocumentFont), DocumentFont);
             DumpElementProperty(dumpBuilder, indent, nameof(DocumentFontSize), DocumentFontSize);
