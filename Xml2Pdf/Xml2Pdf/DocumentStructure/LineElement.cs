@@ -1,6 +1,5 @@
 ﻿using System;
 using iText.Kernel.Colors;
-using iText.Layout;
 using iText.Layout.Properties;
 using Xml2Pdf.DocumentStructure.Geometry;
 

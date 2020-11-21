@@ -77,7 +77,7 @@
             </TableRow>
         </Table>
 
-        <Line />
+        <Spacer marginBottom="50" marginTop="50" />
 
         <Table columnCount="4" width="50%" columnWidths="20%,20%,20%,40%" horizontalAlignment="center">
             <TableRow header="true">

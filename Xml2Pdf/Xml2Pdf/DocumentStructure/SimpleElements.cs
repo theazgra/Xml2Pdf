@@ -11,6 +11,7 @@ namespace Xml2Pdf.DocumentStructure
             typeof(FooterElement),
             typeof(ImageElement),
             typeof(LineElement),
+            typeof(SpacerElement),
             typeof(ListElement),
             typeof(ParagraphElement),
             typeof(TableElement)

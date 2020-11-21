@@ -60,8 +60,7 @@ namespace Xml2Pdf.Renderer
 
             if (valueType != tType)
             {
-                throw new ArgumentException(
-                                            $"Property with name {name} has invalid type. " +
+                throw new ArgumentException($"Property with name {name} has invalid type. " +
                                             $"Requested type: '{tType.Name}'. Read type: '{valueType.Name}'");
             }
 
@@ -154,8 +153,7 @@ namespace Xml2Pdf.Renderer
             {
                 if (rootElement.Margins.Value.AreComplete())
                 {
-                    _pdfDocument.SetMargins(
-                                            rootElement.Margins.Value.Top.Value,
+                    _pdfDocument.SetMargins(rootElement.Margins.Value.Top.Value,
                                             rootElement.Margins.Value.Right.Value,
                                             rootElement.Margins.Value.Bottom.Value,
                                             rootElement.Margins.Value.Left.Value);
@@ -225,13 +223,16 @@ namespace Xml2Pdf.Renderer
                 case ImageElement imageElement:
                     RenderImageElement(imageElement, parent, pdfParent, inheritedStyle);
                     break;
+                case SpacerElement spacerElement:
+                    RenderSpacerElement(spacerElement, parent, pdfParent, inheritedStyle);
+                    break;
                 default:
-                    ColorConsole.WriteLine(
-                                           ConsoleColor.Red,
+                    ColorConsole.WriteLine(ConsoleColor.Red,
                                            $"Missing branch in PdfDocumentRenderer::RenderDocumentElement() for {element.GetType().Name}");
                     break;
             }
         }
+
 
         private void RenderImageElement(ImageElement element, DocumentElement parent, object pdfParent, StyleWrapper inheritedStyle)
         {
@@ -300,8 +301,7 @@ namespace Xml2Pdf.Renderer
             }
             else
             {
-                throw new NotImplementedException(
-                                                  "Mix of raw text and <Text> elements is not supported yet. " +
+                throw new NotImplementedException("Mix of raw text and <Text> elements is not supported yet. " +
                                                   "Use only raw text or multiple <Text> elements.");
             }
 
@@ -424,8 +424,7 @@ namespace Xml2Pdf.Renderer
             }
             else
             {
-                throw RenderException.WrongPdfParent(
-                                                     nameof(RenderTableElement),
+                throw RenderException.WrongPdfParent(nameof(RenderTableElement),
                                                      typeof(Document),
                                                      pdfParent.GetType());
             }
@@ -611,17 +610,11 @@ namespace Xml2Pdf.Renderer
             }
         }
 
-        //
-        // /// <summary>
-        // /// Get the custom font by its name or return document font.
-        // /// </summary>
-        // /// <param name="fontNameProperty">Font name property.</param>
-        // /// <returns>PDF font.</returns>
-        // private PdfFont GetFontByNameOrDefaultFont(ElementProperty<string> fontNameProperty)
-        // {
-        //     if (fontNameProperty.IsInitialized && _style != null && _style.CustomFonts.ContainsKey(fontNameProperty.Value))
-        //         return _style.CustomFonts[fontNameProperty.Value];
-        //     return _documentFont;
-        // }
+        private void RenderSpacerElement(SpacerElement spacerElement, DocumentElement parent, object pdfParent, StyleWrapper inheritedStyle)
+        {
+            var spacerParagraph = new Paragraph();
+            spacerParagraph.AddStyle(spacerElement.GetElementStyle(_style.CustomFonts));
+            AddParagraphToParent(spacerParagraph, pdfParent);
+        }
     }
 }

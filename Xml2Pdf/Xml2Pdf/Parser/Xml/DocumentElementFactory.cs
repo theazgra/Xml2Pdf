@@ -23,6 +23,7 @@ namespace Xml2Pdf.Parser.Xml
                 "TableDataRow" => new TableDataRowElement(),
                 "Header" => new HeaderElement(),
                 "Footer" => new FooterElement(),
+                "Spacer" => new SpacerElement(),
                 _ => throw new InvalidDocumentElementException(elementName)
             };
         }

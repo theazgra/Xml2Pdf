@@ -52,11 +52,11 @@ namespace Xml2Pdf.Parser.Xml
                 case ListItemElement _:
                 case ParagraphElement _:
                 case TextElement _:
+                case SpacerElement _:
                 case PageElement _: // No properties to be parsed yet.
                     return;
                 default:
-                    ColorConsole.WriteLine(
-                                           ConsoleColor.Red,
+                    ColorConsole.WriteLine(ConsoleColor.Red,
                                            $"Missing branch in `ParseAndAssignElementProperty` for '{documentElement.GetType().Name}'");
                     break;
             }
@@ -73,28 +73,20 @@ namespace Xml2Pdf.Parser.Xml
 
                         break;
                     case "marginTop":
-                        documentElement.Margins.Value = new Margins
-                        {
-                            Top = ValueParser.ParseFloat(pair.Value)
-                        };
+                        documentElement.Margins.Value ??= new Margins();
+                        documentElement.Margins.Value.Top = ValueParser.ParseFloat(pair.Value);
                         break;
                     case "marginBottom":
-                        documentElement.Margins.Value = new Margins
-                        {
-                            Bottom = ValueParser.ParseFloat(pair.Value)
-                        };
+                        documentElement.Margins.Value ??= new Margins();
+                        documentElement.Margins.Value.Bottom = ValueParser.ParseFloat(pair.Value);
                         break;
                     case "marginLeft":
-                        documentElement.Margins.Value = new Margins
-                        {
-                            Left = ValueParser.ParseFloat(pair.Value)
-                        };
+                        documentElement.Margins.Value ??= new Margins();
+                        documentElement.Margins.Value.Left = ValueParser.ParseFloat(pair.Value);
                         break;
                     case "marginRight":
-                        documentElement.Margins.Value = new Margins
-                        {
-                            Right = ValueParser.ParseFloat(pair.Value)
-                        };
+                        documentElement.Margins.Value ??= new Margins();
+                        documentElement.Margins.Value.Right = ValueParser.ParseFloat(pair.Value);
                         break;
                 }
             }
