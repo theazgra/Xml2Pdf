@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
+using iText.Forms;
+using iText.Forms.Fields;
 using iText.IO.Image;
 using iText.Kernel.Font;
 using iText.Kernel.Pdf;
@@ -11,6 +13,7 @@ using iText.Layout;
 using iText.Layout.Element;
 using iText.Layout.Properties;
 using Xml2Pdf.DocumentStructure;
+using Xml2Pdf.DocumentStructure.Form;
 using Xml2Pdf.DocumentStructure.Geometry;
 using Xml2Pdf.Exceptions;
 using Xml2Pdf.Format;
@@ -225,6 +228,9 @@ namespace Xml2Pdf.Renderer
                     break;
                 case SpacerElement spacerElement:
                     RenderSpacerElement(spacerElement, parent, pdfParent, inheritedStyle);
+                    break;
+                case TextFieldElement textFieldElement:
+                    RenderTextFieldElement(textFieldElement, parent, pdfParent, inheritedStyle);
                     break;
                 default:
                     ColorConsole.WriteLine(ConsoleColor.Red,
@@ -615,6 +621,36 @@ namespace Xml2Pdf.Renderer
             var spacerParagraph = new Paragraph();
             spacerParagraph.AddStyle(spacerElement.GetElementStyle(_style.CustomFonts));
             AddParagraphToParent(spacerParagraph, pdfParent);
+        }
+
+        private PdfAcroForm GetDocumentForm() => PdfAcroForm.GetAcroForm(_pdfDocument.GetPdfDocument(), true);
+
+        private void RenderTextFieldElement(TextFieldElement element,
+                                            DocumentElement parent,
+                                            object pdfParent,
+                                            StyleWrapper inheritedStyle)
+        {
+            //PdfAcroForm form = PdfAcroForm.GetAcroForm(doc.GetPdfDocument(), true);
+
+            var style = inheritedStyle.CombineStyles(element.GetElementStyle(_style.CustomFonts));
+
+            PdfTextFormField textField = element.IsMultiline.ValueOr(false) switch
+            {
+                true => PdfFormField.CreateMultilineText(_pdfDocument.GetPdfDocument(),
+                                                         element.Rectangle.Value,
+                                                         element.Name.ValueOr(string.Empty),
+                                                         element.Value.ValueOr(string.Empty)),
+                false => PdfFormField.CreateText(_pdfDocument.GetPdfDocument(),
+                                                 element.Rectangle.Value,
+                                                 element.Name.ValueOr(string.Empty),
+                                                 element.Value.ValueOr(string.Empty))
+            };
+
+
+            // TODO(Moravec): Finish rendering code.
+
+            // PdfTextFormField nameField = PdfTextFormField.CreateText(doc.GetPdfDocument(), new Rectangle(99, 753, 425, 15), "name", "");
+            // form.AddField(nameField);
         }
     }
 }

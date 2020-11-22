@@ -1,5 +1,6 @@
 ﻿using System;
 using Xml2Pdf.DocumentStructure;
+using Xml2Pdf.DocumentStructure.Form;
 using Xml2Pdf.DocumentStructure.Geometry;
 using Xml2Pdf.Exceptions;
 using Xml2Pdf.Utilities;
@@ -20,6 +21,11 @@ namespace Xml2Pdf.Parser.Xml
             if (documentElement is TextElement textElement)
             {
                 AssignTextElementProperties(textElement, propertyBag);
+            }
+
+            if (documentElement is FormElement formElement)
+            {
+                AssignFormElementProperties(formElement, propertyBag);
             }
 
             switch (documentElement)
@@ -48,6 +54,9 @@ namespace Xml2Pdf.Parser.Xml
                 case ImageElement imageElement:
                     AssignImageElementProperties(imageElement, propertyBag);
                     break;
+                case TextFieldElement textFieldElement:
+                    AssignTextFieldElementProperties(textFieldElement, propertyBag);
+                    break;
                 case ListItemElement _:
                 case ParagraphElement _:
                 case TextElement _:
@@ -60,6 +69,44 @@ namespace Xml2Pdf.Parser.Xml
                     break;
             }
         }
+
+        private static void AssignFormElementProperties(FormElement formElement, PropertyBag<string> propertyBag)
+        {
+            foreach (var pair in propertyBag.UnprocessedPairs())
+            {
+                switch (pair.Name)
+                {
+                    case "rect":
+                    case "rectangle":
+                        formElement.Rectangle.Value = ValueParser.ParseRectangle(pair.Value);
+                        break;
+                    case "name":
+                        formElement.Name.Value = pair.Value;
+                        break;
+                    case "value":
+                        formElement.Value.Value = pair.Value;
+                        break;
+                }
+            }
+        }
+
+        private static void AssignTextFieldElementProperties(TextFieldElement textFieldElement, PropertyBag<string> propertyBag)
+        {
+            foreach (var pair in propertyBag.UnprocessedPairs())
+            {
+                switch (pair.Name)
+                {
+                    case "multiline":
+                    case "isMultiline":
+                        textFieldElement.IsMultiline.Value = ValueParser.ParseBool(pair.Value);
+                        break;
+                    default:
+                        throw new InvalidDocumentElementPropertyException(textFieldElement, pair.Name, pair.Value);
+                        break;
+                }
+            }
+        }
+
 
         private static void AssignBaseDocumentElementProperties(DocumentElement documentElement, PropertyBag<string> propertyBag)
         {

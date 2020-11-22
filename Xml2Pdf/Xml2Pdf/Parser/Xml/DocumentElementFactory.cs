@@ -1,5 +1,6 @@
 ﻿using Xml2Pdf.Exceptions;
 using Xml2Pdf.DocumentStructure;
+using Xml2Pdf.DocumentStructure.Form;
 
 namespace Xml2Pdf.Parser.Xml
 {
@@ -24,6 +25,7 @@ namespace Xml2Pdf.Parser.Xml
                 "Header" => new HeaderElement(),
                 "Footer" => new FooterElement(),
                 "Spacer" => new SpacerElement(),
+                "TextField" => new TextFieldElement(),
                 _ => throw new InvalidDocumentElementException(elementName)
             };
         }

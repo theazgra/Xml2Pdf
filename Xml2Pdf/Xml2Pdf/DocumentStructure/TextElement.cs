@@ -15,8 +15,6 @@ namespace Xml2Pdf.DocumentStructure
 {
     public abstract class TextElement : BorderedDocumentElement
     {
-        protected override bool IsParentType => false;
-        protected override Type[] AllowedChildrenTypes => Array.Empty<Type>();
 
 #region TextProperties
 
@@ -173,6 +171,6 @@ namespace Xml2Pdf.DocumentStructure
     public class LeafTextElement : TextElement
     {
         protected override bool IsParentType => false;
-        protected override Type[] AllowedChildrenTypes => null;
+        protected override Type[] AllowedChildrenTypes => Array.Empty<Type>();
     }
 }

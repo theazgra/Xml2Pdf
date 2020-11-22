@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Text;
+using Xml2Pdf.DocumentStructure.Form;
 
 namespace Xml2Pdf.DocumentStructure
 {
     public class TableCellElement : TextElement
     {
-        private static readonly Type[] PossibleChildren = {typeof(ParagraphElement)};
+        private static readonly Type[] PossibleChildren = {typeof(ParagraphElement),typeof(TextFieldElement)};
 
         public ElementProperty<int> ColumnSpan { get; } = new ElementProperty<int>();
         public ElementProperty<int> RowSpan { get; } = new ElementProperty<int>();

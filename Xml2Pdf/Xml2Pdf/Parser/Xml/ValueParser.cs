@@ -8,7 +8,6 @@ using iText.Kernel.Geom;
 using iText.Layout.Properties;
 using Xml2Pdf.DocumentStructure.Geometry;
 using Xml2Pdf.Exceptions;
-using Xml2Pdf.Utilities;
 
 namespace Xml2Pdf.Parser.Xml
 {
@@ -74,8 +73,7 @@ namespace Xml2Pdf.Parser.Xml
             {
                 1 => new Margins(ParseFloat(parts[0])),
                 2 => new Margins(ParseFloat(parts[0]), float.Parse(parts[1])),
-                4 => new Margins(
-                                 ParseFloat(parts[0]),
+                4 => new Margins(ParseFloat(parts[0]),
                                  ParseFloat(parts[1]),
                                  ParseFloat(parts[2]),
                                  ParseFloat(parts[3])),
@@ -101,8 +99,7 @@ namespace Xml2Pdf.Parser.Xml
             {
                 "portrait" => PageOrientation.Portrait,
                 "landscape" => PageOrientation.Landscape,
-                _ => throw new ValueParseException(
-                                                   $"Invalid value '{propertyValue}' for page orientation. " +
+                _ => throw new ValueParseException($"Invalid value '{propertyValue}' for page orientation. " +
                                                    "Valid values are portrait and landscape.")
             };
         }
@@ -154,8 +151,7 @@ namespace Xml2Pdf.Parser.Xml
             var parts = ParseStringArray(value);
             if (parts.Length < 3)
             {
-                throw new ValueParseException(
-                                              "Unable to parse BorderInfo. " +
+                throw new ValueParseException("Unable to parse BorderInfo. " +
                                               "Expected values like: [1.5;solid;black] or [1.5,dotted,black,(0.5)]");
             }
 
@@ -303,6 +299,18 @@ namespace Xml2Pdf.Parser.Xml
             if (parts.Length != 2)
                 throw new ValueParseException("IntPoint must have two values.");
             return new IntPoint(ParseInt(parts[0]), ParseInt(parts[1]));
+        }
+
+        public static Rectangle ParseRectangle(string value)
+        {
+            string[] parts = ParseStringArray(value);
+            return parts.Length switch
+            {
+                2 => new Rectangle(ParseFloat(parts[0]), ParseFloat(parts[1])),
+                4 => new Rectangle(ParseFloat(parts[0]), ParseFloat(parts[1]), ParseFloat(parts[2]), ParseFloat(parts[3])),
+                _ => throw new
+                    ValueParseException("You must specify two values (width,height) or four values (x,y,width,height) for rectangle")
+            };
         }
     }
 }

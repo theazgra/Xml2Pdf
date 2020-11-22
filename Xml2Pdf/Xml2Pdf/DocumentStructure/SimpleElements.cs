@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using Xml2Pdf.DocumentStructure.Form;
 
 namespace Xml2Pdf.DocumentStructure
 {
@@ -14,7 +15,8 @@ namespace Xml2Pdf.DocumentStructure
             typeof(SpacerElement),
             typeof(ListElement),
             typeof(ParagraphElement),
-            typeof(TableElement)
+            typeof(TableElement),
+            typeof(TextFieldElement)
         };
 
         protected override bool IsParentType => true;
