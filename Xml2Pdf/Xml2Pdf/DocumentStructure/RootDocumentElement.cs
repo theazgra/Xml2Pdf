@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Text;
 using iText.Kernel.Geom;
 using Xml2Pdf.DocumentStructure.Geometry;
@@ -12,10 +11,10 @@ namespace Xml2Pdf.DocumentStructure
 
         public ElementStyle Style { get; } = new ElementStyle();
 
-        // public Margins CustomMargins { get; set; }
         public PageSize PageSize { get; set; } = PageSize.A4;
         public PageOrientation PageOrientation { get; set; } = PageOrientation.Portrait;
 
+        public ElementProperty<string> StyleFile { get; } = new ElementProperty<string>();
         public ElementProperty<string> DocumentFont { get; } = new ElementProperty<string>();
         public ElementProperty<float> DocumentFontSize { get; } = new ElementProperty<float>();
 
@@ -43,8 +42,6 @@ namespace Xml2Pdf.DocumentStructure
                 .Append(" -PageOrientation=")
                 .Append(PageOrientation)
                 .AppendLine();
-            // if (CustomMargins != null)
-                // PrepareIndent(dumpBuilder, indent).Append(" #Margins: ").Append(CustomMargins);
 
             DumpElementProperty(dumpBuilder, indent, nameof(DocumentFont), DocumentFont);
             DumpElementProperty(dumpBuilder, indent, nameof(DocumentFontSize), DocumentFontSize);

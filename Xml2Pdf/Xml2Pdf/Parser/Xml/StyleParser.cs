@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Xml;
 using iText.Kernel.Font;
 using iText.Layout;
@@ -13,6 +14,25 @@ namespace Xml2Pdf.Parser.Xml
 {
     internal class StyleParser
     {
+        public void ParseStyle(string xmlFilePath, ElementStyle result)
+        {
+            var xmlReaderSettings = new XmlReaderSettings
+            {
+                IgnoreComments = true,
+                IgnoreWhitespace = true
+            };
+
+
+            using var fileStream = File.Open(xmlFilePath, FileMode.Open);
+            using var xmlReader = XmlReader.Create(fileStream, xmlReaderSettings);
+            while (!xmlReader.EOF && (xmlReader.NodeType != XmlNodeType.Element && xmlReader.Name != "Style"))
+            {
+                xmlReader.Read();
+            }
+
+            ParseStyle(xmlReader, result);
+        }
+
         public void ParseStyle(XmlReader xmlReader, ElementStyle result)
         {
             bool isStyleElementClosed = false;
@@ -48,7 +68,7 @@ namespace Xml2Pdf.Parser.Xml
 
                             default:
                                 ColorConsole.WriteLine(ConsoleColor.DarkBlue,
-                                    $"Unhandled style node. '{xmlReader.Name}'");
+                                                       $"Unhandled style node. '{xmlReader.Name}'");
                                 break;
                         }
 

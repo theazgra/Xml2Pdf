@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Xml;
 using Xml2Pdf.DocumentStructure;
 using Xml2Pdf.DocumentStructure.Geometry;
 using Xml2Pdf.Exceptions;
@@ -383,6 +382,9 @@ namespace Xml2Pdf.Parser.Xml
             {
                 switch (name)
                 {
+                    case "style":
+                        rootDocumentElement.StyleFile.Value = value;
+                        break;
                     case "font":
                     case "documentFont":
                         rootDocumentElement.DocumentFont.Value = value;
@@ -390,33 +392,6 @@ namespace Xml2Pdf.Parser.Xml
                     case "fontSize":
                         rootDocumentElement.DocumentFontSize.Value = ValueParser.ParseFloat(value);
                         break;
-                    // case "margins":
-                    // rootDocumentElement.CustomMargins = ValueParser.ParseCompleteMargins(value);
-                    // break;
-                    // case "topMargin":
-                    //     rootDocumentElement.CustomMargins = new Margins
-                    //     {
-                    //         Top = ValueParser.ParseFloat(value)
-                    //     };
-                    //     break;
-                    // case "bottomMargin":
-                    //     rootDocumentElement.CustomMargins = new Margins
-                    //     {
-                    //         Bottom = ValueParser.ParseFloat(value)
-                    //     };
-                    //     break;
-                    // case "leftMargin":
-                    //     rootDocumentElement.CustomMargins = new Margins
-                    //     {
-                    //         Left = ValueParser.ParseFloat(value)
-                    //     };
-                    //     break;
-                    // case "rightMargin":
-                    //     rootDocumentElement.CustomMargins = new Margins
-                    //     {
-                    //         Right = ValueParser.ParseFloat(value)
-                    //     };
-                    //     break;
                     case "pageSize":
                         rootDocumentElement.PageSize = ValueParser.ParsePageSize(value);
                         break;

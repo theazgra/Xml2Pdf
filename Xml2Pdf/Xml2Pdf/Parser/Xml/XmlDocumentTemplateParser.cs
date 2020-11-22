@@ -1,29 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.ComTypes;
 using System.Xml;
 using Xml2Pdf.DocumentStructure;
 using Xml2Pdf.Exceptions;
 using Xml2Pdf.Parser.Interface;
-using Xml2Pdf.Utilities;
 using static Xml2Pdf.Parser.Xml.DocumentElementFactory;
 
 namespace Xml2Pdf.Parser.Xml
 {
     public class XmlDocumentTemplateParser : IDocumentTemplateParser
     {
-        private StyleParser _styleParser = null;
-
         public RootDocumentElement ParseTemplateFile(string filePath)
         {
+            string templateDirectoryPath = new FileInfo(filePath).Directory?.FullName;
             using var fileStream = File.Open(path: filePath, FileMode.Open);
-            return ParseTemplate(fileStream);
+            return ParseTemplate(fileStream, templateDirectoryPath);
         }
 
-        private RootDocumentElement ParseTemplate(Stream inputStream)
+        private RootDocumentElement ParseTemplate(Stream inputStream, string templateDirectory)
         {
             var xmlReaderSettings = new XmlReaderSettings
             {
@@ -37,6 +33,10 @@ namespace Xml2Pdf.Parser.Xml
             }
 
             RootDocumentElement root = (RootDocumentElement) ParseDocumentElement(xmlReader, null);
+            if (root.StyleFile.IsInitialized)
+            {
+                new StyleParser().ParseStyle(Path.Combine(templateDirectory, root.StyleFile.Value), root.Style);
+            }
 
             var parentElements = new Stack<DocumentElement>();
             parentElements.Push(root);
@@ -48,8 +48,7 @@ namespace Xml2Pdf.Parser.Xml
                     case XmlNodeType.Element:
                         if (xmlReader.Name == "Style")
                         {
-                            _styleParser = new StyleParser();
-                            _styleParser.ParseStyle(xmlReader, root.Style);
+                            new StyleParser().ParseStyle(xmlReader, root.Style);
                             continue;
                         }
 
@@ -97,7 +96,7 @@ namespace Xml2Pdf.Parser.Xml
                 if (currentElement.GetType() != typeof(RootDocumentElement))
                 {
                     throw UnexpectedDocumentElementException.WrongDocumentElement(currentElement.GetType(),
-                        typeof(RootDocumentElement));
+                                                                                  typeof(RootDocumentElement));
                 }
             }
             else

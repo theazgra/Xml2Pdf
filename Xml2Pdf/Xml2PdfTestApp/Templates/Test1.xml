@@ -1,18 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
-<PdfDocument font="lato-light" fontSize="9.5">
-    <Style>
-        <Color name="greenIGuess" value="0x27AE60"/>
-        <ListItemStyle>
-            <Entry name="italic" value="true"/>
-        </ListItemStyle>
-        <TableCellStyle>
-            <Entry name="fontSize" value="8"/>
-            <Entry name="foreground" value="0xAA0000"/>
-            <Entry name="textAlign" value="right"/>
-        </TableCellStyle>
-        <CustomFont name="lato-light" path="C:\Windows\Fonts\LatoWeb-Light.ttf"/>
-        <CustomFont name="papyrus" path="C:\Windows\Fonts\PAPYRUS.TTF"/>
-    </Style>
+<!--        font="lato-light"-->
+<PdfDocument font="lato-light" style="Style.xml"  fontSize="9.5">
+<!--    <Style>-->
+<!--        <Color name="greenIGuess" value="0x27AE60"/>-->
+<!--        <ListItemStyle>-->
+<!--            <Entry name="italic" value="true"/>-->
+<!--        </ListItemStyle>-->
+<!--        <TableCellStyle>-->
+<!--            <Entry name="fontSize" value="8"/>-->
+<!--            <Entry name="foreground" value="0xAA0000"/>-->
+<!--            <Entry name="textAlign" value="right"/>-->
+<!--        </TableCellStyle>-->
+<!--        <CustomFont name="lato-light" path="C:\Windows\Fonts\LatoWeb-Light.ttf"/>-->
+<!--        <CustomFont name="papyrus" path="C:\Windows\Fonts\PAPYRUS.TTF"/>-->
+<!--    </Style>-->
     <Page>
         <Paragraph>
             <Text>X</Text>
