@@ -6,10 +6,10 @@ namespace Xml2Pdf.DocumentStructure
 {
     public class ImageElement : DocumentElement
     {
-        public ElementProperty<string> Path { get; } = new ElementProperty<string>();
-        public ElementProperty<string> SourceProperty { get; } = new ElementProperty<string>();
-        public ElementProperty<float> HorizontalScaling { get; } = new ElementProperty<float>();
-        public ElementProperty<float> VerticalScaling { get; } = new ElementProperty<float>();
+        public ElementProperty<string> Path { get; } = new();
+        public ElementProperty<string> SourceProperty { get; } = new();
+        public ElementProperty<float> HorizontalScaling { get; } = new();
+        public ElementProperty<float> VerticalScaling { get; } = new();
 
         protected override bool IsParentType => false;
         protected override Type[] AllowedChildrenTypes => Array.Empty<Type>();

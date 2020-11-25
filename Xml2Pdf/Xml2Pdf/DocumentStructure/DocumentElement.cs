@@ -67,8 +67,8 @@ namespace Xml2Pdf.DocumentStructure
 
 #region DocumentElementProperties
 
-        public ElementProperty<Margins> Margins { get; } = new ElementProperty<Margins>();
-        public ElementProperty<FixedPosition> FixedPosition { get; } = new ElementProperty<FixedPosition>();
+        public ElementProperty<Margins> Margins { get; } = new();
+        public ElementProperty<FixedPosition> FixedPosition { get; } = new();
 
 #endregion
 

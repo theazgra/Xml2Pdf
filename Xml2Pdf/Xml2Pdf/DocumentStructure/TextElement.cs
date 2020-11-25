@@ -24,15 +24,15 @@ namespace Xml2Pdf.DocumentStructure
 
         public ElementProperty<HorizontalAlignment> HorizontalAlignment { get; } = new();
 
-        public ElementProperty<bool> Bold { get; } = new ElementProperty<bool>();
-        public ElementProperty<bool> Italic { get; } = new ElementProperty<bool>();
-        public ElementProperty<bool> Superscript { get; } = new ElementProperty<bool>();
-        public ElementProperty<bool> Subscript { get; } = new ElementProperty<bool>();
-        public ElementProperty<bool> Underline { get; } = new ElementProperty<bool>();
-        public ElementProperty<string> FontName { get; } = new ElementProperty<string>();
-        public ElementProperty<float> FontSize { get; } = new ElementProperty<float>();
-        public ElementProperty<Color> ForegroundColor { get; } = new ElementProperty<Color>();
-        public ElementProperty<Color> BackgroundColor { get; } = new ElementProperty<Color>();
+        public ElementProperty<bool> Bold { get; } = new();
+        public ElementProperty<bool> Italic { get; } = new();
+        public ElementProperty<bool> Superscript { get; } = new();
+        public ElementProperty<bool> Subscript { get; } = new();
+        public ElementProperty<bool> Underline { get; } = new();
+        public ElementProperty<string> FontName { get; } = new();
+        public ElementProperty<float> FontSize { get; } = new();
+        public ElementProperty<Color> ForegroundColor { get; } = new();
+        public ElementProperty<Color> BackgroundColor { get; } = new();
 
 #endregion
 

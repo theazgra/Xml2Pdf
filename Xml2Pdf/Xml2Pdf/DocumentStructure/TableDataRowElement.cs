@@ -7,8 +7,8 @@ namespace Xml2Pdf.DocumentStructure
     {
         private static readonly Type[] PossibleChildren = {typeof(TableCellElement)};
 
-        public ElementProperty<string> DataSource { get; } = new ElementProperty<string>();
-        public ElementProperty<string[]> ColumnCellProperties { get; } = new ElementProperty<string[]>();
+        public ElementProperty<string> DataSource { get; } = new();
+        public ElementProperty<string[]> ColumnCellProperties { get; } = new();
 
         protected override bool IsParentType => true;
         protected override Type[] AllowedChildrenTypes => PossibleChildren;

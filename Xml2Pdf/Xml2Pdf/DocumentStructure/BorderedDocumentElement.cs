@@ -2,7 +2,6 @@
 using System.Text;
 using iText.Kernel.Font;
 using iText.Kernel.Geom;
-using iText.Layout;
 using Xml2Pdf.DocumentStructure.Geometry;
 using Xml2Pdf.Renderer;
 using Xml2Pdf.Renderer.Mappers;
@@ -11,11 +10,11 @@ namespace Xml2Pdf.DocumentStructure
 {
     public abstract class BorderedDocumentElement : DocumentElement
     {
-        public ElementProperty<BorderInfo> Borders { get; } = new ElementProperty<BorderInfo>();
-        public ElementProperty<BorderInfo> TopBorder { get; } = new ElementProperty<BorderInfo>();
-        public ElementProperty<BorderInfo> BottomBorder { get; } = new ElementProperty<BorderInfo>();
-        public ElementProperty<BorderInfo> LeftBorder { get; } = new ElementProperty<BorderInfo>();
-        public ElementProperty<BorderInfo> RightBorder { get; } = new ElementProperty<BorderInfo>();
+        public ElementProperty<BorderInfo> Borders { get; } = new();
+        public ElementProperty<BorderInfo> TopBorder { get; } = new();
+        public ElementProperty<BorderInfo> BottomBorder { get; } = new();
+        public ElementProperty<BorderInfo> LeftBorder { get; } = new();
+        public ElementProperty<BorderInfo> RightBorder { get; } = new();
 
         protected BorderedDocumentElement() { }
 

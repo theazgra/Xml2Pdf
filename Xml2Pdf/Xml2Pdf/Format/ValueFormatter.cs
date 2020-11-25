@@ -17,7 +17,7 @@ namespace Xml2Pdf.Format
             internal CallbackFormatter(Func<T, string> formatFunction) { _formatFunction = formatFunction; }
         }
 
-        private readonly List<IPropertyFormatter> _formatters = new List<IPropertyFormatter>();
+        private readonly List<IPropertyFormatter> _formatters = new();
 
         public void AddFormatter(IPropertyFormatter formatter) { _formatters.Add(formatter); }
 

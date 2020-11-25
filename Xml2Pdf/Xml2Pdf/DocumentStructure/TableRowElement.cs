@@ -7,9 +7,9 @@ namespace Xml2Pdf.DocumentStructure
     {
         private static readonly Type[] PossibleChildren = {typeof(TableCellElement)};
 
-        public ElementProperty<bool> IsHeader { get; } = new ElementProperty<bool>();
-        public ElementProperty<bool> IsFooter { get; } = new ElementProperty<bool>();
-        public ElementProperty<float> RowHeight { get; } = new ElementProperty<float>();
+        public ElementProperty<bool> IsHeader { get; } = new();
+        public ElementProperty<bool> IsFooter { get; } = new();
+        public ElementProperty<float> RowHeight { get; } = new();
 
         protected override bool IsParentType => true;
         protected override Type[] AllowedChildrenTypes => PossibleChildren;

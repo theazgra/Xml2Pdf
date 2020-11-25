@@ -9,14 +9,14 @@ namespace Xml2Pdf.DocumentStructure
     {
         private static readonly Type[] PossibleChildren = {typeof(PageElement)};
 
-        public ElementStyle Style { get; } = new ElementStyle();
+        public ElementStyle Style { get; } = new();
 
         public PageSize PageSize { get; set; } = PageSize.A4;
         public PageOrientation PageOrientation { get; set; } = PageOrientation.Portrait;
 
-        public ElementProperty<string> StyleFile { get; } = new ElementProperty<string>();
-        public ElementProperty<string> DocumentFont { get; } = new ElementProperty<string>();
-        public ElementProperty<float> DocumentFontSize { get; } = new ElementProperty<float>();
+        public ElementProperty<string> StyleFile { get; } = new();
+        public ElementProperty<string> DocumentFont { get; } = new();
+        public ElementProperty<float> DocumentFontSize { get; } = new();
 
         public int PageCount { get; private set; }
 

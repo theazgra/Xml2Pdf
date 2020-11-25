@@ -10,13 +10,13 @@ namespace Xml2Pdf.DocumentStructure
     {
         private static readonly Type[] PossibleChildren = {typeof(TableRowElement), typeof(TableDataRowElement)};
 
-        public ElementProperty<UnitValue> TableWidth { get; } = new ElementProperty<UnitValue>();
-        public ElementProperty<int> ColumnCount { get; set; } = new ElementProperty<int>();
-        public ElementProperty<UnitValue[]> ColumnWidths { get; set; } = new ElementProperty<UnitValue[]>();
-        public ElementProperty<bool> LargeTable { get; set; } = new ElementProperty<bool>();
-        public ElementProperty<float> VerticalBorderSpacing { get; set; } = new ElementProperty<float>();
-        public ElementProperty<float> HorizontalBorderSpacing { get; set; } = new ElementProperty<float>();
-        public ElementProperty<float> RowHeight { get; set; } = new ElementProperty<float>();
+        public ElementProperty<UnitValue> TableWidth { get; } = new();
+        public ElementProperty<int> ColumnCount { get; set; } = new();
+        public ElementProperty<UnitValue[]> ColumnWidths { get; set; } = new();
+        public ElementProperty<bool> LargeTable { get; set; } = new();
+        public ElementProperty<float> VerticalBorderSpacing { get; set; } = new();
+        public ElementProperty<float> HorizontalBorderSpacing { get; set; } = new();
+        public ElementProperty<float> RowHeight { get; set; } = new();
 
         protected override bool IsParentType => true;
         protected override Type[] AllowedChildrenTypes => PossibleChildren;

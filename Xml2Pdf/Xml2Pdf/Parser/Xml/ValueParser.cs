@@ -13,7 +13,7 @@ namespace Xml2Pdf.Parser.Xml
 {
     internal static class ValueParser
     {
-        private readonly static Dictionary<string, Color> ColorMap = new Dictionary<string, Color>
+        private readonly static Dictionary<string, Color> ColorMap = new()
         {
             {
                 "black", ColorConstants.BLACK

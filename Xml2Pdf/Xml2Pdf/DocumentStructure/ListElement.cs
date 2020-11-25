@@ -11,12 +11,12 @@ namespace Xml2Pdf.DocumentStructure
     {
         private static readonly Type[] PossibleChildren = {typeof(ListItemElement)};
 
-        public ElementProperty<int> StartIndex { get; } = new ElementProperty<int>();
-        public ElementProperty<float> Indentation { get; } = new ElementProperty<float>();
-        public ElementProperty<string> ListSymbol { get; } = new ElementProperty<string>();
-        public ElementProperty<string> PreSymbolText { get; } = new ElementProperty<string>();
-        public ElementProperty<string> PostSymbolText { get; } = new ElementProperty<string>();
-        public ElementProperty<bool> Enumeration { get; } = new ElementProperty<bool>();
+        public ElementProperty<int> StartIndex { get; } = new();
+        public ElementProperty<float> Indentation { get; } = new();
+        public ElementProperty<string> ListSymbol { get; } = new();
+        public ElementProperty<string> PreSymbolText { get; } = new();
+        public ElementProperty<string> PostSymbolText { get; } = new();
+        public ElementProperty<bool> Enumeration { get; } = new();
 
         protected override bool IsParentType => true;
         protected override Type[] AllowedChildrenTypes => PossibleChildren;

@@ -35,7 +35,7 @@ namespace Xml2Pdf.Renderer
         private Document _pdfDocument = null;
         private readonly Dictionary<string, object> _objectPropertyMap;
 
-        private ElementStyle _style = new ElementStyle();
+        private ElementStyle _style = new();
 
         private PdfFont _docFont;
         private float _docFontSize = 10;

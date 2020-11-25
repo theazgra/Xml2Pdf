@@ -8,9 +8,9 @@ namespace Xml2Pdf.DocumentStructure
     {
         private static readonly Type[] PossibleChildren = {typeof(ParagraphElement),typeof(TextFieldElement)};
 
-        public ElementProperty<int> ColumnSpan { get; } = new ElementProperty<int>();
-        public ElementProperty<int> RowSpan { get; } = new ElementProperty<int>();
-        public ElementProperty<bool> Enumerate { get; } = new ElementProperty<bool>();
+        public ElementProperty<int> ColumnSpan { get; } = new();
+        public ElementProperty<int> RowSpan { get; } = new();
+        public ElementProperty<bool> Enumerate { get; } = new();
 
         protected override bool IsParentType => true;
         protected override Type[] AllowedChildrenTypes => PossibleChildren;
