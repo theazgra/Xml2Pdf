@@ -82,6 +82,24 @@ namespace Xml2Pdf.Parser.Xml
                     case "value":
                         formElement.Value.Value = pair.Value;
                         break;
+                    case "font":
+                    case "fontName":
+                        formElement.FontName.Value = pair.Value;
+                        break;
+                    case "fontSize":
+                        formElement.FontSize.Value = ValueParser.ParseFloat(pair.Value);
+                        break;
+                    case "foreground":
+                    case "foregroundColor":
+                        formElement.ForegroundColor.Value = ValueParser.ParseColor(pair.Value);
+                        break;
+                    case "background":
+                    case "backgroundColor":
+                        formElement.BackgroundColor.Value = ValueParser.ParseColor(pair.Value);
+                        break;
+                    case "borders":
+                        formElement.Borders.Value = ValueParser.ParseBorderInfo(pair.Value);
+                        break;
                 }
             }
         }

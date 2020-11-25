@@ -631,18 +631,17 @@ namespace Xml2Pdf.Renderer
                                             object pdfParent,
                                             StyleWrapper inheritedStyle)
         {
-            // PdfTextFormField textField = element.IsMultiline.ValueOr(false)
-            //     ? PdfFormField.CreateMultilineText(_pdfDocument.GetPdfDocument(),
-            //                                        element.Rectangle.Value,
-            //                                        element.Name.ValueOr(string.Empty),
-            //                                        element.Value.ValueOr(string.Empty))
-            //     : PdfFormField.CreateText(_pdfDocument.GetPdfDocument(),
-            //                               element.Rectangle.Value,
-            //                               element.Name.ValueOr(string.Empty),
-            //                               element.Value.ValueOr(string.Empty));
-            //
-            // // TODO(Moravec): Add custom properties to FormElement.
-            // GetDocumentForm().AddField(textField);
+            PdfTextFormField textField = element.IsMultiline.ValueOr(false)
+                ? PdfFormField.CreateMultilineText(_pdfDocument.GetPdfDocument(),
+                                                   element.FixedPosition.Value.ToRectangle(),
+                                                   element.Name.ValueOr(string.Empty),
+                                                   element.Value.ValueOr(string.Empty))
+                : PdfFormField.CreateText(_pdfDocument.GetPdfDocument(),
+                                          element.FixedPosition.Value.ToRectangle(),
+                                          element.Name.ValueOr(string.Empty),
+                                          element.Value.ValueOr(string.Empty)); textField.setco
+            // TODO(Moravec): Add custom properties to FormElement.
+            GetDocumentForm().AddField(textField);
         }
     }
 }
