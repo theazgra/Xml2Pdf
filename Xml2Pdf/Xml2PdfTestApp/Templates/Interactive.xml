@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <PdfDocument>
     <Page>
-        <TextField/>
+        <TextField rect="10,10,50,25" name="name" value="Vojtech" />
     </Page>
 </PdfDocument>

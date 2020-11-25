@@ -76,10 +76,6 @@ namespace Xml2Pdf.Parser.Xml
             {
                 switch (pair.Name)
                 {
-                    case "rect":
-                    case "rectangle":
-                        formElement.Rectangle.Value = ValueParser.ParseRectangle(pair.Value);
-                        break;
                     case "name":
                         formElement.Name.Value = pair.Value;
                         break;
@@ -102,7 +98,6 @@ namespace Xml2Pdf.Parser.Xml
                         break;
                     default:
                         throw new InvalidDocumentElementPropertyException(textFieldElement, pair.Name, pair.Value);
-                        break;
                 }
             }
         }
@@ -134,6 +129,10 @@ namespace Xml2Pdf.Parser.Xml
                         documentElement.Margins.Value ??= new Margins();
                         documentElement.Margins.Value.Right = ValueParser.ParseFloat(pair.Value);
                         break;
+                    case "rect":
+                    case "position":
+                        documentElement.FixedPosition.Value = ValueParser.ParseFixedPosition(pair.Value);
+                        break;
                 }
             }
         }
@@ -150,13 +149,6 @@ namespace Xml2Pdf.Parser.Xml
                     case "property":
                     case "sourceProperty":
                         element.SourceProperty.Value = pair.Value;
-                        break;
-                    case "position":
-                    case "fixedPosition":
-                        element.FixedPosition.Value = ValueParser.ParseIntPointFloat(pair.Value);
-                        break;
-                    case "width":
-                        element.Width.Value = ValueParser.ParseUnitValue(pair.Value);
                         break;
                     case "hScaling":
                     case "horizontalScaling":

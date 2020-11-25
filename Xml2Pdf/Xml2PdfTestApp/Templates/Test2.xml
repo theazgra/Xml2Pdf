@@ -16,8 +16,8 @@
         <!--        <Paragraph>Nullam lectus justo, vulputate eget mollis sed, tempor sed magna. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. In rutrum. Fusce aliquam vestibulum ipsum. Donec quis nibh at felis congue commodo. Maecenas ipsum velit, consectetuer eu lobortis ut, dictum at dui. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Quisque porta. Maecenas libero. Duis pulvinar. In laoreet, magna id viverra tincidunt, sem odio bibendum justo, vel imperdiet sapien wisi sed libero. Donec iaculis gravida nulla. Etiam egestas wisi a erat. Maecenas sollicitudin.</Paragraph>-->
         <!--        <Paragraph>Fusce wisi. Integer imperdiet lectus quis justo. Curabitur sagittis hendrerit ante. Nulla pulvinar eleifend sem. Nullam dapibus fermentum ipsum. Maecenas aliquet accumsan leo. In laoreet, magna id viverra tincidunt, sem odio bibendum justo, vel imperdiet sapien wisi sed libero. Aliquam ante. Vestibulum erat nulla, ullamcorper nec, rutrum non, nonummy ac, erat. Mauris dictum facilisis augue. Aliquam id dolor. Sed convallis magna eu sem. Integer vulputate sem a nibh rutrum consequat. In dapibus augue non sapien. Aliquam ornare wisi eu metus. Nam quis nulla. Nullam at arcu a est sollicitudin euismod. Fusce nibh.</Paragraph>-->
 
-        <Paragraph>Test</Paragraph>
-        <Image property="ImageData" position="40,400" width="50%" hScaling="0.7" vScaling="2"/>
+        <Paragraph rect="100,100,250">Text at 50,50,100</Paragraph>
+<!--        <Image property="ImageData" rect="40,400,25%"/>-->
 <!--        path="D:\Desktop\bus.png"-->
     </Page>
 </PdfDocument>

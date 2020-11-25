@@ -8,6 +8,7 @@ using iText.Forms;
 using iText.Forms.Fields;
 using iText.IO.Image;
 using iText.Kernel.Font;
+using iText.Kernel.Geom;
 using iText.Kernel.Pdf;
 using iText.Layout;
 using iText.Layout.Element;
@@ -257,10 +258,10 @@ namespace Xml2Pdf.Renderer
             image.AddStyle(inheritedStyle);
 
             if (element.FixedPosition.IsInitialized)
+            {
                 image.SetFixedPosition(element.FixedPosition.Value.X, element.FixedPosition.Value.Y);
-
-            if (element.Width.IsInitialized)
-                image.SetWidth(element.Width.Value);
+                image.SetWidth(element.FixedPosition.Value.Width);
+            }
 
             image.Scale(element.HorizontalScaling.ValueOr(1.0f), element.VerticalScaling.ValueOr(1.0f));
 
@@ -630,27 +631,18 @@ namespace Xml2Pdf.Renderer
                                             object pdfParent,
                                             StyleWrapper inheritedStyle)
         {
-            //PdfAcroForm form = PdfAcroForm.GetAcroForm(doc.GetPdfDocument(), true);
-
-            var style = inheritedStyle.CombineStyles(element.GetElementStyle(_style.CustomFonts));
-
-            PdfTextFormField textField = element.IsMultiline.ValueOr(false) switch
-            {
-                true => PdfFormField.CreateMultilineText(_pdfDocument.GetPdfDocument(),
-                                                         element.Rectangle.Value,
-                                                         element.Name.ValueOr(string.Empty),
-                                                         element.Value.ValueOr(string.Empty)),
-                false => PdfFormField.CreateText(_pdfDocument.GetPdfDocument(),
-                                                 element.Rectangle.Value,
-                                                 element.Name.ValueOr(string.Empty),
-                                                 element.Value.ValueOr(string.Empty))
-            };
-
-
-            // TODO(Moravec): Finish rendering code.
-
-            // PdfTextFormField nameField = PdfTextFormField.CreateText(doc.GetPdfDocument(), new Rectangle(99, 753, 425, 15), "name", "");
-            // form.AddField(nameField);
+            // PdfTextFormField textField = element.IsMultiline.ValueOr(false)
+            //     ? PdfFormField.CreateMultilineText(_pdfDocument.GetPdfDocument(),
+            //                                        element.Rectangle.Value,
+            //                                        element.Name.ValueOr(string.Empty),
+            //                                        element.Value.ValueOr(string.Empty))
+            //     : PdfFormField.CreateText(_pdfDocument.GetPdfDocument(),
+            //                               element.Rectangle.Value,
+            //                               element.Name.ValueOr(string.Empty),
+            //                               element.Value.ValueOr(string.Empty));
+            //
+            // // TODO(Moravec): Add custom properties to FormElement.
+            // GetDocumentForm().AddField(textField);
         }
     }
 }

@@ -293,14 +293,6 @@ namespace Xml2Pdf.Parser.Xml
 
         internal static UnitValue[] ParseUnitValueArray(string value) => ParseStringArray(value).Select(ParseUnitValue).ToArray();
 
-        public static IntPoint ParseIntPointFloat(string pairValue)
-        {
-            var parts = ParseStringArray(pairValue);
-            if (parts.Length != 2)
-                throw new ValueParseException("IntPoint must have two values.");
-            return new IntPoint(ParseInt(parts[0]), ParseInt(parts[1]));
-        }
-
         public static Rectangle ParseRectangle(string value)
         {
             string[] parts = ParseStringArray(value);
@@ -309,7 +301,19 @@ namespace Xml2Pdf.Parser.Xml
                 2 => new Rectangle(ParseFloat(parts[0]), ParseFloat(parts[1])),
                 4 => new Rectangle(ParseFloat(parts[0]), ParseFloat(parts[1]), ParseFloat(parts[2]), ParseFloat(parts[3])),
                 _ => throw new
-                    ValueParseException("You must specify two values (width,height) or four values (x,y,width,height) for rectangle")
+                    ValueParseException("You must specify two values (width,height) or four values (x,y,width,height) for rectangle.")
+            };
+        }
+
+        public static FixedPosition ParseFixedPosition(string value)
+        {
+            string[] parts = ParseStringArray(value);
+            return parts.Length switch
+            {
+                3 => new FixedPosition(ParseFloat(parts[0]), ParseFloat(parts[1]), ParseUnitValue(parts[2])),
+                4 => new FixedPosition(ParseFloat(parts[0]), ParseFloat(parts[1]), ParseUnitValue(parts[2]), ParseUnitValue(parts[3])),
+                _ => throw new
+                    ValueParseException("You must specify three values (x,y,width) or four values (x,y,width,height) for fixed position.")
             };
         }
     }

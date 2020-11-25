@@ -67,6 +67,7 @@ namespace Xml2Pdf.DocumentStructure
 #region DocumentElementProperties
 
         public ElementProperty<Margins> Margins { get; } = new ElementProperty<Margins>();
+        public ElementProperty<FixedPosition> FixedPosition { get; } = new ElementProperty<FixedPosition>();
 
 #endregion
 
@@ -90,6 +91,7 @@ namespace Xml2Pdf.DocumentStructure
         {
             PrepareIndent(dumpBuilder, indent).Append('<').Append(GetType().Name).Append('>').AppendLine();
             DumpElementProperty(dumpBuilder, indent, nameof(Margins), Margins);
+            DumpElementProperty(dumpBuilder, indent, nameof(FixedPosition), FixedPosition);
         }
 
         /// <summary>
@@ -120,6 +122,16 @@ namespace Xml2Pdf.DocumentStructure
                     if (Margins.Value.Right.HasValue)
                         style.SetMarginRight(Margins.Value.Right.Value);
                 }
+            }
+
+            // TODO(Moravec):   Fixed position is now from bottom-left corner, if we want to transform
+            //                  it to top-left corner, we have to pass page rectangle to this function.
+
+            // TODO(Moravec):   Add page index.
+
+            if (FixedPosition.IsInitialized)
+            {
+                style.SetFixedPosition(FixedPosition.Value.X, FixedPosition.Value.Y, FixedPosition.Value.Width);
             }
 
             return style;
