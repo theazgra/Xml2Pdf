@@ -31,10 +31,10 @@ namespace Xml2Pdf.Renderer
         private const int FontPropertyId = 20;
         private const float ScriptFontCoefficient = 0.7f;
 
+        private PageSize _pageSize;
         private Document _pdfDocument = null;
         private readonly Dictionary<string, object> _objectPropertyMap;
 
-        // private Rectangle _effectivePageRectangle;
         private ElementStyle _style = new ElementStyle();
 
         private PdfFont _docFont;
@@ -122,13 +122,11 @@ namespace Xml2Pdf.Renderer
             using var writer = new PdfWriter(savePath);
             var pdf = new PdfDocument(writer);
 
-            var pageSize = rootDocumentElement.PageOrientation == PageOrientation.Portrait
+            _pageSize = rootDocumentElement.PageOrientation == PageOrientation.Portrait
                 ? rootDocumentElement.PageSize
                 : rootDocumentElement.PageSize.Rotate();
 
-
-            _pdfDocument = new Document(pdf, pageSize);
-            // _effectivePageRectangle = _pdfDocument.GetPageEffectiveArea(pageSize);
+            _pdfDocument = new Document(pdf, _pageSize);
 
             RenderRootDocumentElement(rootDocumentElement);
 
@@ -289,7 +287,7 @@ namespace Xml2Pdf.Renderer
             var paragraph = new Paragraph();
 
             StyleWrapper paragraphStyle = inheritedStyle.CombineStyles(_style.ParagraphStyle)
-                                                        .CombineStyles(element.GetElementStyle(_style.CustomFonts));
+                                                        .CombineStyles(element.GetElementStyle(_style.CustomFonts, _pageSize));
 
             paragraph.AddStyle(paragraphStyle);
 
@@ -320,7 +318,7 @@ namespace Xml2Pdf.Renderer
             Text text;
             rawText ??= element.GetTextToRender(_objectPropertyMap, ValueFormatter);
 
-            StyleWrapper textStyle = inheritedStyle.CombineStyles(element.GetElementStyle(_style.CustomFonts));
+            StyleWrapper textStyle = inheritedStyle.CombineStyles(element.GetElementStyle(_style.CustomFonts, _pageSize));
 
 
             if (element.Superscript.ValueOr(false))
@@ -345,8 +343,8 @@ namespace Xml2Pdf.Renderer
             var emptyParagraph = new Paragraph();
 
             StyleWrapper lineStyle = _style.LineStyle != null
-                ? _style.LineStyle.CombineStyles(lineElement.GetElementStyle(_style.CustomFonts))
-                : lineElement.GetElementStyle(_style.CustomFonts);
+                ? _style.LineStyle.CombineStyles(lineElement.GetElementStyle(_style.CustomFonts, _pageSize))
+                : lineElement.GetElementStyle(_style.CustomFonts, _pageSize);
 
 
             if (lineElement.Length.IsInitialized)
@@ -362,7 +360,7 @@ namespace Xml2Pdf.Renderer
         {
             var list = element.Enumeration.ValueOr(false) ? new List(ListNumberingType.DECIMAL) : new List();
 
-            StyleWrapper listStyle = inheritedStyle.CombineStyles(element.GetElementStyle(_style.CustomFonts));
+            StyleWrapper listStyle = inheritedStyle.CombineStyles(element.GetElementStyle(_style.CustomFonts, _pageSize));
 
             if (element.Indentation.IsInitialized)
                 list.SetSymbolIndent(element.Indentation.Value);
@@ -396,7 +394,7 @@ namespace Xml2Pdf.Renderer
             var listItem = new ListItem(element.GetTextToRender(_objectPropertyMap, ValueFormatter));
 
             StyleWrapper listItemStyle = inheritedStyle.CombineStyles(_style.ListItemStyle)
-                                                       .CombineStyles(element.GetElementStyle(_style.CustomFonts));
+                                                       .CombineStyles(element.GetElementStyle(_style.CustomFonts, _pageSize));
 
 
             listItem.AddStyle(listItemStyle);
@@ -409,7 +407,7 @@ namespace Xml2Pdf.Renderer
 
 
             var tableStyle = inheritedStyle.CombineStyles(_style.TableStyle)
-                                           .CombineStyles(element.GetElementStyle(_style.CustomFonts));
+                                           .CombineStyles(element.GetElementStyle(_style.CustomFonts, _pageSize));
 
             table.SetWidth(element.TableWidth.ValueOr(UnitValue.CreatePercentValue(100.0f)));
 
@@ -448,7 +446,7 @@ namespace Xml2Pdf.Renderer
             if (!tableRowElement.IsHeader.ValueOr(false) && !tableRowElement.IsFooter.ValueOr(false))
                 pdfTable.StartNewRow();
 
-            var tableRowStyle = inheritedStyle.CombineStyles(tableRowElement.GetElementStyle(_style.CustomFonts));
+            var tableRowStyle = inheritedStyle.CombineStyles(tableRowElement.GetElementStyle(_style.CustomFonts, _pageSize));
 
             if (!tableRowElement.RowHeight.IsInitialized && parent.RowHeight.IsInitialized)
             {
@@ -475,12 +473,12 @@ namespace Xml2Pdf.Renderer
 
             var cellStyle = inheritedStyle
                             .CombineStyles(_style.TableCellStyle)
-                            .CombineStyles(tableCell.GetElementStyle(_style.CustomFonts));
+                            .CombineStyles(tableCell.GetElementStyle(_style.CustomFonts, _pageSize));
 
 
             if (tableCell.HasChildren)
             {
-                cellStyle = cellStyle.CombineStyles(((TextElement) tableCell.FirstChild).GetElementStyle(_style.CustomFonts));
+                cellStyle = cellStyle.CombineStyles(((TextElement) tableCell.FirstChild).GetElementStyle(_style.CustomFonts, _pageSize));
             }
 
             if (parent.RowHeight.IsInitialized)
@@ -558,7 +556,7 @@ namespace Xml2Pdf.Renderer
                                           .ToArray();
             }
 
-            var rowStyle = inheritedStyle.CombineStyles(element.GetElementStyle(_style.CustomFonts));
+            var rowStyle = inheritedStyle.CombineStyles(element.GetElementStyle(_style.CustomFonts, _pageSize));
             // TODO(Moravec): Finish down here.
 
             int rowIndex = 1;
@@ -620,7 +618,7 @@ namespace Xml2Pdf.Renderer
         private void RenderSpacerElement(SpacerElement spacerElement, DocumentElement parent, object pdfParent, StyleWrapper inheritedStyle)
         {
             var spacerParagraph = new Paragraph();
-            spacerParagraph.AddStyle(spacerElement.GetElementStyle(_style.CustomFonts));
+            spacerParagraph.AddStyle(spacerElement.GetElementStyle(_style.CustomFonts, _pageSize));
             AddParagraphToParent(spacerParagraph, pdfParent);
         }
 

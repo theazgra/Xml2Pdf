@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using iText.Kernel.Colors;
 using iText.Kernel.Font;
+using iText.Kernel.Geom;
 using iText.Layout.Properties;
 using Xml2Pdf.Exceptions;
 using Xml2Pdf.Format;
@@ -15,16 +16,13 @@ namespace Xml2Pdf.DocumentStructure
 {
     public abstract class TextElement : BorderedDocumentElement
     {
-
 #region TextProperties
 
-        public ElementProperty<VerticalAlignment> VerticalAlignment { get; } =
-            new ElementProperty<VerticalAlignment>();
+        public ElementProperty<VerticalAlignment> VerticalAlignment { get; } = new();
 
-        public ElementProperty<TextAlignment> TextAlignment { get; } = new ElementProperty<TextAlignment>();
+        public ElementProperty<TextAlignment> TextAlignment { get; } = new();
 
-        public ElementProperty<HorizontalAlignment> HorizontalAlignment { get; } =
-            new ElementProperty<HorizontalAlignment>();
+        public ElementProperty<HorizontalAlignment> HorizontalAlignment { get; } = new();
 
         public ElementProperty<bool> Bold { get; } = new ElementProperty<bool>();
         public ElementProperty<bool> Italic { get; } = new ElementProperty<bool>();
@@ -138,9 +136,9 @@ namespace Xml2Pdf.DocumentStructure
             return string.Empty;
         }
 
-        public override StyleWrapper GetElementStyle(Dictionary<string, PdfFont> customFonts)
+        public override StyleWrapper GetElementStyle(Dictionary<string, PdfFont> customFonts, PageSize page)
         {
-            var style = base.GetElementStyle(customFonts);
+            var style = base.GetElementStyle(customFonts, page);
             if (FontSize.IsInitialized)
                 style.SetFontSize(FontSize.Value);
             if (FontName.IsInitialized && customFonts.ContainsKey(FontName.Value))

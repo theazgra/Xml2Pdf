@@ -12,6 +12,6 @@ namespace Xml2Pdf.DocumentStructure
         public StyleWrapper LineStyle { get; set; }
         public StyleWrapper TableStyle { get; set; }
 
-        public Dictionary<string, PdfFont> CustomFonts { get; set; } = new Dictionary<string, PdfFont>();
+        public Dictionary<string, PdfFont> CustomFonts { get; } = new Dictionary<string, PdfFont>();
     }
 }

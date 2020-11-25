@@ -183,7 +183,7 @@ namespace Xml2Pdf.Parser.Xml
             };
         }
 
-        internal static byte HexToByte(ReadOnlySpan<char> hexString)
+        private static byte HexToByte(ReadOnlySpan<char> hexString)
         {
             Debug.Assert(hexString.Length == 2);
 
@@ -222,9 +222,9 @@ namespace Xml2Pdf.Parser.Xml
                 byte r, g, b;
                 try
                 {
-                    r = HexToByte(value[2..4]);
-                    g = HexToByte(value[4..6]);
-                    b = HexToByte(value[6..8]);
+                    r = HexToByte(value.AsSpan()[2..4]);
+                    g = HexToByte(value.AsSpan()[4..6]);
+                    b = HexToByte(value.AsSpan()[6..8]);
                 }
                 catch (ValueParseException e)
                 {

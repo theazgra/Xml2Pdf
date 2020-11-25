@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Xml;
 using iText.Kernel.Font;
-using iText.Layout;
 using Xml2Pdf.DocumentStructure;
 using Xml2Pdf.Exceptions;
 using Xml2Pdf.Renderer;
@@ -142,7 +141,7 @@ namespace Xml2Pdf.Parser.Xml
             var propertyBag = ReadWhileInEnclosingNode(xmlReader, enclosingNodeName);
             TextElement textElement = new LeafTextElement();
             ElementPropertyParser.ParseAndAssignElementProperties(textElement, propertyBag);
-            return textElement.GetElementStyle(customFonts);
+            return textElement.GetElementStyle(customFonts, null);
         }
 
         private StyleWrapper ParseBorderedElementStyle(string enclosingNodeName, XmlReader xmlReader)
@@ -150,7 +149,7 @@ namespace Xml2Pdf.Parser.Xml
             var propertyBag = ReadWhileInEnclosingNode(xmlReader, enclosingNodeName);
             BorderedDocumentElement borderedElement = new LineElement();
             ElementPropertyParser.ParseAndAssignElementProperties(borderedElement, propertyBag);
-            return borderedElement.GetElementStyle(null);
+            return borderedElement.GetElementStyle(null, null);
         }
 
         private (string name, string value) GetNameValueAttributePair(XmlReader xmlReader)

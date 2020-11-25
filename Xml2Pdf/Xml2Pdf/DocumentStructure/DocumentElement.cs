@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using iText.Kernel.Font;
+using iText.Kernel.Geom;
 using Xml2Pdf.DocumentStructure.Geometry;
 using Xml2Pdf.Exceptions;
 using Xml2Pdf.Renderer;
@@ -99,7 +100,8 @@ namespace Xml2Pdf.DocumentStructure
         /// </summary>
         /// <returns>Style with element properties.</returns>
         [SuppressMessage("ReSharper", "PossibleInvalidOperationException")]
-        public virtual StyleWrapper GetElementStyle(Dictionary<string, PdfFont> customFonts)
+        public virtual StyleWrapper GetElementStyle(Dictionary<string, PdfFont> customFonts,
+                                                    PageSize page)
         {
             StyleWrapper style = new StyleWrapper();
             if (Margins.IsInitialized)
