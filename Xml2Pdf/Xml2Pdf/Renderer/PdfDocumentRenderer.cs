@@ -626,6 +626,26 @@ namespace Xml2Pdf.Renderer
 
         private PdfAcroForm GetDocumentForm() => PdfAcroForm.GetAcroForm(_pdfDocument.GetPdfDocument(), true);
 
+        private void StylePdfFormElement(PdfFormField pdfElement, FormElement element)
+        {
+            if (element.FontName.IsInitialized && _style.CustomFonts.ContainsKey(element.FontName.Value))
+                pdfElement.SetFont(_style.CustomFonts[element.FontName.Value]);
+            if (element.FontSize.IsInitialized)
+                pdfElement.SetFontSize(element.FontSize.Value);
+            if (element.ForegroundColor.IsInitialized)
+                pdfElement.SetColor(element.ForegroundColor.Value);
+            if (element.BackgroundColor.IsInitialized)
+                pdfElement.SetBackgroundColor(element.BackgroundColor.Value);
+            if (element.Borders.IsInitialized)
+            {
+                pdfElement.SetBorderWidth(element.Borders.Value.Width);
+                pdfElement.SetBorderColor(element.Borders.Value.Color);
+                //pdfElement.SetBorderStyle(1);
+            }
+
+            pdfElement.SetReadOnly(element.ReadOnly.ValueOr(false));
+        }
+
         private void RenderTextFieldElement(TextFieldElement element,
                                             DocumentElement parent,
                                             object pdfParent,
@@ -639,8 +659,10 @@ namespace Xml2Pdf.Renderer
                 : PdfFormField.CreateText(_pdfDocument.GetPdfDocument(),
                                           element.FixedPosition.Value.ToRectangle(),
                                           element.Name.ValueOr(string.Empty),
-                                          element.Value.ValueOr(string.Empty)); textField.setco
-            // TODO(Moravec): Add custom properties to FormElement.
+                                          element.Value.ValueOr(string.Empty));
+
+            StylePdfFormElement(textField, element);
+
             GetDocumentForm().AddField(textField);
         }
     }

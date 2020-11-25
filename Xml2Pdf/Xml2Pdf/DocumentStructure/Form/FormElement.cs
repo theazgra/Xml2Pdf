@@ -15,6 +15,7 @@ namespace Xml2Pdf.DocumentStructure.Form
         public ElementProperty<Color> ForegroundColor { get; } = new ElementProperty<Color>();
         public ElementProperty<Color> BackgroundColor { get; } = new ElementProperty<Color>();
         public ElementProperty<BorderInfo> Borders { get; } = new ElementProperty<BorderInfo>();
+        public ElementProperty<bool> ReadOnly { get; } = new ElementProperty<bool>();
 
         internal override void DumpToStringBuilder(StringBuilder dumpBuilder, int indent)
         {
@@ -26,6 +27,7 @@ namespace Xml2Pdf.DocumentStructure.Form
             DumpElementProperty(dumpBuilder, indent, nameof(ForegroundColor), ForegroundColor);
             DumpElementProperty(dumpBuilder, indent, nameof(BackgroundColor), BackgroundColor);
             DumpElementProperty(dumpBuilder, indent, nameof(Borders), Borders);
+            DumpElementProperty(dumpBuilder, indent, nameof(ReadOnly), ReadOnly);
         }
     }
 

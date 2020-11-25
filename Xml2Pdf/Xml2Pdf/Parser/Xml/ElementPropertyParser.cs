@@ -100,6 +100,9 @@ namespace Xml2Pdf.Parser.Xml
                     case "borders":
                         formElement.Borders.Value = ValueParser.ParseBorderInfo(pair.Value);
                         break;
+                    case "readonly":
+                        formElement.ReadOnly.Value = ValueParser.ParseBool(pair.Value);
+                        break;
                 }
             }
         }
